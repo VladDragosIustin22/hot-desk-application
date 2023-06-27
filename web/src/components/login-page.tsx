@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,6 +9,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useFormik} from "formik";
+import * as Yup from "yup";
 
 function Copyright(props: any) {
   return (
@@ -25,16 +26,33 @@ function Copyright(props: any) {
 }
 
 const defaultTheme = createTheme();
+const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
+
+interface Values {
+  email: string;
+  password: string;
+}
+
+const handleSubmit = () => {
+  console.log("Submitted")
+} 
+
+const schema = Yup.object().shape({
+  email: Yup.string().email("Email shuld be valid! Example: bob.golden@gmail.com").required("Required"),
+  password: Yup.string().min(8).matches(passwordRegex,{message: " Please create a stronger password! At least 1 upper case letter, 1 lower case letter, 1 numeric digit"}).required("Required")
+})
 
 export default function LogIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+
+  const formik = useFormik<Values>({
+    initialValues : {
+      email: '',
+      password: '',
+    },
+    validationSchema: schema,
+    onSubmit: handleSubmit,
+  });
+  console.log(formik)
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -51,29 +69,33 @@ export default function LogIn() {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1"  variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onChange={formik.handleChange} onSubmit={formik.handleSubmit} onBlur={formik.handleBlur} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
+              value ={formik.values.email}
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
               autoFocus
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
             />
             <TextField
               margin="normal"
+              value ={formik.values.password}
               required
               fullWidth
               name="password"
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
             />
             <Button
               type="submit"
@@ -85,7 +107,7 @@ export default function LogIn() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/sign-up-page" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

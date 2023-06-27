@@ -1,4 +1,3 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,18 +11,53 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useFormik} from "formik";
+import * as Yup from "yup";
 
 const defaultTheme = createTheme();
 
+interface Values {
+  firstName : string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword : string;
+}
+const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
+
+const schema = Yup.object().shape({
+  firstName : Yup.string().required("Required"),
+  lastName : Yup.string().required("Required"),
+  email: Yup.string().email("Email shuld be valid! Example: bob.golden@gmail.com").required("Required"),
+  password: Yup.string().min(8).matches(passwordRegex,{message: " Please create a stronger password! At least 1 upper case letter, 1 lower case letter, 1 numeric digit"}).required("Required")
+});
+
+const handleSubmit = () => {
+  console.log("Submitted")
+} 
 export default function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+
+  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   const data = new FormData(event.currentTarget);
+  //   console.log({
+  //     email: data.get("email"),
+  //     password: data.get("password"),
+  //   });
+  // };
+
+
+  const formik = useFormik<Values>({
+    initialValues : {
+      firstName :"",
+      lastName : "",
+      email: '',
+      password: '',
+      confirmPassword : "",
+    },
+    validationSchema: schema,
+    onSubmit: handleSubmit,
+  });
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -45,8 +79,8 @@ export default function SignUp() {
           </Typography>
           <Box
             component="form"
-            noValidate
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit} 
+            onBlur={formik.handleBlur}
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
@@ -56,9 +90,12 @@ export default function SignUp() {
                   name="firstName"
                   required
                   fullWidth
+                  value={formik.touched.firstName}
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                  helperText={formik.touched.firstName && formik.errors.firstName}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -66,9 +103,12 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="lastName"
+                  value = {formik.touched.lastName}
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  error={formik.touched.lastName && Boolean(formik.errors.lastName )}
+                  helperText={formik.touched.lastName  && formik.errors.lastName }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -76,9 +116,12 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="email"
+                  value = {formik.touched.email}
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -86,16 +129,20 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="password"
+                  value = {formik.touched.password}
                   label="Password"
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={formik.touched.password && Boolean(formik.errors.password)}
+                  helperText={formik.touched.password && formik.errors.password}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
+                  value={formik.touched.confirmPassword}
                   name="confirmPassword"
                   label="Confirm Password"
                   type="password"
