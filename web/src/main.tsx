@@ -4,6 +4,7 @@ import "./index.css";
 import App from './App';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./components/sign-up-page";
+
 import LogIn from "./components/login-page";
 
 const router = createBrowserRouter([
