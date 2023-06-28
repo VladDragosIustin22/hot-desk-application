@@ -29,23 +29,14 @@ const schema = Yup.object().shape({
   firstName : Yup.string().required("Required"),
   lastName : Yup.string().required("Required"),
   email: Yup.string().email("Email shuld be valid! Example: bob.golden@gmail.com").required("Required"),
-  password: Yup.string().min(8).matches(passwordRegex,{message: " Please create a stronger password! At least 1 upper case letter, 1 lower case letter, 1 numeric digit"}).required("Required")
+  password: Yup.string().min(8).matches(passwordRegex,{message: " Please create a stronger password! At least 1 upper case letter, 1 lower case letter, 1 numeric digit"}).required("Required"),
+  confirmPassword : Yup.string().oneOf([Yup.ref("password"), ""],"Passwords must match!").required("Required")
 });
 
 const handleSubmit = () => {
   console.log("Submitted")
 } 
 export default function SignUp() {
-
-  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   const data = new FormData(event.currentTarget);
-  //   console.log({
-  //     email: data.get("email"),
-  //     password: data.get("password"),
-  //   });
-  // };
-
 
   const formik = useFormik<Values>({
     initialValues : {
@@ -79,6 +70,7 @@ export default function SignUp() {
           </Typography>
           <Box
             component="form"
+            onChange={formik.handleChange}
             onSubmit={formik.handleSubmit} 
             onBlur={formik.handleBlur}
             sx={{ mt: 3 }}
@@ -86,11 +78,10 @@ export default function SignUp() {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  autoComplete="given-name"
                   name="firstName"
                   required
                   fullWidth
-                  value={formik.touched.firstName}
+                  value={formik.values.firstName}
                   id="firstName"
                   label="First Name"
                   autoFocus
@@ -100,13 +91,13 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  autoFocus
                   required
                   fullWidth
                   id="lastName"
-                  value = {formik.touched.lastName}
+                  value = {formik.values.lastName}
                   label="Last Name"
                   name="lastName"
-                  autoComplete="family-name"
                   error={formik.touched.lastName && Boolean(formik.errors.lastName )}
                   helperText={formik.touched.lastName  && formik.errors.lastName }
                 />
@@ -116,38 +107,40 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="email"
-                  value = {formik.touched.email}
+                  value = {formik.values.email}
                   label="Email Address"
                   name="email"
-                  autoComplete="email"
+                  autoFocus
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  autoFocus
                   required
                   fullWidth
                   name="password"
-                  value = {formik.touched.password}
+                  value = {formik.values.password}
                   label="Password"
                   type="password"
                   id="password"
-                  autoComplete="new-password"
                   error={formik.touched.password && Boolean(formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  autoFocus
                   required
                   fullWidth
-                  value={formik.touched.confirmPassword}
+                  value={formik.values.confirmPassword}
                   name="confirmPassword"
                   label="Confirm Password"
                   type="password"
                   id="confirmPassword"
-                  autoComplete="new-password"
+                  error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                  helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
                 />
               </Grid>
               <Grid item xs={12}>
