@@ -41,8 +41,14 @@ const handleSubmit = () => {
 export default function SignUp() {
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
+  const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
+  const handleClickShowPassword = (fieldId: string) => {
+    if (fieldId === 'password') {
+      setShowPassword((prevShowPassword) => !prevShowPassword);
+    } else if (fieldId === 'confirmPassword') {
+      setShowConfirmedPassword((prevShowConfirmedPassword) => !prevShowConfirmedPassword);
+    }
+  };
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -99,7 +105,6 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  autoFocus
                   required
                   fullWidth
                   id="lastName"
@@ -118,68 +123,61 @@ export default function SignUp() {
                   value = {formik.values.email}
                   label="Email Address"
                   name="email"
-                  autoFocus
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  autoFocus
-                  required
-                  fullWidth
-                  name="password"
-                  value = {formik.values.password}
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  error={formik.touched.password && Boolean(formik.errors.password)}
-                  helperText={formik.touched.password && formik.errors.password}
-                  InputProps={
-                    {
+              <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    value={formik.values.password}
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    error={formik.touched.password && Boolean(formik.errors.password)}
+                    helperText={formik.touched.password && formik.errors.password}
+                    InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
                             aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
+                            onClick={() => handleClickShowPassword('password')}
                             onMouseDown={handleMouseDownPassword}
                           >
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
-                    )
-                   }
-                  }
-                />
+                      ),
+                    }}
+                  />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  autoFocus
-                  required
-                  fullWidth
-                  value={formik.values.confirmPassword}
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type={showPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-                  helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
-                  InputProps={
-                    {
+                  <TextField
+                    required
+                    fullWidth
+                    value={formik.values.confirmPassword}
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    type={showConfirmedPassword ? 'text' : 'password'}
+                    id="confirmPassword"
+                    error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                    helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                    InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
                             aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
+                            onClick={() => handleClickShowPassword('confirmPassword')}
                             onMouseDown={handleMouseDownPassword}
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showConfirmedPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
-                    )
-                   }
-                  }
-                />
+                      ),
+                    }}
+                  />
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
