@@ -3163,19 +3163,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Vivo\\.nuget\\packages\\": {}
+    "C:\\Users\\Dragos Vlad\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\lisam\\HotDeskApplication\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
+      "projectUniqueName": "E:\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
       "projectName": "HotDeskApplicationApi",
-      "projectPath": "D:\\lisam\\HotDeskApplication\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
-      "packagesPath": "C:\\Users\\Vivo\\.nuget\\packages\\",
-      "outputPath": "D:\\lisam\\HotDeskApplication\\HotDeskApplicationApi\\HotDeskApplicationApi\\obj\\",
+      "projectPath": "E:\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
+      "packagesPath": "C:\\Users\\Dragos Vlad\\.nuget\\packages\\",
+      "outputPath": "E:\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Vivo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Dragos Vlad\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
