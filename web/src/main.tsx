@@ -4,7 +4,7 @@ import "./index.css";
 import App from './App';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./components/sign-up-page";
-
+import Header from "./components/main-screen";
 import LogIn from "./components/login-page";
 
 const router = createBrowserRouter([
@@ -20,6 +20,10 @@ const router = createBrowserRouter([
     path: "/login-page",
     element: <LogIn />,
   },
+  {
+    path: "/main-screen",
+    element: <Header />,
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
