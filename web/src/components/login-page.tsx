@@ -11,6 +11,9 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useFormik} from "formik";
 import * as Yup from "yup";
+import { useState } from 'react';
+import { IconButton, InputAdornment } from '@mui/material';
+import {Visibility,VisibilityOff} from '@mui/icons-material'
 
 function Copyright(props: any) {
   return (
@@ -43,7 +46,14 @@ const schema = Yup.object().shape({
 })
 
 export default function LogIn() {
+  
+  const [showPassword, setShowPassword] = useState(false);
 
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
   const formik = useFormik<Values>({
     initialValues : {
       email: '',
@@ -84,6 +94,7 @@ export default function LogIn() {
               autoFocus
               error={formik.touched.email && Boolean(formik.errors.email)}
               helperText={formik.touched.email && formik.errors.email}
+              
             />
             <TextField
               margin="normal"
@@ -92,10 +103,25 @@ export default function LogIn() {
               fullWidth
               name="password"
               label="Password"
-              type="password"
               id="password"
+              type={showPassword ? 'text' : 'password'}
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
+              InputProps={
+                {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                )
+               }
+              }
             />
             <Button
               type="submit"
