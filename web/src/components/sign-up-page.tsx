@@ -13,7 +13,9 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik} from "formik";
 import * as Yup from "yup";
-
+import { VisibilityOff, Visibility } from "@mui/icons-material";
+import { InputAdornment, IconButton } from "@mui/material";
+import { useState } from 'react';
 const defaultTheme = createTheme();
 
 interface Values {
@@ -38,6 +40,12 @@ const handleSubmit = () => {
 } 
 export default function SignUp() {
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
   const formik = useFormik<Values>({
     initialValues : {
       firstName :"",
@@ -123,10 +131,25 @@ export default function SignUp() {
                   name="password"
                   value = {formik.values.password}
                   label="Password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   error={formik.touched.password && Boolean(formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
+                  InputProps={
+                    {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                    )
+                   }
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -137,10 +160,25 @@ export default function SignUp() {
                   value={formik.values.confirmPassword}
                   name="confirmPassword"
                   label="Confirm Password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
                   helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                  InputProps={
+                    {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                    )
+                   }
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
