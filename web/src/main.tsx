@@ -23,7 +23,7 @@ const router = createBrowserRouter([
   {
     path: "/main-screen",
     element: <Header />,
-  }
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

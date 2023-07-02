@@ -3163,29 +3163,32 @@
     ]
   },
   "packageFolders": {
-    "/Users/cristinabagacean/.nuget/packages/": {},
-    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "C:\\Users\\Dragos Vlad\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/cristinabagacean/Projects/hot-desk-application/HotDeskApplicationApi/HotDeskApplicationApi/HotDeskApplicationApi.csproj",
+      "projectUniqueName": "E:\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
       "projectName": "HotDeskApplicationApi",
-      "projectPath": "/Users/cristinabagacean/Projects/hot-desk-application/HotDeskApplicationApi/HotDeskApplicationApi/HotDeskApplicationApi.csproj",
-      "packagesPath": "/Users/cristinabagacean/.nuget/packages/",
-      "outputPath": "/Users/cristinabagacean/Projects/hot-desk-application/HotDeskApplicationApi/HotDeskApplicationApi/obj/",
+      "projectPath": "E:\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
+      "packagesPath": "C:\\Users\\Dragos Vlad\\.nuget\\packages\\",
+      "outputPath": "E:\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "/Users/cristinabagacean/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Dragos Vlad\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "/usr/local/share/dotnet/sdk/7.0.304/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\sdk\\7.0.302\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3246,8 +3249,16 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file E:\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }
