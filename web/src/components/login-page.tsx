@@ -15,6 +15,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import "@fontsource/roboto/500.css";
 
 const defaultTheme = createTheme();
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
