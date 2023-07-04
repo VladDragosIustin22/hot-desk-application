@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\HotDeskApplicationApi"
+    "\\HotDeskApplicationApi",
+    "\\HotDeskApplicationApi\\Models"
   ],
-  "SelectedNode": "\\HotDeskApplicationApi.sln",
+  "SelectedNode": "\\HotDeskApplicationApi\\Models\\User.cs",
   "PreviewInSolutionExplorer": false
 }
