@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from './App';
+import App from "./App";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./components/sign-up-page";
 import Header from "./components/main-screen";
@@ -10,10 +10,10 @@ import LogIn from "./components/login-page";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />
+    element: <App />,
   },
   {
-    path: "/sign-up-page",
+    path: "/SignUp",
     element: <SignUp />,
   },
   {
