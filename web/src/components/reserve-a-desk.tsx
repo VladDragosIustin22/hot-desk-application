@@ -1,9 +1,9 @@
-import dayjs from 'dayjs';
-import { DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { grey, blue } from '@mui/material/colors';
+import dayjs from "dayjs";
+import { DemoItem } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { grey, blue } from "@mui/material/colors";
 import {
   Box,
   Button,
@@ -12,10 +12,10 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React from 'react';
-import { DateCalendar } from '@mui/x-date-pickers';
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import React from "react";
+import { DateCalendar } from "@mui/x-date-pickers";
 
 const theme = createTheme({
   palette: {
@@ -29,32 +29,38 @@ const theme = createTheme({
 });
 
 function BasicSelect() {
-  const [headquarters, setHeadquarters] = React.useState('');
-  const [floor, setFloor] = React.useState('');
-  const [desk, setDesk] = React.useState('');
+  const [headquarters, setHeadquarters] = React.useState("");
+  const [floor, setFloor] = React.useState("");
+  const [desk, setDesk] = React.useState("");
 
-  const handleHeadquartersChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleHeadquartersChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setHeadquarters(event.target.value);
   };
 
-  const handleFloorChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleFloorChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setFloor(event.target.value);
   };
 
-  const handleDeskChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleDeskChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setDesk(event.target.value);
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        mt: 2, 
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 2,
       }}
     >
-      <FormControl sx={{ width: '25ch', mb: 1 }}>
+      <FormControl sx={{ width: "25ch", mb: 1 }}>
         <InputLabel id="select-headquarters">Headquarters</InputLabel>
         <Select
           labelId="select-headquarters"
@@ -71,7 +77,7 @@ function BasicSelect() {
         </Select>
       </FormControl>
 
-      <FormControl sx={{ width: '25ch', mb: 1 }}>
+      <FormControl sx={{ width: "25ch", mb: 1 }}>
         <InputLabel id="select-floor">Floor</InputLabel>
         <Select
           labelId="select-floor"
@@ -88,7 +94,7 @@ function BasicSelect() {
         </Select>
       </FormControl>
 
-      <FormControl sx={{ width: '25ch', mb: 1 }}>
+      <FormControl sx={{ width: "25ch", mb: 1 }}>
         <InputLabel id="select-desk">Desk</InputLabel>
         <Select
           labelId="select-desk"
@@ -108,11 +114,12 @@ function BasicSelect() {
   );
 }
 
-
 function ReserveDesk() {
-  const [city, setCity] = React.useState('');
+  const [city, setCity] = React.useState("");
 
-  const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setCity(event.target.value);
   };
 
@@ -120,23 +127,23 @@ function ReserveDesk() {
     <ThemeProvider theme={theme}>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
             p: 2,
           }}
         >
-          <Typography variant="h6" sx={{ fontSize: '50px', mx: 'auto' }}>
+          <Typography variant="h6" sx={{ fontSize: "50px", mx: "auto" }}>
             Reserve a desk
           </Typography>
 
@@ -147,9 +154,9 @@ function ReserveDesk() {
 
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             mt: 4,
           }}
         >
@@ -161,17 +168,17 @@ function ReserveDesk() {
 
           <DemoItem label="Time:" component="TimePicker">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <TimePicker
                   defaultValue={dayjs()}
                   sx={{
-                    '& .MuiOutlinedInput-root': {
+                    "& .MuiOutlinedInput-root": {
                       borderColor: grey[900],
                     },
-                    '& .MuiOutlinedInput-notchedOutline': {
+                    "& .MuiOutlinedInput-notchedOutline": {
                       borderColor: grey[900],
                     },
-                    '& .MuiOutlinedInput-input': {
+                    "& .MuiOutlinedInput-input": {
                       color: grey[900],
                     },
                   }}
@@ -179,20 +186,20 @@ function ReserveDesk() {
                 <Typography
                   variant="body1"
                   component="span"
-                  style={{ margin: '0 10px' }}
+                  style={{ margin: "0 10px" }}
                 >
                   to
                 </Typography>
                 <TimePicker
                   defaultValue={dayjs()}
                   sx={{
-                    '& .MuiOutlinedInput-root': {
+                    "& .MuiOutlinedInput-root": {
                       borderColor: grey[900],
                     },
-                    '& .MuiOutlinedInput-notchedOutline': {
+                    "& .MuiOutlinedInput-notchedOutline": {
                       borderColor: grey[900],
                     },
-                    '& .MuiOutlinedInput-input': {
+                    "& .MuiOutlinedInput-input": {
                       color: grey[900],
                     },
                   }}
