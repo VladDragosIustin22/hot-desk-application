@@ -4,23 +4,6 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "@fontsource/roboto/500.css";
 
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 export default function Header() {
   const displayHeader = () => {
@@ -68,25 +51,16 @@ export default function Header() {
               position: "absolute",
             }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3, mb: 2, backgroundColor: "#2929ff" }}
-            >
+            <Button sx={{ mt: 3, mb: 2, backgroundColor: "#2929ff" }}>
+            <Link
+            href="/reserve-a-desk"
+             color="#FFFFFF" underline="none" 
+              >
               Make a reservation
+            </Link>
             </Button>
           </Box>
 
-          <Copyright
-            sx={{
-              mt: 5,
-              mb: 4,
-              position: "absolute",
-              left: 0,
-              bottom: 0,
-              right: 0,
-            }}
-          />
         </Container>
       </ThemeProvider>
     </>
