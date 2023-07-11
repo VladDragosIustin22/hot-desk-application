@@ -7,6 +7,7 @@ import SignUp from "./components/sign-up-page";
 import Header from "./components/main-screen";
 import LogIn from "./components/login-page";
 import ReserveDesk from "./components/reserve-a-desk";
+import ReservationOverview from "./components/reservation-overview";
 
 const router = createBrowserRouter([
   {
@@ -27,8 +28,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/reserve-a-desk",
-    element: <ReserveDesk />
-  }
+    element: <ReserveDesk />,
+  },
+  {
+    path: "/ReservationOverview",
+    element: <ReservationOverview />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
