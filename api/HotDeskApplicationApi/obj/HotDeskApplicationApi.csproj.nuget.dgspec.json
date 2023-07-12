@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\lisam\\HotDeskApp\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj": {}
+    "C:\\Users\\verde\\OneDrive\\Desktop\\Proiect_Hot_Desktop_App_Lisam\\hot-desk-application\\api\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj": {}
   },
   "projects": {
-    "D:\\lisam\\HotDeskApp\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj": {
+    "C:\\Users\\verde\\OneDrive\\Desktop\\Proiect_Hot_Desktop_App_Lisam\\hot-desk-application\\api\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\lisam\\HotDeskApp\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
+        "projectUniqueName": "C:\\Users\\verde\\OneDrive\\Desktop\\Proiect_Hot_Desktop_App_Lisam\\hot-desk-application\\api\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
         "projectName": "HotDeskApplicationApi",
-        "projectPath": "D:\\lisam\\HotDeskApp\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
-        "packagesPath": "C:\\Users\\Vivo\\.nuget\\packages\\",
-        "outputPath": "D:\\lisam\\HotDeskApp\\hot-desk-application\\HotDeskApplicationApi\\HotDeskApplicationApi\\obj\\",
+        "projectPath": "C:\\Users\\verde\\OneDrive\\Desktop\\Proiect_Hot_Desktop_App_Lisam\\hot-desk-application\\api\\HotDeskApplicationApi\\HotDeskApplicationApi.csproj",
+        "packagesPath": "C:\\Users\\verde\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\verde\\OneDrive\\Desktop\\Proiect_Hot_Desktop_App_Lisam\\hot-desk-application\\api\\HotDeskApplicationApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Vivo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\verde\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

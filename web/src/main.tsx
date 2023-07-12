@@ -6,7 +6,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./components/sign-up-page";
 import Header from "./components/main-screen";
 import LogIn from "./components/login-page";
-
+import ReserveDesk from "./components/reserve-a-desk";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/login-page",
     element: <LogIn />,
+  },
+  {
+    path:"/reserve-a-desk",
+    element:<ReserveDesk/>
   },
   {
     path: "/main-screen",
