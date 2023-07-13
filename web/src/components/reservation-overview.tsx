@@ -10,12 +10,19 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TodayIcon from "@mui/icons-material/Today";
-import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
-import Grid from "@mui/material";
+import { Form, Link } from "react-router-dom";
+import { Button, Stack, TextField, Grid } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Paper from "@mui/material/Paper";
 
 const settings = ["My Profile", "Settings", "Logout"];
-
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -39,15 +46,15 @@ function ReservationOverview() {
     setAnchorElUser(null);
   };
   return (
-    <AppBar position="fixed">
-      <Container component="main" maxWidth="xl">
+    <>
+      <AppBar position="fixed">
         <Toolbar disableGutters>
           <TodayIcon
             sx={{
               display: { xs: "none", md: "flex" },
               mr: 1,
               fontSize: 40,
-              marginLeft: -25,
+              marginLeft: 5,
             }}
           />{" "}
           <Typography
@@ -87,33 +94,59 @@ function ReservationOverview() {
             My Reservations
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}></Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt="Vlad Dragos-Iustin"
-                  src="/static/images/avatar/2.jpg"
-                />
-              </IconButton>
-            </Tooltip>
-            <Typography
-              variant="h6"
-              noWrap
+          <Box sx={{ flexGrow: 0, marginRight: 10 }}>
+            <Stack direction="row" spacing={2}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar
+                    alt="Vlad Dragos-Iustin"
+                    src="/static/images/avatar/2.jpg"
+                  />
+                </IconButton>
+              </Tooltip>
+
+              <Typography
+                variant="h6"
+                noWrap
+                sx={{
+                  mr: 2,
+                  display: { xs: "none", md: "flex" },
+                  fontFamily: "roboto",
+                  fontWeight: 700,
+                  letterSpacing: ".0rem",
+                  color: "#FFFFFF",
+                  textDecoration: "none",
+                  marginLeft: 2,
+                  marginTop: 0,
+                  padding: 1,
+                }}
+              >
+                User Name
+              </Typography>
+            </Stack>
+            <Box
+              margin={1}
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="flex-end"
               sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontFamily: "roboto",
-                fontWeight: 700,
-                letterSpacing: ".0rem",
-                color: "#FFFFFF",
-                textDecoration: "none",
-                marginLeft: 2,
-                marginTop: 0,
-                padding: 1,
+                top: 100,
+                right: "60%",
+                marginRight: -100,
+                position: "absolute",
               }}
             >
-              User Name
-            </Typography>
+              <Button sx={{ mt: 3, mb: 2, backgroundColor: "#EC7329" }}>
+                <Link
+                  style={{ textDecoration: "none" }}
+                  to={"/reserve-a-desk"}
+                  color="#FFFFFF"
+                >
+                  Make a reservation
+                </Link>
+              </Button>
+            </Box>
+
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"
@@ -138,8 +171,37 @@ function ReservationOverview() {
             </Menu>
           </Box>
         </Toolbar>
-      </Container>
-    </AppBar>
+      </AppBar>
+      <Box
+        sx={{
+          flexGrow: 1,
+          marginTop: 30,
+          marginLeft: 30,
+          display: { xs: "flex", md: "flex" },
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid
+            item
+            xs={6}
+            justifyContent="center"
+            direction="row"
+            alignItems="center"
+          >
+            <Item>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+              <Typography sx={{ marginRight: 70 }}>
+                Vlad Dragos-Iustin
+              </Typography>
+            </Item>
+          </Grid>
+
+          <Grid item xs={4} marginRight={0}>
+            <Item>xs=4</Item>
+          </Grid>
+        </Grid>
+      </Box>
+    </>
   );
 }
 export default ReservationOverview;
