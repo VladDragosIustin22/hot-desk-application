@@ -46,7 +46,7 @@ function  DatePickerValue() {
   const [value, setValue] = React.useState<Dayjs | null>(dayjs());
    const [allDay, setAllDay] = React.useState<boolean>(false);
   return (
-    <FormControl sx={{ width: '64ch', mb: 3 }}>
+    <FormControl sx={{ width: '64ch', mb:4 }}>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <DatePicker
@@ -57,7 +57,7 @@ function  DatePickerValue() {
       />
       
       <FormGroup sx={{ mr:-20,ml: 'auto' }}>
-      <FormControlLabel control={<Switch checked={allDay} onChange={(event) => setAllDay(event.target.checked)} />} label="All day" />
+      <FormControlLabel control={<Switch checked={allDay} onChange={(event) => setAllDay(event.target.checked)} />} label="All day" color='secondary.main'/>
     </FormGroup>
     </Box>
     </LocalizationProvider>
