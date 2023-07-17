@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
-import { DateCalendar, DatePicker, TimeView } from '@mui/x-date-pickers';
+import { DatePicker, TimeView } from '@mui/x-date-pickers';
 
 const theme = createTheme({
   palette: {
@@ -284,11 +284,8 @@ const shouldDisableEndTime = (value: Dayjs, view: TimeView) => {
           </Box>
           </Box>
           <DatePickerValue /><div>
-          <DemoItem label="Date:" component="DatePicker">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateCalendar />
-            </LocalizationProvider>
-          </DemoItem>
+          
+          
           <Box sx={{ display: 'flex', mb: 2 }}>
           <DemoItem component="TimePicker">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
