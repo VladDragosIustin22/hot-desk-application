@@ -12,18 +12,15 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  AppBar,
+  Switch,
+  FormGroup,
+  FormControlLabel,
   Toolbar,
+  AppBar,
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimeView } from '@mui/x-date-pickers';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-
-
+import { DateCalendar, DatePicker, TimeView } from '@mui/x-date-pickers';
 
 const theme = createTheme({
   palette: {
@@ -67,19 +64,25 @@ function  DatePickerValue() {
  
 
 function BasicSelect() {
-  const [headquarters, setHeadquarters] = React.useState('');
-  const [floor, setFloor] = React.useState('');
-  const [desk, setDesk] = React.useState('');
+  const [headquarters, setHeadquarters] = React.useState("");
+  const [floor, setFloor] = React.useState("");
+  const [desk, setDesk] = React.useState("");
 
-  const handleHeadquartersChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleHeadquartersChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setHeadquarters(event.target.value);
   };
 
-  const handleFloorChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleFloorChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setFloor(event.target.value);
   };
 
-  const handleDeskChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleDeskChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setDesk(event.target.value);
   };
 
@@ -106,6 +109,7 @@ function BasicSelect() {
         </Select>
       </FormControl>
 
+      
       <FormControl sx={{ width: '25ch', mb: 5 ,alignItems:'left'}}>
         <InputLabel id="select-floor">Floor</InputLabel>
         <Select
@@ -123,6 +127,7 @@ function BasicSelect() {
       </FormControl>
 
       <FormControl sx={{ width: '25ch', mb: 5,alignItems:'left' }}>
+      
         <InputLabel id="select-desk">Desk</InputLabel>
         <Select
           labelId="select-desk"
@@ -141,91 +146,91 @@ function BasicSelect() {
     </Box>
   );
 }
-  
- 
+
 
 function ReserveDesk() {
-  const [startTime, setStartTime] = React.useState<Dayjs | null>(
-    dayjs().set('hour', 7).set('minute', 0)
-  );
-  const [endDateTime, setEndTime] = React.useState<Dayjs | null>(null);
-  const [allDay, setAllDay] = React.useState<boolean>(false);
+ const [startTime, setStartTime] = React.useState<Dayjs | null>(
+  dayjs().set('hour', 7).set('minute', 0)
+);
+const [endDateTime, setEndTime] = React.useState<Dayjs | null>(null);
+const [allDay, setAllDay] = React.useState<boolean>(false);
+
+const handleStartTimeChange = (newValue: Dayjs | null) => {
+setStartTime(newValue);
+  if (allDay) {
+    setEndTime(null);
+  }
+};
+
+const handleEndTimeChange = (newValue: Dayjs | null) => {
+  setEndTime(newValue);
+  if(allDay){
+    setStartTime(null);
+  }
+};
+
+const shouldDisableTime = (value: Dayjs, view: TimeView) => {
+  if (view === 'hours') {
+    const hour = value.hour();
+    const minute = value.minute();
+    if (hour >= 17 || hour < 7) {
+      return true;
+    }
+    if (hour === 7 && minute < 30) {
+      return true;
+    }
+  }
+  return false;
+};
+
+
+
+const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
+  if (view === 'hours') {
+    const startHour = startTime?.hour();
+    const startMinute = startTime?.minute();
+    if (startHour !== undefined && startMinute !== undefined) {
+      const startTime = dayjs()
+        .set('hour', startHour)
+        .set('minute', startMinute)
+        .startOf('minute');
+      const endTime = dayjs().set('hour', 16).startOf('hour');
+      return (
+        value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
+      );
+    }
+  }
+  if (view === 'minutes') {
+    const minute = value.minute();
+    return minute !== 0 && minute !== 30;
+  }
+  return false;
+};
+const shouldDisableEndTime = (value: Dayjs, view: TimeView) => {
+  if (view === 'hours') {
+    const startHour = startTime?.add(1,'hour').hour();
+    const startMinute = startTime?.minute();
+    if (startHour !== undefined && startMinute !== undefined) {
+      const startTime = dayjs()
+        .set('hour', startHour)
+        .set('minute', startMinute)
+        .startOf('minute');
+
+      const endTime = dayjs().set('hour', 16).startOf('hour'); 
+      return (
+        value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
+      );
+    }
+  }
+  if (view === 'minutes') {
+    const minute = value.minute();
+    return minute !== 0 && minute !== 30;
+  }
+  return false;
+};
   
-  const handleStartTimeChange = (newValue: Dayjs | null) => {
-  setStartTime(newValue);
-    if (allDay) {
-      setEndTime(null);
-    }
-  };
-
-  const handleEndTimeChange = (newValue: Dayjs | null) => {
-    setEndTime(newValue);
-    if(allDay){
-      setStartTime(null);
-    }
-  };
-
-  const shouldDisableTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const hour = value.hour();
-      const minute = value.minute();
-      if (hour >= 17 || hour < 7) {
-        return true;
-      }
-      if (hour === 7 && minute < 30) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-
-
-  const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const startHour = startTime?.hour();
-      const startMinute = startTime?.minute();
-      if (startHour !== undefined && startMinute !== undefined) {
-        const startTime = dayjs()
-          .set('hour', startHour)
-          .set('minute', startMinute)
-          .startOf('minute');
-        const endTime = dayjs().set('hour', 16).startOf('hour');
-        return (
-          value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
-        );
-      }
-    }
-    if (view === 'minutes') {
-      const minute = value.minute();
-      return minute !== 0 && minute !== 30;
-    }
-    return false;
-  };
-  const shouldDisableEndTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const startHour = startTime?.add(1,'hour').hour();
-      const startMinute = startTime?.minute();
-      if (startHour !== undefined && startMinute !== undefined) {
-        const startTime = dayjs()
-          .set('hour', startHour)
-          .set('minute', startMinute)
-          .startOf('minute');
-
-        const endTime = dayjs().set('hour', 16).startOf('hour'); 
-        return (
-          value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
-        );
-      }
-    }
-    if (view === 'minutes') {
-      const minute = value.minute();
-      return minute !== 0 && minute !== 30;
-    }
-    return false;
-  };
-
   
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -262,11 +267,13 @@ function ReserveDesk() {
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
+            flexDirection: 'column',
             alignItems: 'center',
             width: '100%',
+            mt: 4,
             p:2,
-            mb:2,    
-          }}></Box>
+          }}
+          ></Box>
           <Box sx={{ justifyContent: 'flex-start', mt: 2 }}>
           <Button variant="contained"  
           size="large" 
@@ -276,30 +283,31 @@ function ReserveDesk() {
           </Button>
           </Box>
           </Box>
-         
-     
-        <DatePickerValue />
-         
-         <div>
+          <DatePickerValue /><div>
+          <DemoItem label="Date:" component="DatePicker">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateCalendar />
+            </LocalizationProvider>
+          </DemoItem>
           <Box sx={{ display: 'flex', mb: 2 }}>
           <DemoItem component="TimePicker">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
             <>
                 <TimePicker
                 label="Start"   
                 onChange={handleStartTimeChange}
                 shouldDisableTime={shouldDisableStartTime}
                   sx={{
-                    '& .MuiOutlinedInput-root': {
+                    "& .MuiOutlinedInput-root": {
                       borderColor: grey[900],
                       width: '18ch',
                     },
-                    '& .MuiOutlinedInput-notchedOutline': {
+                    "& .MuiOutlinedInput-notchedOutline": {
                       borderColor: grey[900],
                       
                     },
-                    '& .MuiOutlinedInput-input': {
+                    "& .MuiOutlinedInput-input": {
                       color: grey[900],
                     },
                   }}
@@ -317,14 +325,14 @@ function ReserveDesk() {
                  onChange={handleEndTimeChange}
                  shouldDisableTime={shouldDisableEndTime}
                   sx={{
-                    '& .MuiOutlinedInput-root': {
+                    "& .MuiOutlinedInput-root": {
                       borderColor: grey[900],
                       width: '18ch',
                     },
-                    '& .MuiOutlinedInput-notchedOutline': {
+                    "& .MuiOutlinedInput-notchedOutline": {
                       borderColor: grey[900],
                     },
-                    '& .MuiOutlinedInput-input': {
+                    "& .MuiOutlinedInput-input": {
                       color: grey[900],
                     },
                   }}
