@@ -17,14 +17,12 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const settings = ["My Profile", "Settings", "Logout"];
 const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
+  padding: theme.spacing(1),
   textAlign: "center",
   color: theme.palette.text.secondary,
-  height: 60,
-  lineHeight: "60px",
 }));
-
-const lightTheme = createTheme({ palette: { mode: "light" } });
 
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -106,7 +104,7 @@ function ReservationOverview() {
               </Tooltip>
 
               <Avatar
-                alt="Remy Sharp"
+                alt="User Name"
                 src="/static/images/avatar/1.jpg"
                 sx={{ marginLeft: 5, marginRight: -6 }}
               />
@@ -178,37 +176,36 @@ function ReservationOverview() {
           </Box>
         </Toolbar>
       </AppBar>
-      <Box
-        sx={{
-          flexGrow: 1,
-          marginTop: 30,
-          marginLeft: 30,
-          display: { xs: "flex", md: "flex" },
-        }}
-      ></Box>
-      <Grid container spacing={0} alignItems={"center"}>
-        {[lightTheme].map((theme, index) => (
-          <Grid item xs={8} key={index}>
-            <ThemeProvider theme={theme}>
-              <Box
+      <Box sx={{ flexGrow: 1, marginTop: 35 }}>
+        <Grid container spacing={0} marginLeft={20} alignItems="center">
+          <Grid item xs={5}>
+            <Item>
+              <Typography variant="h6" marginRight={60} alignItems="center">
+                Vlad Dragos Iustin
+              </Typography>
+              <Typography
+                variant="h6"
                 sx={{
-                  p: 2,
-                  bgcolor: "Background",
-                  display: "grid",
-                  gridTemplateColumns: { md: "1fr 1fr" },
-                  gap: 1,
+                  fontSize: 15,
+                  marginRight: 72,
                 }}
               >
-                {[0, 1, 2, 3, 4, 6, 8, 12, 16, 24].map((elevation) => (
-                  <Item key={elevation} elevation={elevation}>
-                    {`elevation=${elevation}`}
-                  </Item>
-                ))}
-              </Box>
-            </ThemeProvider>
+                Developer
+              </Typography>
+            </Item>
           </Grid>
-        ))}
-      </Grid>
+          <Grid item xs={5}>
+            <Item>
+              <Typography
+                variant="h6"
+                sx={{ fontSize: 15, marginRight: 90, marginTop: 4 }}
+              >
+                Date:
+              </Typography>
+            </Item>
+          </Grid>
+        </Grid>
+      </Box>
     </>
   );
 }
