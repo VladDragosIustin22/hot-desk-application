@@ -5,24 +5,27 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TodayIcon from "@mui/icons-material/Today";
 import { Form, Link } from "react-router-dom";
 import { Button, Stack, TextField, Grid } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const settings = ["My Profile", "Settings", "Logout"];
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
-  padding: theme.spacing(1),
   textAlign: "center",
   color: theme.palette.text.secondary,
+  height: 60,
+  lineHeight: "60px",
 }));
+
+const lightTheme = createTheme({ palette: { mode: "light" } });
+
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -95,15 +98,18 @@ function ReservationOverview() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}></Box>
           <Box sx={{ flexGrow: 0, marginRight: 10 }}>
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={2} alignItems="center">
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar
-                    alt="Vlad Dragos-Iustin"
-                    src="/static/images/avatar/2.jpg"
-                  />
+                  <MoreVertIcon sx={{ fontSize: 30 }}></MoreVertIcon>
                 </IconButton>
               </Tooltip>
+
+              <Avatar
+                alt="Remy Sharp"
+                src="/static/images/avatar/1.jpg"
+                sx={{ marginLeft: 5, marginRight: -6 }}
+              />
 
               <Typography
                 variant="h6"
@@ -179,28 +185,30 @@ function ReservationOverview() {
           marginLeft: 30,
           display: { xs: "flex", md: "flex" },
         }}
-      >
-        <Grid container spacing={2}>
-          <Grid
-            item
-            xs={6}
-            justifyContent="center"
-            direction="row"
-            alignItems="center"
-          >
-            <Item>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-              <Typography sx={{ marginRight: 70 }}>
-                Vlad Dragos-Iustin
-              </Typography>
-            </Item>
+      ></Box>
+      <Grid container spacing={0} alignItems={"center"}>
+        {[lightTheme].map((theme, index) => (
+          <Grid item xs={8} key={index}>
+            <ThemeProvider theme={theme}>
+              <Box
+                sx={{
+                  p: 2,
+                  bgcolor: "Background",
+                  display: "grid",
+                  gridTemplateColumns: { md: "1fr 1fr" },
+                  gap: 1,
+                }}
+              >
+                {[0, 1, 2, 3, 4, 6, 8, 12, 16, 24].map((elevation) => (
+                  <Item key={elevation} elevation={elevation}>
+                    {`elevation=${elevation}`}
+                  </Item>
+                ))}
+              </Box>
+            </ThemeProvider>
           </Grid>
-
-          <Grid item xs={4} marginRight={0}>
-            <Item>xs=4</Item>
-          </Grid>
-        </Grid>
-      </Box>
+        ))}
+      </Grid>
     </>
   );
 }
