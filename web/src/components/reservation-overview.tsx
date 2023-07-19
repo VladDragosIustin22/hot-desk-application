@@ -14,15 +14,10 @@ import { Button, Stack, TextField, Grid, Divider } from "@mui/material";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import CreateIcon from "@mui/icons-material/Create";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const settings = ["My Profile", "Settings", "Logout"];
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -186,12 +181,12 @@ function ReservationOverview() {
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             <Stack direction="column">
               <Typography variant="h6" marginRight={60} alignItems="center">
-                Vlad Dragos Iustin
+                Vlad Dragos
               </Typography>
               <Typography
                 variant="h6"
                 sx={{
-                  fontSize: 15,
+                  fontSize: 13,
                   marginRight: 72,
                 }}
               >
@@ -199,12 +194,49 @@ function ReservationOverview() {
               </Typography>
             </Stack>
           </Stack>
-          <Typography
-            variant="h6"
-            sx={{ fontSize: 15, marginRight: 90, marginTop: 4 }}
-          >
-            Date:
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={10}>
+            <Stack direction="column">
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 4 }}>
+                Date: 05.07.2023
+              </Typography>
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 4 }}>
+                Office: Brizei
+              </Typography>
+            </Stack>
+            <Stack direction="column">
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 4 }}>
+                Interval: All day
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: 15,
+                  marginTop: 4,
+                }}
+              >
+                Floor: 1
+              </Typography>
+            </Stack>
+            <Stack direction="column" alignItems="center">
+              <Typography
+                variant="h6"
+                sx={{ fontSize: 15, marginTop: 4 }}
+              ></Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: 15,
+                  marginTop: 8,
+                }}
+              >
+                Desk: 2
+              </Typography>
+            </Stack>
+            <Stack direction="column" alignItems="center" spacing={9}>
+              <CreateIcon></CreateIcon>
+              <DeleteIcon></DeleteIcon>
+            </Stack>
+          </Stack>
         </Stack>
       </Box>
     </>
