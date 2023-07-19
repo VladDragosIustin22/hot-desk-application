@@ -271,13 +271,13 @@ function ReservationOverview() {
                 variant="h6"
                 sx={{
                   fontSize: 15,
-                  marginTop: 8,
+                  marginTop: 7,
                 }}
               >
                 Desk: 2
               </Typography>
             </Stack>
-            <Stack direction="column" alignItems="center" spacing={9}>
+            <Stack direction="column" alignItems="center">
               <CreateIcon
                 onClick={(event) => (window.location.href = "/EditReservation")}
               ></CreateIcon>
