@@ -10,7 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TodayIcon from "@mui/icons-material/Today";
 import { Form, Link } from "react-router-dom";
-import { Button, Stack, TextField, Grid } from "@mui/material";
+import { Button, Stack, TextField, Grid, Divider } from "@mui/material";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -176,10 +176,15 @@ function ReservationOverview() {
           </Box>
         </Toolbar>
       </AppBar>
-      <Box sx={{ flexGrow: 1, marginTop: 35 }}>
-        <Grid container spacing={0} marginLeft={20} alignItems="center">
-          <Grid item xs={5}>
-            <Item>
+      <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          divider={<Divider orientation="vertical" flexItem />}
+        >
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Stack direction="column">
               <Typography variant="h6" marginRight={60} alignItems="center">
                 Vlad Dragos Iustin
               </Typography>
@@ -192,19 +197,15 @@ function ReservationOverview() {
               >
                 Developer
               </Typography>
-            </Item>
-          </Grid>
-          <Grid item xs={5}>
-            <Item>
-              <Typography
-                variant="h6"
-                sx={{ fontSize: 15, marginRight: 90, marginTop: 4 }}
-              >
-                Date:
-              </Typography>
-            </Item>
-          </Grid>
-        </Grid>
+            </Stack>
+          </Stack>
+          <Typography
+            variant="h6"
+            sx={{ fontSize: 15, marginRight: 90, marginTop: 4 }}
+          >
+            Date:
+          </Typography>
+        </Stack>
       </Box>
     </>
   );
