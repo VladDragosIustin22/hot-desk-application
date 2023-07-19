@@ -3,3 +3,7 @@ api/HotDeskApplicationApi/bin/Debug/net6.0/HotDeskApplicationApi.dll
 api/HotDeskApplicationApi/bin/Debug/net6.0/HotDeskApplicationApi.pdb
 api/.vs/HotDeskApplicationApi/DesignTimeBuild/.dtbcache.v2
 
+*.cs
+*.cache
+*.editorconfig
+*.json
