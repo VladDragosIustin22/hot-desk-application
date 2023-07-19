@@ -9,15 +9,26 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TodayIcon from "@mui/icons-material/Today";
-import { Form, Link } from "react-router-dom";
-import { Button, Stack, TextField, Grid, Divider } from "@mui/material";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
+import { Link } from "react-router-dom";
+import { Button, Stack, Divider } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import Modal from "@mui/material/Modal";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 const settings = ["My Profile", "Settings", "Logout"];
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -41,6 +52,40 @@ function ReservationOverview() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [confirmation, setConfirmation] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const handleNo = () => {
+    setConfirmation(false);
+    setOpen(false);
+    navigate("/ReservationOverview");
+  };
+  const handleYes = () => {
+    setConfirmation(true);
+    setOpen(false);
+    navigate("/ReservationOverview");
+  };
+  useEffect(() => {
+    const DeleteReservation = async () => {
+      if (confirmation) {
+        const response = await fetch(
+          `https://localhost:7155/api/Security/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+    };
+    DeleteReservation();
+  }, [id, confirmation]);
+
   return (
     <>
       <AppBar position="fixed">
@@ -233,8 +278,35 @@ function ReservationOverview() {
               </Typography>
             </Stack>
             <Stack direction="column" alignItems="center" spacing={9}>
-              <CreateIcon></CreateIcon>
-              <DeleteIcon></DeleteIcon>
+              <CreateIcon
+                onClick={(event) => (window.location.href = "/EditReservation")}
+              ></CreateIcon>
+              <Button onClick={handleOpen}>
+                <DeleteIcon></DeleteIcon>
+              </Button>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                  <Typography
+                    id="modal-modal-title"
+                    variant="h5"
+                    component="h2"
+                  >
+                    My Reservations
+                  </Typography>
+                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    Are you sure you want to delete this record?
+                  </Typography>
+                  <Box sx={{ marginTop: 2, marginLeft: 31 }}>
+                    <Button onClick={handleNo}>Cancel</Button>
+                    <Button onClick={handleYes}>Confirm</Button>
+                  </Box>
+                </Box>
+              </Modal>
             </Stack>
           </Stack>
         </Stack>
