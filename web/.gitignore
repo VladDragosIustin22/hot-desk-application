@@ -420,3 +420,17 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+api/HotDeskApplicationApi/bin/Debug/net6.0/HotDeskApplicationApi.deps.json
+api/HotDeskApplicationApi/bin/Debug/net6.0/HotDeskApplicationApi.dll
+api/HotDeskApplicationApi/bin/Debug/net6.0/HotDeskApplicationApi.pdb
+api/HotDeskApplicationApi/obj/Debug/net6.0/HotDeskApplicationApi.assets.cache
+api/HotDeskApplicationApi/obj/Debug/net6.0/HotDeskApplicationApi.csproj.AssemblyReference.cache
+api/HotDeskApplicationApi/obj/Debug/net6.0/HotDeskApplicationApi.csproj.CoreCompileInputs.cache
+api/HotDeskApplicationApi/obj/Debug/net6.0/HotDeskApplicationApi.csproj.FileListAbsolute.txt
+api/HotDeskApplicationApi/obj/Debug/net6.0/HotDeskApplicationApi.dll
+api/HotDeskApplicationApi/obj/Debug/net6.0/HotDeskApplicationApi.genruntimeconfig.cache
+api/HotDeskApplicationApi/obj/Debug/net6.0/HotDeskApplicationApi.pdb
+api/HotDeskApplicationApi/obj/HotDeskApplicationApi.csproj.nuget.dgspec.json
+api/HotDeskApplicationApi/obj/HotDeskApplicationApi.csproj.nuget.g.props
+api/HotDeskApplicationApi/obj/project.assets.json
+api/HotDeskApplicationApi/obj/project.nuget.cache
