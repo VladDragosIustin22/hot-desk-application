@@ -9,6 +9,8 @@ import LogIn from "./components/login-page";
 import ReserveDesk from "./components/reserve-a-desk";
 import ReservationOverview from "./components/reservation-overview";
 
+import EditReservation from "./components/edit-reservation";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,6 +35,11 @@ const router = createBrowserRouter([
   {
     path: "/ReservationOverview",
     element: <ReservationOverview />,
+  },
+
+  {
+    path: "/EditReservation",
+    element: <EditReservation />,
   },
 ]);
 
