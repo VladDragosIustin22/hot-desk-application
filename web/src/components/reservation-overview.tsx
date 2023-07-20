@@ -17,7 +17,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import EditReservation from "./edit-reservation";
+import { Height } from "@mui/icons-material";
 const settings = ["My Profile", "Settings", "Logout"];
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -52,20 +55,29 @@ function ReservationOverview() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
   const [open, setOpen] = React.useState(false);
+  const [open1, setOpen1] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleOpen1 = () => {
+    setOpen1(true);
+    console.log("Test");
+  };
+  const handleClose1 = () => setOpen1(false);
   const [confirmation, setConfirmation] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const handleNo = () => {
     setConfirmation(false);
     setOpen(false);
+    setOpen1(false);
     navigate("/ReservationOverview");
   };
   const handleYes = () => {
     setConfirmation(true);
     setOpen(false);
+    setOpen1(false);
     navigate("/ReservationOverview");
   };
   useEffect(() => {
@@ -241,15 +253,15 @@ function ReservationOverview() {
           </Stack>
           <Stack direction="row" alignItems="center" spacing={10}>
             <Stack direction="column">
-              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 4 }}>
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
                 Date: 05.07.2023
               </Typography>
-              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 4 }}>
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
                 Office: Brizei
               </Typography>
             </Stack>
             <Stack direction="column">
-              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 4 }}>
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
                 Interval: All day
               </Typography>
               <Typography
@@ -265,7 +277,7 @@ function ReservationOverview() {
             <Stack direction="column" alignItems="center">
               <Typography
                 variant="h6"
-                sx={{ fontSize: 15, marginTop: 4 }}
+                sx={{ fontSize: 15, marginTop: 2 }}
               ></Typography>
               <Typography
                 variant="h6"
@@ -277,10 +289,34 @@ function ReservationOverview() {
                 Desk: 2
               </Typography>
             </Stack>
-            <Stack direction="column" alignItems="center">
-              <CreateIcon
-                onClick={(event) => (window.location.href = "/EditReservation")}
-              ></CreateIcon>
+            <Stack direction="column" alignItems="center" gap={3}>
+              <Button onClick={handleOpen1}>
+                <CreateIcon
+                  sx={{
+                    marginTop: 2,
+                  }}
+
+                  // onClick={(event) => (window.location.href = "/EditReservation")}
+                ></CreateIcon>
+              </Button>
+
+              <Modal
+                open={open1}
+                onClose={handleClose1}
+                aria-labelledby="modal-modal-title"
+                sx={{
+                  background: "white",
+                }}
+              >
+                <Box sx={{ style }}>
+                  <EditReservation />
+                  <Box sx={{ marginTop: 2, marginLeft: 31 }}>
+                    <Button onClick={handleNo}>Cancel</Button>
+                    <Button onClick={handleYes}>Confirm</Button>
+                  </Box>
+                </Box>
+              </Modal>
+
               <Button onClick={handleOpen}>
                 <DeleteIcon></DeleteIcon>
               </Button>
