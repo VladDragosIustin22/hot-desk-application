@@ -25,6 +25,7 @@ import Switch from '@mui/material/Switch';
 
 
 
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -42,9 +43,16 @@ const theme = createTheme({
   },
 });
 
-function  DatePickerValue() {
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs());
-   const [allDay, setAllDay] = React.useState<boolean>(false);
+function DatePickerValue({ allDay, handleAllDayToggle, value,startTime, endTime, setValue,setDateCompleted }: any) {
+  const handleDateChange = (newValue: Dayjs | null) => {
+    setValue(newValue);
+    if (newValue) {
+      setDateCompleted(true);
+    } else {
+      setDateCompleted(false);
+    }
+  };
+
   return (
     <FormControl sx={{ width: '64ch', mb: 3 }}>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -52,25 +60,29 @@ function  DatePickerValue() {
       <DatePicker
         label="Date"
         value={value}
-        onChange={(newValue) => setValue(newValue)}
+        onChange={handleDateChange}
         sx={{ width: '64ch' }}
       />
       
-      <FormGroup sx={{ mr:-20,ml: 'auto' }}>
-      <FormControlLabel control={<Switch checked={allDay} onChange={(event) => setAllDay(event.target.checked)} />} label="All day" />
-    </FormGroup>
+      <FormGroup sx={{ mr: -20, ml: 'auto' }}>
+  <FormControlLabel
+    control={<Switch checked={allDay} onChange={handleAllDayToggle} />}
+    label="All day"
+  />
+</FormGroup>
     </Box>
-    </LocalizationProvider>
+      </LocalizationProvider>
     </FormControl>
   );
 }
+
  
 
-function BasicSelect() {
+function BasicSelect({ isDateCompleted, isTimeCompleted }: { isDateCompleted: boolean; isTimeCompleted: boolean }) {
   const [headquarters, setHeadquarters] = React.useState('');
   const [floor, setFloor] = React.useState('');
   const [desk, setDesk] = React.useState('');
-
+  
   const handleHeadquartersChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setHeadquarters(event.target.value);
   };
@@ -91,7 +103,7 @@ function BasicSelect() {
         alignItems: 'left',
         mt: 2, 
       }}
-    >
+    >     
       <FormControl sx={{ width: '64ch', mb: 5 }}>
         <InputLabel id="select-office">Office</InputLabel>
         <Select
@@ -100,6 +112,7 @@ function BasicSelect() {
           value={headquarters}
           label="Office"
           onChange={handleHeadquartersChange}
+          disabled={!isDateCompleted || !isTimeCompleted}
         >
           <MenuItem value={10}>Predeal</MenuItem>
           <MenuItem value={20}>Brizei</MenuItem>
@@ -114,6 +127,7 @@ function BasicSelect() {
           value={floor}
           label="Floor"
           onChange={handleFloorChange}
+          disabled={!isDateCompleted || !isTimeCompleted || !headquarters}
         >
           <MenuItem value={11}>0</MenuItem>
           <MenuItem value={12}>1</MenuItem>
@@ -130,6 +144,7 @@ function BasicSelect() {
           value={desk}
           label="Desk"
           onChange={handleDeskChange}
+          disabled={!isDateCompleted || !isTimeCompleted || !headquarters || !floor}
         >
           <MenuItem value={16}>1</MenuItem>
           <MenuItem value={17}>2</MenuItem>
@@ -148,82 +163,109 @@ function ReserveDesk() {
   const [startTime, setStartTime] = React.useState<Dayjs | null>(
     dayjs().set('hour', 7).set('minute', 0)
   );
-  const [endDateTime, setEndTime] = React.useState<Dayjs | null>(null);
+  const [endTime, setEndTime] = React.useState<Dayjs | null>(null);
   const [allDay, setAllDay] = React.useState<boolean>(false);
+  const [value, setValue] = React.useState<Dayjs | null>(dayjs());
+ 
+  const [isDateCompleted, setDateCompleted] = React.useState(false);
+  const [isTimeCompleted, setTimeCompleted] = React.useState(false);
   
-  const handleStartTimeChange = (newValue: Dayjs | null) => {
-  setStartTime(newValue);
-    if (allDay) {
-      setEndTime(null);
+  const handleDateChange = (newValue: Dayjs | null) => {
+    setValue(newValue);
+    if (newValue) {
+      setDateCompleted(true);
+    } else {
+      setDateCompleted(false);
     }
   };
 
-  const handleEndTimeChange = (newValue: Dayjs | null) => {
-    setEndTime(newValue);
-    if(allDay){
+
+  const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllDay(event.target.checked);
+    if (event.target.checked) {
       setStartTime(null);
+      setEndTime(null);
+      setTimeCompleted(true); 
+    } else {
+      setTimeCompleted(!!startTime && !!endTime); 
     }
   };
 
-  const shouldDisableTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const hour = value.hour();
-      const minute = value.minute();
-      if (hour >= 17 || hour < 7) {
-        return true;
-      }
-      if (hour === 7 && minute < 30) {
-        return true;
-      }
-    }
-    return false;
+  const handleStartTimeChange = (newValue: Dayjs | null) => {
+    setStartTime(allDay ? null : newValue);
+   
   };
-
-
-
-  const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const startHour = startTime?.hour();
-      const startMinute = startTime?.minute();
-      if (startHour !== undefined && startMinute !== undefined) {
-        const startTime = dayjs()
-          .set('hour', startHour)
-          .set('minute', startMinute)
-          .startOf('minute');
-        const endTime = dayjs().set('hour', 16).startOf('hour');
-        return (
-          value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
-        );
-      }
+  
+  const handleEndTimeChange = (newValue: Dayjs | null) => {
+    setEndTime(allDay ? null : newValue);
+    if (newValue) {
+      setTimeCompleted(true);
+    } else {
+      setTimeCompleted(false);
     }
-    if (view === 'minutes') {
-      const minute = value.minute();
-      return minute !== 0 && minute !== 30;
-    }
-    return false;
   };
-  const shouldDisableEndTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const startHour = startTime?.add(1,'hour').hour();
-      const startMinute = startTime?.minute();
-      if (startHour !== undefined && startMinute !== undefined) {
-        const startTime = dayjs()
-          .set('hour', startHour)
-          .set('minute', startMinute)
-          .startOf('minute');
-
-        const endTime = dayjs().set('hour', 16).startOf('hour'); 
-        return (
-          value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
-        );
+  
+    const shouldDisableTime = (value: Dayjs, view: TimeView) => {
+      if (view === 'hours') {
+        const hour = value.hour();
+        const minute = value.minute();
+        if (hour >= 17 || hour < 7) {
+          return true;
+        }
+        if (hour === 7 && minute < 30) {
+          return true;
+        }
       }
-    }
-    if (view === 'minutes') {
-      const minute = value.minute();
-      return minute !== 0 && minute !== 30;
-    }
-    return false;
-  };
+      return false;
+    };
+  
+
+  
+    const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
+      if (view === 'hours') {
+        const startHour = startTime?.hour();
+        const startMinute = startTime?.minute();
+        if (startHour !== undefined && startMinute !== undefined) {
+          const startTime = dayjs()
+            .set('hour', startHour)
+            .set('minute', startMinute)
+            .startOf('minute');
+          const endTime = dayjs().set('hour', 16).startOf('hour');
+          return (
+            value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
+          );
+        }
+      }
+      if (view === 'minutes') {
+        const minute = value.minute();
+        return minute !== 0 && minute !== 30;
+      }
+      return false;
+    };
+    const shouldDisableEndTime = (value: Dayjs, view: TimeView) => {
+      if (view === 'hours') {
+        const startHour = startTime?.add(1,'hour').hour();
+        const startMinute = startTime?.minute();
+        if (startHour !== undefined && startMinute !== undefined) {
+          const startTime = dayjs()
+            .set('hour', startHour)
+            .set('minute', startMinute)
+            .startOf('minute');
+  
+          const endTime = dayjs().set('hour', 16).startOf('hour'); 
+          return (
+            value.isBefore(startTime, 'hour') || value.isAfter(endTime, 'hour')
+          );
+        }
+      }
+      if (view === 'minutes') {
+        const minute = value.minute();
+        return minute !== 0 && minute !== 30;
+      }
+      return false;
+    };
+  
+    
 
   
   return (
@@ -277,19 +319,32 @@ function ReserveDesk() {
           </Box>
           </Box>
          
-     
-        <DatePickerValue />
-         
+          <DatePickerValue
+        allDay={allDay}
+        handleAllDayToggle={handleAllDayToggle} 
+        setValue={setValue}
+        startTime={startTime}
+        endTime={endTime}
+        handleStartTimeChange={handleStartTimeChange}
+        handleEndTimeChange={handleEndTimeChange}
+        setDateCompleted={setDateCompleted}
+        handleDateChange={handleDateChange}
+        isTimeCompleted={isTimeCompleted} 
+      />
+          
+        {!allDay && (
          <div>
           <Box sx={{ display: 'flex', mb: 2 }}>
           <DemoItem component="TimePicker">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
             <>
+          
                 <TimePicker
                 label="Start"   
                 onChange={handleStartTimeChange}
                 shouldDisableTime={shouldDisableStartTime}
+                disabled={!isDateCompleted}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       borderColor: grey[900],
@@ -316,6 +371,7 @@ function ReserveDesk() {
                  label="End"    
                  onChange={handleEndTimeChange}
                  shouldDisableTime={shouldDisableEndTime}
+                 disabled={!isDateCompleted}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       borderColor: grey[900],
@@ -326,8 +382,8 @@ function ReserveDesk() {
                     },
                     '& .MuiOutlinedInput-input': {
                       color: grey[900],
-                    },
-                  }}
+                          },
+              }}
                 />
                 
               </>
@@ -335,13 +391,14 @@ function ReserveDesk() {
               </div>
             </LocalizationProvider>
           </DemoItem>
-          </Box>
+          </Box> 
           </div>
-          <BasicSelect />
+          )}
+       <BasicSelect isDateCompleted={isDateCompleted} isTimeCompleted={isTimeCompleted} />
         </Box>
-      
+);
     </ThemeProvider>
-  );
+    );
 }
 
 export default ReserveDesk;
