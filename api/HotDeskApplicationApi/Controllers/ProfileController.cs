@@ -24,13 +24,13 @@ namespace HotDeskApplicationApi.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly IConfiguration configuration;
-        private readonly ProfileContext dbContext;
+        private readonly HotDeskDbContext dbContext;
 
         public ProfileController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             IConfiguration configuration,
-            ProfileContext dbContext
+            HotDeskDbContext dbContext
         )
         {
             this.userManager = userManager;

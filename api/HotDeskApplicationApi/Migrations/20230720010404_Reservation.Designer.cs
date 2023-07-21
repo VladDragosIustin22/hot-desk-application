@@ -11,9 +11,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HotDeskApplicationApi.Migrations
 {
-    [DbContext(typeof(HotDeskDbContext))]
-    [Migration("20230707114719_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(HotDeskAppContext))]
+    [Migration("20230720010404_Reservation")]
+    partial class Reservation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,61 @@ namespace HotDeskApplicationApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Desk", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FloorID")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("FloorID");
+
+                    b.ToTable("Desks");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Floor", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OfficeID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("OfficeID");
+
+                    b.ToTable("Floors");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Office", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Offices");
+                });
 
             modelBuilder.Entity("HotDeskApplicationApi.Models.Profile", b =>
                 {
@@ -46,6 +101,35 @@ namespace HotDeskApplicationApi.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Profile");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Reservation", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeskID")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FloorID")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LeavingTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OfficeID")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProfileID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -244,6 +328,28 @@ namespace HotDeskApplicationApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Desk", b =>
+                {
+                    b.HasOne("HotDeskApplicationApi.Models.Floor", "Floor")
+                        .WithMany("Desks")
+                        .HasForeignKey("FloorID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Floor");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Floor", b =>
+                {
+                    b.HasOne("HotDeskApplicationApi.Models.Office", "Office")
+                        .WithMany("Floors")
+                        .HasForeignKey("OfficeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Office");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -293,6 +399,16 @@ namespace HotDeskApplicationApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Floor", b =>
+                {
+                    b.Navigation("Desks");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Office", b =>
+                {
+                    b.Navigation("Floors");
                 });
 #pragma warning restore 612, 618
         }

@@ -240,3 +240,13 @@ D:/lisam/HotDeskApplication/HotDeskApplicationApi/HotDeskApplicationApi/obj/Debu
 /Users/cristinabagacean/LisamSystems/hot-desk-application/api/HotDeskApplicationApi/bin/Debug/net6.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /Users/cristinabagacean/LisamSystems/hot-desk-application/api/HotDeskApplicationApi/bin/Debug/net6.0/Microsoft.IdentityModel.Tokens.dll
 /Users/cristinabagacean/LisamSystems/hot-desk-application/api/HotDeskApplicationApi/bin/Debug/net6.0/System.IdentityModel.Tokens.Jwt.dll
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.csproj.AssemblyReference.cache
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.AssemblyInfoInputs.cache
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.AssemblyInfo.cs
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.csproj.CoreCompileInputs.cache
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.dll
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\refint\HotDeskApplicationApi.dll
+C:\Users\Zotta\lisam-mentorat\hot-desk-application\api\HotDeskApplicationApi\obj\Debug\net6.0\HotDeskApplicationApi.pdb

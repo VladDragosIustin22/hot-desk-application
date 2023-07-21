@@ -17,9 +17,9 @@ namespace HotDeskApplicationApi.Controllers
 
     public class SecurityController : Controller
     {
-        private readonly ProfileContext _dbContext;
+        private readonly HotDeskDbContext _dbContext;
 
-        public SecurityController(ProfileContext dbContext)
+        public SecurityController(HotDeskDbContext dbContext)
         {
             _dbContext = dbContext;
         }

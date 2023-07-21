@@ -11,9 +11,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HotDeskApplicationApi.Migrations
 {
-    [DbContext(typeof(HotDeskDbContext))]
-    [Migration("20230707114719_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(HotDeskAppContext))]
+    [Migration("20230719233403_changeDatabase")]
+    partial class changeDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

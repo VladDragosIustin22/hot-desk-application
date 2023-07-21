@@ -11,9 +11,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HotDeskApplicationApi.Migrations
 {
-    [DbContext(typeof(HotDeskDbContext))]
-    [Migration("20230707114719_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(HotDeskAppContext))]
+    [Migration("20230721123106_UpdateViewReservation")]
+    partial class UpdateViewReservation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,54 @@ namespace HotDeskApplicationApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Desk", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FloorID")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Desks");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Floor", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OfficeID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Floors");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Office", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Offices");
+                });
+
             modelBuilder.Entity("HotDeskApplicationApi.Models.Profile", b =>
                 {
                     b.Property<Guid>("ID")
@@ -32,20 +80,68 @@ namespace HotDeskApplicationApi.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("EmailAddress")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ID");
 
                     b.ToTable("Profile");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.Models.Reservation", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeskID")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FloorID")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LeavingTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OfficeID")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProfileID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("HotDeskApplicationApi.ViewModels.ReservationView", b =>
+                {
+                    b.Property<DateTime?>("ArrivalTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LeavingTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("OfficeName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("desk")
+                        .HasColumnType("text");
+
+                    b.Property<string>("floor")
+                        .HasColumnType("text");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("ReservationView", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
