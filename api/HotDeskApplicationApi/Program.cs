@@ -45,12 +45,12 @@ namespace HotDeskApplicationApi
           
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<Data.ProfileContext>();
+                .AddEntityFrameworkStores<Data.HotDeskDbContext>();
 
             builder.Services.AddControllers();
 
-            builder.Services.AddDbContext<ProfileContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("ProfileContext")));
+            builder.Services.AddDbContext<HotDeskDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("HotDeskDbContext")));
 
             builder.Services
                 .AddMvc(options =>

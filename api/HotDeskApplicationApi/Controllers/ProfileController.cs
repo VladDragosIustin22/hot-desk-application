@@ -1,103 +1,101 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using HotDeskApplicationApi.Data;
+﻿using HotDeskApplicationApi.Data;
 using HotDeskApplicationApi.Models;
-using HotDeskApplicationApi.Models.Security;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
 
 namespace HotDeskApplicationApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProfileController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
-        private readonly IConfiguration configuration;
-        private readonly ProfileContext dbContext;
+        private readonly HotDeskDbContext hotDeskDbContext;
 
-        public ProfileController(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
-            IConfiguration configuration,
-            ProfileContext dbContext
-        )
+        public ProfileController(HotDeskDbContext dbContext)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.configuration = configuration;
-            this.dbContext = dbContext;
+            hotDeskDbContext = dbContext;
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<Profile[]> ListProfiles()
+        {
+            return await hotDeskDbContext.Profile.ToArrayAsync();
+        }
+
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<Profile> GetProfile(Guid id)
+        {
+            var profile = await hotDeskDbContext.Profile.FindAsync(id);
+
+            return profile;
+        }
+
+        [HttpPut("{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PutProfile(Guid id, Profile profile)
+        {
+            hotDeskDbContext.Entry(profile).State = EntityState.Modified;
+
+            try
+            {
+                await hotDeskDbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProfileExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         [HttpPost]
         [AllowAnonymous]
-        public async Task<Token> Register(RegisterModel registerModel)
+        public async Task<ActionResult<Profile>> PostProfile(Profile profile)
         {
-            IdentityUser identityUser = new IdentityUser() { Email = registerModel.Email, UserName = registerModel.Email };
-
-            IdentityResult result = await userManager.CreateAsync(identityUser, registerModel.Password);
-
-            IdentityUser user = await userManager.FindByEmailAsync(registerModel.Email);
-
-            Profile profile = new Profile()
+            if (hotDeskDbContext.Profile == null)
             {
-                ID = Guid.Parse(user.Id),
-                FirstName = registerModel.FirstName,
-                LastName = registerModel.LastName,
-                EmailAddress = registerModel.Email,
-            };
+                return Problem("Entity set 'ProfileContext.Profile'  is null.");
+            }
 
-            dbContext.Profile.Add(profile);
+            hotDeskDbContext.Profile.Add(profile);
 
-            dbContext.SaveChanges();
+            await hotDeskDbContext.SaveChangesAsync();
 
-            return new Token();
+            return CreatedAtAction("GetProfile", new { id = profile.ID }, profile);
         }
 
-        [HttpPost]
+        [HttpDelete("{id}")]
         [AllowAnonymous]
-        public async Task<Token> Login(LoginModel loginModel)
+        public async Task<IActionResult> DeleteProfile(Guid id)
         {
-            IdentityUser identityUser = await userManager.FindByEmailAsync(loginModel.Email);
+            var profile = await hotDeskDbContext.Profile.FindAsync(id);
 
-            Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.CheckPasswordSignInAsync(identityUser, loginModel.Password, true);
+            if (profile == null)
+            {
+                return NotFound();
+            }
 
-            return GenerateToken(identityUser);
+            hotDeskDbContext.Profile.Remove(profile);
+
+            await hotDeskDbContext.SaveChangesAsync();
+
+            return NoContent();
         }
 
-        private Token GenerateToken(IdentityUser user)
+        private bool ProfileExists(Guid id)
         {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            };
-
-            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetValue<string>("Authentication:Secret")));
-
-            JwtSecurityToken token = new JwtSecurityToken(
-            issuer: configuration.GetValue<string>("Authentication:Issuer"),
-            audience: configuration.GetValue<string>("Authentication:Issuer"),
-            claims: claims,
-            expires: DateTime.Now.AddDays(this.configuration.GetValue<int>("Authentication:ExpiryTimeInDays")),
-            signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
-        );
-
-            return new Token()
-            {
-                Value = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiry = token.ValidTo,
-            };
+            return (hotDeskDbContext.Profile?.Any(e => e.ID == id)).GetValueOrDefault();
         }
-
     }
 }
-

@@ -1,130 +1,98 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using HotDeskApplicationApi.Data;
-using HotDeskApplicationApi.Framework.Identity;
 using HotDeskApplicationApi.Models;
+using HotDeskApplicationApi.Models.Security;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.IdentityModel.Tokens;
 
 namespace HotDeskApplicationApi.Controllers
 {
-    [Route("api/[controller]/")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-
-    public class SecurityController : Controller
+    public class SecurityController : ControllerBase
     {
-        private readonly ProfileContext _dbContext;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public SecurityController(ProfileContext dbContext)
+        private readonly SignInManager<IdentityUser> signInManager;
+
+        private readonly IConfiguration configuration;
+
+        private readonly HotDeskDbContext hotDeskDbContext;
+
+        public SecurityController(
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            IConfiguration configuration,
+            HotDeskDbContext dbContext
+        )
         {
-            _dbContext = dbContext;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.configuration = configuration;
+            this.hotDeskDbContext = dbContext;
         }
-
-        // GET: api/Security
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Profile>>> GetProfile()
-        {
-            Framework.Identity.Identity identity = ControllerContext.GetIdentity();
-
-
-            if (_dbContext.Profile == null)
-            {
-                return NotFound();
-            }
-            return await _dbContext.Profile.ToListAsync();
-        }
-        // GET: api/Security/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Profile>> GetProfile(Guid id)
-        {
-            if (_dbContext.Profile == null)
-            {
-                return NotFound();
-            }
-            var profile = await _dbContext.Profile.FindAsync(id);
-
-            if (profile == null)
-            {
-                return NotFound();
-            }
-
-            return profile;
-        }
-
-        // PUT: api/Security/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProfile(Guid id, Profile profile)
-        {
-            if (id != profile.ID)
-            {
-                return BadRequest();
-            }
-
-            _dbContext.Entry(profile).State = EntityState.Modified;
-
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProfileExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Security
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Profile>> PostProfile(Profile profile)
+        [AllowAnonymous]
+        public async Task<Token> Register(RegisterModel registerModel)
         {
-            if (_dbContext.Profile == null)
-            {
-                return Problem("Entity set 'ProfileContext.Profile'  is null.");
-            }
-            _dbContext.Profile.Add(profile);
-            await _dbContext.SaveChangesAsync();
+            IdentityUser identityUser = new IdentityUser() { Email = registerModel.Email, UserName = registerModel.Email };
 
-            return CreatedAtAction("GetProfile", new { id = profile.ID }, profile);
+            IdentityResult result = await userManager.CreateAsync(identityUser, registerModel.Password);
+
+            IdentityUser user = await userManager.FindByEmailAsync(registerModel.Email);
+
+            Profile profile = new Profile()
+            {
+                ID = Guid.Parse(user.Id),
+                FirstName = registerModel.FirstName,
+                LastName = registerModel.LastName,
+                EmailAddress = registerModel.Email,
+            };
+
+            hotDeskDbContext.Profile.Add(profile);
+
+            hotDeskDbContext.SaveChanges();
+
+            return new Token();
         }
 
-        // DELETE: api/Security/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProfile(Guid id)
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<Token> Login(LoginModel loginModel)
         {
-            if (_dbContext.Profile == null)
-            {
-                return NotFound();
-            }
-            var profile = await _dbContext.Profile.FindAsync(id);
-            if (profile == null)
-            {
-                return NotFound();
-            }
+            IdentityUser identityUser = await userManager.FindByEmailAsync(loginModel.Email);
 
-            _dbContext.Profile.Remove(profile);
-            await _dbContext.SaveChangesAsync();
+            Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.CheckPasswordSignInAsync(identityUser, loginModel.Password, true);
 
-            return NoContent();
+            return GenerateToken(identityUser);
         }
 
-        private bool ProfileExists(Guid id)
+        private Token GenerateToken(IdentityUser user)
         {
-            return (_dbContext.Profile?.Any(e => e.ID == id)).GetValueOrDefault();
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            };
+
+            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetValue<string>("Authentication:Secret")));
+
+            JwtSecurityToken token = new JwtSecurityToken(
+                issuer: configuration.GetValue<string>("Authentication:Issuer"),
+                audience: configuration.GetValue<string>("Authentication:Issuer"),
+                claims: claims,
+                expires: DateTime.Now.AddDays(this.configuration.GetValue<int>("Authentication:ExpiryTimeInDays")),
+                signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return new Token()
+            {
+                Value = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiry = token.ValidTo,
+            };
         }
     }
 }
-

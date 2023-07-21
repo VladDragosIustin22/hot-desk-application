@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HotDeskApplicationApi.Migrations
 {
-    [DbContext(typeof(ProfileContext))]
+    [DbContext(typeof(HotDeskDbContext))]
     [Migration("20230707114719_InitialCreate")]
     partial class InitialCreate
     {
