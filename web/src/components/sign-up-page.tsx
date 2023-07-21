@@ -9,7 +9,6 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -18,15 +17,9 @@ import { InputAdornment, IconButton } from "@mui/material";
 import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import "@fontsource/roboto/500.css";
+import { SignUpModel } from "../models/signup-model";
 const defaultTheme = createTheme();
 
-interface Values {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
 
 const schema = Yup.object().shape({
@@ -47,9 +40,6 @@ const schema = Yup.object().shape({
     .required("Required"),
 });
 
-const handleSubmit = () => {
-  console.log("Submitted");
-};
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
@@ -67,7 +57,7 @@ export default function SignUp() {
   ) => {
     event.preventDefault();
   };
-  const formik = useFormik<Values>({
+  const formik = useFormik<SignUpModel>({
     initialValues: {
       firstName: "",
       lastName: "",
@@ -76,7 +66,23 @@ export default function SignUp() {
       confirmPassword: "",
     },
     validationSchema: schema,
-    onSubmit: handleSubmit,
+    onSubmit:(values) => {
+      const addedProfile = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        password: values.password,
+      };
+  
+      fetch(`https://localhost:7156/api/Security/Register`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addedProfile),
+      });
+    },
   });
 
   return (

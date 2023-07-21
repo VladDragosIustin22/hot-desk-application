@@ -7,7 +7,6 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
@@ -16,18 +15,10 @@ import { useState } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "@fontsource/roboto/500.css";
+import { LogInModel } from "../models/login-model";
 
 const defaultTheme = createTheme();
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
-
-interface Values {
-  email: string;
-  password: string;
-}
-
-const handleSubmit = () => {
-  console.log("Submitted");
-};
 
 const schema = Yup.object().shape({
   email: Yup.string()
@@ -52,13 +43,26 @@ export default function LogIn() {
   ) => {
     event.preventDefault();
   };
-  const formik = useFormik<Values>({
+  const formik = useFormik<LogInModel>({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: schema,
-    onSubmit: handleSubmit,
+    onSubmit: (values) => {
+      const validatedProfile = {
+        email: values.email,
+        password: values.password,
+      };
+      fetch(`https://localhost:7156/api/Security/Login`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(validatedProfile),
+      });
+    },
   });
   console.log(formik);
 
