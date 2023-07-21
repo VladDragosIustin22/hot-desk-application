@@ -56,28 +56,28 @@ function ReservationOverview() {
     setAnchorElUser(null);
   };
 
-  const [open, setOpen] = React.useState(false);
-  const [open1, setOpen1] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleOpen1 = () => {
-    setOpen1(true);
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
+  const handleOpenEdit = () => {
+    setOpenEdit(true);
     console.log("Test");
   };
-  const handleClose1 = () => setOpen1(false);
+  const handleCloseEdit = () => setOpenEdit(false);
   const [confirmation, setConfirmation] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const handleNo = () => {
     setConfirmation(false);
-    setOpen(false);
-    setOpen1(false);
+    setOpenDelete(false);
+    setOpenEdit(false);
     navigate("/ReservationOverview");
   };
   const handleYes = () => {
     setConfirmation(true);
-    setOpen(false);
-    setOpen1(false);
+    setOpenDelete(false);
+    setOpenEdit(false);
     navigate("/ReservationOverview");
   };
   useEffect(() => {
@@ -290,7 +290,7 @@ function ReservationOverview() {
               </Typography>
             </Stack>
             <Stack direction="column" alignItems="center" gap={3}>
-              <Button onClick={handleOpen1}>
+              <Button onClick={handleOpenEdit}>
                 <CreateIcon
                   sx={{
                     marginTop: 2,
@@ -302,8 +302,8 @@ function ReservationOverview() {
               </Button>
 
               <Modal
-                open={open1}
-                onClose={handleClose1}
+                open={openEdit}
+                onClose={handleCloseEdit}
                 aria-labelledby="modal-modal-title"
                 sx={{
                   background: "white",
@@ -318,7 +318,7 @@ function ReservationOverview() {
                 </Box>
               </Modal>
 
-              <Button onClick={handleOpen}>
+              <Button onClick={handleOpenDelete}>
                 <DeleteIcon
                   sx={{
                     fontSize: 20,
@@ -326,8 +326,8 @@ function ReservationOverview() {
                 ></DeleteIcon>
               </Button>
               <Modal
-                open={open}
-                onClose={handleClose}
+                open={openDelete}
+                onClose={handleCloseDelete}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
               >
