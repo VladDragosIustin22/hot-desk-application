@@ -251,8 +251,8 @@ function ReservationOverview() {
               </Typography>
             </Stack>
           </Stack>
-          <Stack direction="row" alignItems="center" spacing={10}>
-            <Stack direction="column">
+          <Stack direction="row" alignItems="center" spacing={15}>
+            <Stack direction="column" gap={2}>
               <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
                 Date: 05.07.2023
               </Typography>
@@ -260,7 +260,7 @@ function ReservationOverview() {
                 Office: Brizei
               </Typography>
             </Stack>
-            <Stack direction="column">
+            <Stack direction="column" gap={2}>
               <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
                 Interval: All day
               </Typography>
@@ -268,13 +268,13 @@ function ReservationOverview() {
                 variant="h6"
                 sx={{
                   fontSize: 15,
-                  marginTop: 4,
+                  marginTop: 2,
                 }}
               >
                 Floor: 1
               </Typography>
             </Stack>
-            <Stack direction="column" alignItems="center">
+            <Stack direction="column" alignItems="center" gap={2}>
               <Typography
                 variant="h6"
                 sx={{ fontSize: 15, marginTop: 2 }}
@@ -283,7 +283,7 @@ function ReservationOverview() {
                 variant="h6"
                 sx={{
                   fontSize: 15,
-                  marginTop: 7,
+                  marginTop: 5,
                 }}
               >
                 Desk: 2
@@ -294,6 +294,7 @@ function ReservationOverview() {
                 <CreateIcon
                   sx={{
                     marginTop: 2,
+                    fontSize: 20,
                   }}
 
                   // onClick={(event) => (window.location.href = "/EditReservation")}
@@ -318,7 +319,11 @@ function ReservationOverview() {
               </Modal>
 
               <Button onClick={handleOpen}>
-                <DeleteIcon></DeleteIcon>
+                <DeleteIcon
+                  sx={{
+                    fontSize: 20,
+                  }}
+                ></DeleteIcon>
               </Button>
               <Modal
                 open={open}
