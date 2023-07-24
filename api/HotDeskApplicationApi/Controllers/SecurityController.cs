@@ -51,6 +51,9 @@ namespace HotDeskApplicationApi.Controllers
                 FirstName = registerModel.FirstName,
                 LastName = registerModel.LastName,
                 EmailAddress = registerModel.Email,
+                Avatar = "..\\Images\\default-avatar.png",
+                Role = "developer",
+                NickName = registerModel.LastName
             };
 
             hotDeskDbContext.Profile.Add(profile);
