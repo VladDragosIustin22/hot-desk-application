@@ -17,29 +17,24 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/SignUp",
+    path: "/signup",
     element: <SignUp />,
   },
   {
-    path: "/login-page",
+    path: "/login",
     element: <LogIn />,
   },
   {
-    path: "/main-screen",
+    path: "/mainscreen",
     element: <Header />,
   },
   {
-    path: "/reserve-a-desk",
+    path: "/reserveadesk",
     element: <ReserveDesk />,
   },
   {
-    path: "/ReservationOverview",
+    path: "/reservationoverview",
     element: <ReservationOverview />,
-  },
-
-  {
-    path: "/EditReservation",
-    element: <EditReservation />,
   },
 ]);
 
