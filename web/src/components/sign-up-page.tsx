@@ -66,14 +66,14 @@ export default function SignUp() {
       confirmPassword: "",
     },
     validationSchema: schema,
-    onSubmit:(values) => {
+    onSubmit: (values) => {
       const addedProfile = {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
         password: values.password,
       };
-  
+
       fetch(`https://localhost:7156/api/Security/Register`, {
         method: "POST",
         headers: {
@@ -269,7 +269,7 @@ export default function SignUp() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="/login-page" variant="body2">
+                  <Link href="/login" variant="body2">
                     Already have an account? Sign in
                   </Link>
                 </Grid>
