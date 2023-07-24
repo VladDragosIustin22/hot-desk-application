@@ -18,15 +18,18 @@ import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EditReservation from "./edit-reservation";
-import { Height } from "@mui/icons-material";
-const settings = ["My Profile", "Settings", "Logout"];
+import myProfile from "./my-profile";
+import Logout from "./logout";
+import MyProfile from "./my-profile";
+
+const settings = ["My Profile", "Settings"];
 
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600,
+  width: 1000,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -62,7 +65,6 @@ function ReservationOverview() {
   const handleCloseDelete = () => setOpenDelete(false);
   const handleOpenEdit = () => {
     setOpenEdit(true);
-    console.log("Test");
   };
   const handleCloseEdit = () => setOpenEdit(false);
   const [confirmation, setConfirmation] = useState(false);
@@ -72,31 +74,14 @@ function ReservationOverview() {
     setConfirmation(false);
     setOpenDelete(false);
     setOpenEdit(false);
-    navigate("/ReservationOverview");
+    navigate("/reservationoverview");
   };
   const handleYes = () => {
     setConfirmation(true);
     setOpenDelete(false);
     setOpenEdit(false);
-    navigate("/ReservationOverview");
+    navigate("/reservationoverview");
   };
-  useEffect(() => {
-    const DeleteReservation = async () => {
-      if (confirmation) {
-        const response = await fetch(
-          `https://localhost:7155/api/Security/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
-    };
-    DeleteReservation();
-  }, [id, confirmation]);
 
   return (
     <>
@@ -110,6 +95,7 @@ function ReservationOverview() {
             <EditReservation />
           </Box>
         </Modal>
+
         <Toolbar disableGutters>
           <TodayIcon
             sx={{
@@ -233,6 +219,11 @@ function ReservationOverview() {
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
+              <MenuItem>
+                <Link onClick={Logout} color="black" to={"/login"}>
+                  Logout
+                </Link>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -303,7 +294,7 @@ function ReservationOverview() {
                 <CreateIcon
                   sx={{
                     marginTop: 2,
-                    fontSize: 20,
+                    fontSize: 18,
                   }}
                 ></CreateIcon>
               </Button>
@@ -311,7 +302,7 @@ function ReservationOverview() {
               <Button onClick={handleOpenDelete}>
                 <DeleteIcon
                   sx={{
-                    fontSize: 20,
+                    fontSize: 18,
                   }}
                 ></DeleteIcon>
               </Button>
@@ -332,7 +323,7 @@ function ReservationOverview() {
                   <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                     Are you sure you want to delete this record?
                   </Typography>
-                  <Box sx={{ marginTop: 2, marginLeft: 31 }}>
+                  <Box sx={{ marginTop: 2, marginLeft: 105 }}>
                     <Button onClick={handleNo}>Cancel</Button>
                     <Button onClick={handleYes}>Confirm</Button>
                   </Box>
