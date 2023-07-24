@@ -248,7 +248,6 @@ function EditReservation() {
             mb: 2,
           }}
         >
-          <div></div>
           <Box
             sx={{
               display: "flex",

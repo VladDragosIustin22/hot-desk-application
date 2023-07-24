@@ -26,7 +26,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 600,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -101,6 +101,15 @@ function ReservationOverview() {
   return (
     <>
       <AppBar position="fixed">
+        <Modal
+          open={openEdit}
+          onClose={handleCloseEdit}
+          aria-labelledby="modal-modal-title"
+        >
+          <Box sx={style}>
+            <EditReservation />
+          </Box>
+        </Modal>
         <Toolbar disableGutters>
           <TodayIcon
             sx={{
@@ -296,27 +305,8 @@ function ReservationOverview() {
                     marginTop: 2,
                     fontSize: 20,
                   }}
-
-                  // onClick={(event) => (window.location.href = "/EditReservation")}
                 ></CreateIcon>
               </Button>
-
-              <Modal
-                open={openEdit}
-                onClose={handleCloseEdit}
-                aria-labelledby="modal-modal-title"
-                sx={{
-                  background: "white",
-                }}
-              >
-                <Box sx={{ style }}>
-                  <EditReservation />
-                  <Box sx={{ marginTop: 2, marginLeft: 31 }}>
-                    <Button onClick={handleNo}>Cancel</Button>
-                    <Button onClick={handleYes}>Confirm</Button>
-                  </Box>
-                </Box>
-              </Modal>
 
               <Button onClick={handleOpenDelete}>
                 <DeleteIcon
