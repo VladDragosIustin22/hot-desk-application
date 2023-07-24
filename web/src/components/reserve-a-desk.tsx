@@ -396,7 +396,7 @@ function ReserveDesk() {
           )}
        <BasicSelect isDateCompleted={isDateCompleted} isTimeCompleted={isTimeCompleted} />
         </Box>
-);
+
     </ThemeProvider>
     );
 }
