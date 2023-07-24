@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     element: <Header />,
   },
   {
-    path: "/reserveadesk",
+    path: "/reserve-a-desk",
     element: <ReserveDesk />,
   },
   {
