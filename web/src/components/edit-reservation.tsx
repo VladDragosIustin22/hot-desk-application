@@ -22,7 +22,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { DatePicker, TimeView } from "@mui/x-date-pickers";
 import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
-
+import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 const theme = createTheme({
   palette: {
     primary: {
@@ -213,6 +215,19 @@ function EditReservation() {
     }
     return false;
   };
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const navigate = useNavigate();
+  const [confirmation, setConfirmation] = useState(false);
+  const handleNo = () => {
+    setConfirmation(false);
+    navigate("/reservationoverview");
+  };
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -230,12 +245,13 @@ function EditReservation() {
                 display: { xs: "none", md: "flex" },
                 mr: 1,
                 fontSize: 40,
-                marginLeft: 5,
+                marginLeft: 3,
               }}
             />{" "}
             <Typography variant="h6" component="div">
               Reserve a desk
             </Typography>
+            <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
           </Toolbar>
         </AppBar>
         <Box
@@ -264,7 +280,11 @@ function EditReservation() {
               variant="contained"
               size="large"
               color="secondary"
-              sx={{ height: "50px", color: "white", textTransform: "none" }}
+              sx={{
+                height: "50px",
+                color: "white",
+                textTransform: "none",
+              }}
             >
               Save
             </Button>
