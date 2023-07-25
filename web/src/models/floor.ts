@@ -1,5 +1,5 @@
 export interface Floor{
     ID : string;
-    FloorName : string;
+    Name : string;
     OfficeID : string;
 }

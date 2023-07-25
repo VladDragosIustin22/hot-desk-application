@@ -38,7 +38,7 @@ namespace HotDeskApplicationApi.Controllers
             return floor;
         }
 
-        [HttpGet("byOffice{officeID}")]
+        [HttpGet("byOffice/{officeID}")]
         public async Task<Floor[]> GetFloorByOffice(Guid officeID)
         {
             var floors = await dbContext.Floors.Where(f => f.OfficeID == officeID).ToArrayAsync();

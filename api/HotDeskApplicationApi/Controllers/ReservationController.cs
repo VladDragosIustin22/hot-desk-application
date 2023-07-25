@@ -25,6 +25,7 @@ namespace HotDeskApplicationApi.Controllers
         [HttpGet("GetAllProfileReservations/{profileID}")]
         public IActionResult GetAllProfileReservations(Guid profileID)
         {
+            
             Identity identity = ControllerContext.GetIdentity();
 
             if (identity.ID != profileID)
