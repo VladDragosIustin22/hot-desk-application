@@ -60,7 +60,7 @@ namespace HotDeskApplicationApi.Controllers
 
             hotDeskDbContext.SaveChanges();
 
-            return new Token();
+            return GenerateToken(user);
         }
 
         [HttpPost]
