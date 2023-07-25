@@ -19,26 +19,12 @@ namespace HotDeskApplicationApi.Controllers
             this.dbContext = dbContext;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Floor>>> GetFloor()
+        public async Task<Floor[]> GetFloor()
         {
-            if (dbContext.Floors == null)
-            {
-                return NotFound();
-            }
-            return await dbContext.Floors.ToListAsync();
+            return await dbContext.Floors.ToArrayAsync();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Floor>> PostFloor(Floor floor)
-        {
-
-            dbContext.Floors.Add(floor);
-            await dbContext.SaveChangesAsync();
-
-            return CreatedAtAction("GetFloor", new { id = floor.ID }, floor);
-        }
-
-
+       
         [HttpGet("{id}")]
         public async Task<ActionResult<Floor>> GetFloor(Guid id)
         {
@@ -51,6 +37,24 @@ namespace HotDeskApplicationApi.Controllers
             }
             return floor;
         }
+
+        [HttpGet("byOffice{officeID}")]
+        public async Task<Floor[]> GetFloorByOffice(Guid officeID)
+        {
+            var floors = await dbContext.Floors.Where(f => f.OfficeID == officeID).ToArrayAsync();
+            return floors;
+        }
+        [HttpPost]
+        public async Task<ActionResult<Floor>> PostFloor(Floor floor)
+        {
+
+            dbContext.Floors.Add(floor);
+            await dbContext.SaveChangesAsync();
+
+            return CreatedAtAction("GetFloor", new { id = floor.ID }, floor);
+        }
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFloor(Guid id)

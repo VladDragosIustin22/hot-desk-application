@@ -12,60 +12,56 @@ namespace HotDeskApplicationApi.Controllers
     [AllowAnonymous]
     public class DeskController : ControllerBase
     {
-        private HotDeskDbContext dbContext;
+        private HotDeskDbContext hotDeskDbContext;
 
         public DeskController(HotDeskDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            hotDeskDbContext = dbContext;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Desk>>> GetReservation()
+        public async Task<Desk[]> GetReservation()
         {
-            if (dbContext.Desks == null)
-            {
-                return NotFound();
-            }
-            return await dbContext.Desks.ToListAsync();
+            return await hotDeskDbContext.Desks.ToArrayAsync();
         }
 
         [HttpPost]
         public async Task<ActionResult<Desk>> PostDesk(Desk desk)
         {
-
-            dbContext.Desks.Add(desk);
-            await dbContext.SaveChangesAsync();
+            hotDeskDbContext.Desks.Add(desk);
+            await hotDeskDbContext.SaveChangesAsync();
 
             return CreatedAtAction("GetDesk", new { id = desk.ID }, desk);
         }
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Desk>> GetDesk(Guid id)
+        public async Task<Desk> GetDesk(Guid id)
         {
-
-            var desk = await dbContext.Desks.FindAsync(id);
-
-            if (desk == null)
-            {
-                return this.NotFound();
-            }
+            var desk = await hotDeskDbContext.Desks.FindAsync(id);
             return desk;
+        }
+
+        [HttpGet("byFloor/{floorID}")]
+        public async Task<Desk[]> GetDeskByFloor(Guid floorID)
+        {
+            var desks = await hotDeskDbContext.Desks.Where(d => d.FloorID == floorID).ToArrayAsync();
+            return desks;
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDesk(Guid id)
         {
 
-            var desk = await dbContext.Desks.FindAsync(id);
+            var desk = await hotDeskDbContext.Desks.FindAsync(id);
 
             if (desk == null)
             {
                 return NotFound();
             }
 
-            dbContext.Desks.Remove(desk);
-            await dbContext.SaveChangesAsync();
+            hotDeskDbContext.Desks.Remove(desk);
+            await hotDeskDbContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -74,11 +70,11 @@ namespace HotDeskApplicationApi.Controllers
         public async Task<IActionResult> PutDesk(Guid id, Desk desk)
         {
 
-            dbContext.Entry(desk).State = EntityState.Modified;
+            hotDeskDbContext.Entry(desk).State = EntityState.Modified;
 
             try
             {
-                await dbContext.SaveChangesAsync();
+                await hotDeskDbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -97,7 +93,7 @@ namespace HotDeskApplicationApi.Controllers
 
         private bool DeskExists(Guid id)
         {
-            return (dbContext.Desks?.Any(e => e.ID == id)).GetValueOrDefault();
+            return (hotDeskDbContext.Desks?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 
