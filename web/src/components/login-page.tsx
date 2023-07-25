@@ -35,7 +35,10 @@ const schema = Yup.object().shape({
 
 export default function LogIn() {
   const [showPassword, setShowPassword] = useState(false);
-
+  const [tokenInfo, setTokenInfo] = useState<{ value: string; expiry: Date | null }>({
+    value: "",
+    expiry: null,
+  });
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (
@@ -49,12 +52,12 @@ export default function LogIn() {
       password: "",
     },
     validationSchema: schema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const validatedProfile = {
         email: values.email,
         password: values.password,
       };
-      fetch(`https://localhost:7156/api/Security/Login`, {
+      const response = await fetch(`https://localhost:7156/api/Security/Login`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -62,6 +65,11 @@ export default function LogIn() {
         },
         body: JSON.stringify(validatedProfile),
       });
+      const responseData = await response.json();
+      const { value, expiry } = responseData;
+      localStorage.setItem("authToken", value);
+      localStorage.setItem("authTokenExpiry", new Date(expiry).toISOString());
+      setTokenInfo({ value: value, expiry: new Date(expiry) });
     },
   });
   console.log(formik);
