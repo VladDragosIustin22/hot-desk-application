@@ -1,5 +1,6 @@
 ﻿using HotDeskApplicationApi.Data;
 using HotDeskApplicationApi.Framework.Identity;
+using HotDeskApplicationApi.Models;
 using HotDeskApplicationApi.NewFolder2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ namespace HotDeskApplicationApi.Controllers
         {
             _dbContext = dbContext;
         }
+
         [HttpGet("GetAllProfileReservations/{profileID}")]
         public IActionResult GetAllProfileReservations(Guid profileID)
         {
@@ -43,5 +45,43 @@ namespace HotDeskApplicationApi.Controllers
             return Ok(reservations);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        {
+
+            _dbContext.Reservations.Add(reservation);
+            await _dbContext.SaveChangesAsync();
+
+            return CreatedAtAction("GetReservation", new { id = reservation.ID }, reservation);
+        }
+
+        [HttpGet("AvailableDesks")]
+        public async Task<Desk[]> CheckDeskAvailability(DateTime arrivalTime, DateTime leavingTime, Guid officeID, Guid floorID)
+        {
+
+            var reservedDeskIDs = await _dbContext.Reservations
+                .Where(r => r.OfficeID == officeID && r.FloorID == floorID && !(r.ArrivalTime >= leavingTime || r.LeavingTime <= arrivalTime))
+                .Select(r => r.DeskID)
+                .ToListAsync();
+
+
+            var availableDesks = await _dbContext.Desks
+                .Where(d => d.FloorID == floorID && !reservedDeskIDs.Contains(d.ID))
+                .ToArrayAsync();
+
+            return availableDesks;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReservation(Guid id)
+        {
+
+            var reservation = await _dbContext.Reservations.FindAsync(id);
+
+            _dbContext.Reservations.Remove(reservation);
+            await _dbContext.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

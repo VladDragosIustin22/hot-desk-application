@@ -46,7 +46,7 @@ export default function SignUp() {
   const handleClickShowPassword = (fieldId: string) => {
     if (fieldId === "password") {
       setShowPassword((prevShowPassword) => !prevShowPassword);
-    } else if (fieldId === "confirmPassword") {
+    } else {
       setShowConfirmedPassword(
         (prevShowConfirmedPassword) => !prevShowConfirmedPassword
       );
@@ -235,7 +235,7 @@ export default function SignUp() {
                           <IconButton
                             aria-label="toggle password visibility"
                             onClick={() =>
-                              handleClickShowPassword("confirmPassword")
+                              handleClickShowPassword("")
                             }
                             onMouseDown={handleMouseDownPassword}
                           >
