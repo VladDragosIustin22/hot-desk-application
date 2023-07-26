@@ -152,7 +152,7 @@ function ReservationOverview() {
 
               <Avatar
                 alt="User Name"
-                src="/static/images/avatar/1.jpg"
+                src="https://mui.com/static/images/avatar/1.jpg"
                 sx={{ marginLeft: 5, marginRight: -6 }}
               />
 
@@ -220,7 +220,7 @@ function ReservationOverview() {
                 </MenuItem>
               ))}
               <MenuItem>
-                <Link onClick={Logout} color="black" to={"/login"}>
+                <Link onClick={Logout} color="black" to={"/login"} style={{ textDecoration: "none" }} >
                   Logout
                 </Link>
               </MenuItem>
@@ -235,7 +235,7 @@ function ReservationOverview() {
           divider={<Divider orientation="vertical" flexItem />}
         >
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
             <Stack direction="column">
               <Typography variant="h6" marginRight={60} alignItems="center">
                 Vlad Dragos
