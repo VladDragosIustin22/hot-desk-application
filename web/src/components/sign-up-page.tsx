@@ -43,6 +43,10 @@ const schema = Yup.object().shape({
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
+  const [tokenInfo, setTokenInfo] = useState<{ value: string; expiry: Date | null }>({
+    value: "",
+    expiry: null,
+  });
   const handleClickShowPassword = (fieldId: string) => {
     if (fieldId === "password") {
       setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -66,15 +70,14 @@ export default function SignUp() {
       confirmPassword: "",
     },
     validationSchema: schema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const addedProfile = {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
         password: values.password,
       };
-
-      fetch(`https://localhost:7156/api/Security/Register`, {
+      const response = await fetch(`https://localhost:7156/api/Security/Register`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -82,6 +85,11 @@ export default function SignUp() {
         },
         body: JSON.stringify(addedProfile),
       });
+      const responseData = await response.json();
+      const { value, expiry } = responseData;
+      localStorage.setItem("authToken", value);
+      localStorage.setItem("authTokenExpiry", new Date(expiry).toISOString());
+      setTokenInfo({ value: value, expiry: new Date(expiry) });
     },
   });
 
