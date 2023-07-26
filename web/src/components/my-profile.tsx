@@ -16,14 +16,14 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 const theme = createTheme({
   palette: {
     primary: {
-      main: grey[900],
+      main: grey[700],
     },
     secondary: {
-      main: orange[500],
+      main: orange[900],
     },
   },
   typography: {
-    fontSize: 20,
+    fontSize: 17,
   },
 });
 
@@ -51,7 +51,7 @@ export default function MyProfile() {
             <Typography variant="h6" component="div">
               My Profile
             </Typography>
-            <CloseIcon sx={{ marginLeft: 36 }}></CloseIcon>
+            <CloseIcon sx={{ marginLeft: 39 }}></CloseIcon>
           </Toolbar>
         </AppBar>
         <Stack direction="row" spacing={2}>
@@ -159,8 +159,6 @@ export default function MyProfile() {
                   height: "50px",
                   color: "white",
                   textTransform: "none",
-                  p: 2,
-                  ml: 1,
                 }}
               >
                 Save

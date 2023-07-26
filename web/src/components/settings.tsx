@@ -21,14 +21,14 @@ import SettingsIcon from "@mui/icons-material/Settings";
 const theme = createTheme({
   palette: {
     primary: {
-      main: grey[900],
+      main: grey[700],
     },
     secondary: {
-      main: orange[500],
+      main: orange[900],
     },
   },
   typography: {
-    fontSize: 20,
+    fontSize: 17,
   },
 });
 
@@ -78,14 +78,14 @@ function Settings() {
               sx={{
                 display: { xs: "none", md: "flex" },
                 mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
+                fontSize: 30,
+                marginLeft: 2,
               }}
             />{" "}
             <Typography variant="h6" component="div">
               Settings
             </Typography>
-            <CloseIcon sx={{ marginLeft: 40 }}></CloseIcon>
+            <CloseIcon sx={{ marginLeft: 44 }}></CloseIcon>
           </Toolbar>
         </AppBar>
         <Box
@@ -135,7 +135,7 @@ function Settings() {
           mt: 2,
         }}
       >
-        <FormControl sx={{ width: "40ch", mb: 5 }}>
+        <FormControl sx={{ width: "40ch", mb: 6, mt: -5 }}>
           <InputLabel id="select-language">Language</InputLabel>
           <Select
             labelId="select-office"
@@ -150,7 +150,7 @@ function Settings() {
           </Select>
         </FormControl>
 
-        <FormControl sx={{ width: "40ch", mb: 5 }}>
+        <FormControl sx={{ width: "40ch", mb: 6 }}>
           <InputLabel id="select-favorite-office">Favorite Office</InputLabel>
           <Select
             labelId="select-favorite-office"
@@ -164,7 +164,7 @@ function Settings() {
           </Select>
         </FormControl>
 
-        <FormGroup sx={{ mr: 80, ml: 0, width: "40ch" }}>
+        <FormGroup sx={{ mr: 80, ml: 0, width: "40ch", gap: 4 }}>
           <FormControlLabel
             control={
               <Switch

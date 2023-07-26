@@ -33,10 +33,10 @@ import { Desk } from "../models/desk";
 const theme = createTheme({
   palette: {
     primary: {
-      main: grey[900],
+      main: grey[700],
     },
     secondary: {
-      main: orange[500],
+      main: orange[900],
     },
   },
   typography: {
@@ -348,7 +348,6 @@ function EditReservation() {
             mb: 3,
           }}
         >
-          <div></div>
           <Box
             sx={{
               display: "flex",
@@ -359,7 +358,15 @@ function EditReservation() {
               mb: 2,
             }}
           ></Box>
-          <Box sx={{ justifyContent: "flex-start", mt: 2, marginTop: 10 }}>
+          <Box
+            sx={{
+              justifyContent: "flex-start",
+              mt: 2,
+              marginTop: 10,
+              mb: -135,
+              borderRadius: 1,
+            }}
+          >
             <Button
               variant="contained"
               size="large"
