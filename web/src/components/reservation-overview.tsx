@@ -18,11 +18,12 @@ import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EditReservation from "./edit-reservation";
-import myProfile from "./my-profile";
 import Logout from "./logout";
 import MyProfile from "./my-profile";
+import ReserveDesk from "./reserve-a-desk";
+import Settings from "./settings";
 
-const settings = ["My Profile", "Settings"];
+const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
   position: "absolute" as "absolute",
@@ -36,6 +37,19 @@ const style = {
   p: 4,
 };
 
+const styleSettings = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  height: 600,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 3,
+};
+
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -43,7 +57,7 @@ function ReservationOverview() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-
+  // pt deschiderea meniului
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -81,6 +95,34 @@ function ReservationOverview() {
     setOpenDelete(false);
     setOpenEdit(false);
     navigate("/reservationoverview");
+  };
+
+  const [openReservation, setOpenReservation] = React.useState(false);
+  const handleOpenReservation = () => {
+    setOpenReservation(true);
+  };
+  const handleCloseReservation = () => {
+    setOpenReservation(false);
+  };
+
+  const [openMyProfile, setOpenMyProfile] = React.useState(false);
+  const handleOpenMyProfile = () => {
+    setOpenMyProfile(true);
+  };
+  const handleCloseMyProfile = () => {
+    setOpenMyProfile(false);
+  };
+
+  const [openSettings, setOpenSettingsModal] = React.useState(false);
+  const handleOpenSettingsModal = () => {
+    setOpenSettingsModal(true);
+  };
+  const handleCloseSettingsModal = () => {
+    setOpenSettingsModal(false);
+  };
+
+  const handleLogout = () => {
+    navigate("/login");
   };
 
   return (
@@ -149,85 +191,127 @@ function ReservationOverview() {
                   <MoreVertIcon sx={{ fontSize: 30 }}></MoreVertIcon>
                 </IconButton>
               </Tooltip>
-
-              <Avatar
-                alt="User Name"
-                src="/static/images/avatar/1.jpg"
-                sx={{ marginLeft: 5, marginRight: -6 }}
-              />
-
-              <Typography
-                variant="h6"
-                noWrap
-                sx={{
-                  mr: 2,
-                  display: { xs: "none", md: "flex" },
-                  fontFamily: "roboto",
-                  fontWeight: 700,
-                  letterSpacing: ".0rem",
-                  color: "#FFFFFF",
-                  textDecoration: "none",
-                  marginLeft: 2,
-                  marginTop: 0,
-                  padding: 1,
-                }}
-              >
-                User Name
-              </Typography>
             </Stack>
-            <Box
-              margin={1}
-              display="flex"
-              justifyContent="flex-end"
-              alignItems="flex-end"
-              sx={{
-                top: 100,
-                right: "60%",
-                marginRight: -100,
-                position: "absolute",
-              }}
-            >
-              <Button sx={{ mt: 3, mb: 2, backgroundColor: "#EC7329" }}>
-                <Link
-                  style={{ textDecoration: "none" }}
-                  to={"/reserve-a-desk"}
-                  color="#FFFFFF"
-                >
-                  Make a reservation
-                </Link>
-              </Button>
-            </Box>
-
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-              <MenuItem>
-                <Link onClick={Logout} color="black" to={"/login"}>
-                  Logout
-                </Link>
-              </MenuItem>
-            </Menu>
           </Box>
+          <Modal
+            open={openSettings}
+            onClose={handleCloseSettingsModal}
+            aria-labelledby="modal-modal-title"
+          >
+            <Box sx={styleSettings}>
+              <Settings />
+            </Box>
+          </Modal>
+          <Modal
+            open={openMyProfile}
+            onClose={handleCloseMyProfile}
+            aria-labelledby="modal-modal-title"
+          >
+            <Box sx={styleSettings}>
+              <MyProfile />
+            </Box>
+          </Modal>
+          <Avatar
+            alt="User Name"
+            src="/static/images/avatar/1.jpg"
+            sx={{ marginLeft: -9, marginRight: -1 }}
+          />
+          <Typography
+            variant="h6"
+            noWrap
+            sx={{
+              mr: 2,
+              display: { xs: "none", md: "flex" },
+              fontFamily: "roboto",
+              fontWeight: 700,
+              letterSpacing: ".0rem",
+              color: "#FFFFFF",
+              textDecoration: "none",
+              marginLeft: 2,
+              marginTop: 0,
+              padding: 1,
+            }}
+          >
+            User Name
+          </Typography>
+          <Box
+            margin={1}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="flex-end"
+            sx={{
+              top: 100,
+              right: "60%",
+              marginRight: -100,
+              position: "absolute",
+            }}
+          >
+            <Button
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: "#EC7329",
+                textDecoration: "none",
+              }}
+              onClick={handleOpenReservation}
+            >
+              Make a reservation
+            </Button>
+            <Modal
+              open={openReservation}
+              onClose={handleCloseReservation}
+              aria-labelledby="modal-modal-title"
+            >
+              <Box sx={style}>
+                <ReserveDesk />
+              </Box>
+            </Modal>
+          </Box>
+          <Modal
+            open={openSettings}
+            onClose={handleCloseSettingsModal}
+            aria-labelledby="modal-modal-title"
+          >
+            <Box sx={styleSettings}>
+              <Settings />
+            </Box>
+          </Modal>
+          <Menu
+            sx={{ mt: "45px" }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {settings.map((setting) => (
+              <MenuItem
+                key={setting}
+                onClick={
+                  setting === "Settings"
+                    ? handleOpenSettingsModal
+                    : setting === "Logout"
+                    ? handleLogout
+                    : setting === "My Profile"
+                    ? handleOpenMyProfile
+                    : handleCloseUserMenu
+                }
+              >
+                <Typography textAlign="center">{setting}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
         </Toolbar>
       </AppBar>
+
       <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
         <Stack
           direction="row"

@@ -9,6 +9,7 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import { AppBar, Toolbar, Button, Box } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -18,7 +19,11 @@ import React from "react";
 import TodayIcon from "@mui/icons-material/Today";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Logout from "./logout";
-
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import CreateIcon from "@mui/icons-material/Create";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Modal from "@mui/material/Modal";
 export default function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -40,6 +45,29 @@ export default function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
+  const handleOpenEdit = () => {
+    setOpenEdit(true);
+  };
+  const handleCloseEdit = () => setOpenEdit(false);
+  const [confirmation, setConfirmation] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const handleNo = () => {
+    setConfirmation(false);
+    setOpenDelete(false);
+    setOpenEdit(false);
+    navigate("/reservationoverview");
+  };
+  const handleYes = () => {
+    setConfirmation(true);
+    setOpenDelete(false);
+    setOpenEdit(false);
+    navigate("/reservationoverview");
   };
 
   const defaultTheme = createTheme();
@@ -208,6 +236,111 @@ export default function Header() {
           </AppBar>
         </Container>
       </ThemeProvider>
+      <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          divider={<Divider orientation="vertical" flexItem />}
+        >
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Stack direction="column">
+              <Typography variant="h6" marginRight={60} alignItems="center">
+                Vlad Dragos
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: 13,
+                  marginRight: 72,
+                }}
+              >
+                Developer
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack direction="row" alignItems="center" spacing={15}>
+            <Stack direction="column" gap={2}>
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
+                Date: 05.07.2023
+              </Typography>
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
+                Office: Brizei
+              </Typography>
+            </Stack>
+            <Stack direction="column" gap={2}>
+              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
+                Interval: All day
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: 15,
+                  marginTop: 2,
+                }}
+              >
+                Floor: 1
+              </Typography>
+            </Stack>
+            <Stack direction="column" alignItems="center" gap={2}>
+              <Typography
+                variant="h6"
+                sx={{ fontSize: 15, marginTop: 2 }}
+              ></Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: 15,
+                  marginTop: 5,
+                }}
+              >
+                Desk: 2
+              </Typography>
+            </Stack>
+            <Stack direction="column" alignItems="center" gap={3}>
+              <Button onClick={handleOpenEdit}>
+                <CreateIcon
+                  sx={{
+                    marginTop: 2,
+                    fontSize: 18,
+                  }}
+                ></CreateIcon>
+              </Button>
+
+              <Button onClick={handleOpenDelete}>
+                <DeleteIcon
+                  sx={{
+                    fontSize: 18,
+                  }}
+                ></DeleteIcon>
+              </Button>
+              <Modal
+                open={openDelete}
+                onClose={handleCloseDelete}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                  <Typography
+                    id="modal-modal-title"
+                    variant="h5"
+                    component="h2"
+                  >
+                    My Reservations
+                  </Typography>
+                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    Are you sure you want to delete this record?
+                  </Typography>
+                  <Box sx={{ marginTop: 2, marginLeft: 105 }}>
+                    <Button onClick={handleNo}>Cancel</Button>
+                    <Button onClick={handleYes}>Confirm</Button>
+                  </Box>
+                </Box>
+              </Modal>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Box>
     </>
   );
 }
