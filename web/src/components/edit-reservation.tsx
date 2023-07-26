@@ -12,19 +12,24 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Switch,
-  FormGroup,
-  FormControlLabel,
-  Toolbar,
   AppBar,
+  Toolbar,
+  SelectChangeEvent,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import React from "react";
-import { DatePicker, TimeView } from "@mui/x-date-pickers";
+import React, { useEffect, useState } from "react";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimeView } from "@mui/x-date-pickers";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
 import CloseIcon from "@mui/icons-material/Close";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Office } from "../models/office";
+import { Floor } from "../models/floor";
+import { v4 as uuidv4 } from "uuid";
+import { Desk } from "../models/desk";
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -38,29 +43,42 @@ const theme = createTheme({
     fontSize: 20,
   },
 });
-function DatePickerValue() {
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs());
-  const [allDay, setAllDay] = React.useState<boolean>(false);
+
+function DatePickerValue({
+  allDay,
+  handleAllDayToggle,
+  value,
+  startTime,
+  endTime,
+  setValue,
+  setDateCompleted,
+}: any) {
+  const handleDateChange = (newValue: Dayjs | null) => {
+    setValue(newValue);
+    if (newValue) {
+      setDateCompleted(true);
+    } else {
+      setDateCompleted(false);
+    }
+  };
+
   return (
-    <FormControl sx={{ width: "64ch", mb: 4 }}>
+    <FormControl sx={{ width: "64ch", mb: 5 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <DatePicker
             label="Date"
             value={value}
-            onChange={(newValue) => setValue(newValue)}
+            onChange={handleDateChange}
             sx={{ width: "64ch" }}
           />
+
           <FormGroup sx={{ mr: -20, ml: "auto" }}>
             <FormControlLabel
               control={
-                <Switch
-                  checked={allDay}
-                  onChange={(event) => setAllDay(event.target.checked)}
-                />
+                <Switch checked={allDay} onChange={handleAllDayToggle} />
               }
               label="All day"
-              color="secondary.main"
             />
           </FormGroup>
         </Box>
@@ -68,25 +86,61 @@ function DatePickerValue() {
     </FormControl>
   );
 }
-function BasicSelect() {
-  const [headquarters, setHeadquarters] = React.useState("");
-  const [floor, setFloor] = React.useState("");
-  const [desk, setDesk] = React.useState("");
-  const handleHeadquartersChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setHeadquarters(event.target.value);
+
+function BasicSelect({
+  isDateCompleted,
+  isTimeCompleted,
+}: {
+  isDateCompleted: boolean;
+  isTimeCompleted: boolean;
+}) {
+  const [offices, setOffices] = useState<Office[] | null>(null);
+  const [officeID, setofficeID] = useState<string | null>(null);
+
+  const [floors, setFloors] = useState<Floor[] | null>(null);
+  const [floorID, setFloorID] = useState<string | null>(null);
+
+  const [desks, setDesks] = useState<Desk[] | null>(null);
+  const [deskID, setDeskID] = useState<string | null>(null);
+
+  const [availableFloors, setAvailableFloors] = useState(true);
+  const [availableDesks, setAvailableDesks] = useState(true);
+
+  const officeUuids = offices?.map((office: Office) => uuidv4()) || [];
+  const floorsUuids = floors?.map((floor: Floor) => uuidv4()) || [];
+  const desksUuids = desks?.map((desk: Desk) => uuidv4()) || [];
+
+  useEffect(() => {
+    fetch(`https://localhost:7156/api/Office`)
+      .then((response) => response.json())
+      .then((data) => setOffices(data));
+  }, []);
+
+  const handleOfficeChange = (event: SelectChangeEvent<string>): void => {
+    const officeID = event.target.value;
+    setofficeID(event.target.value);
+
+    fetch(`https://localhost:7156/api/Floor/byOffice/${officeID}`)
+      .then((response) => response.json())
+      .then((data) => setFloors(data));
+    setAvailableFloors(false);
+    setAvailableDesks(true);
   };
-  const handleFloorChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setFloor(event.target.value);
+
+  const handleFloorChange = (event: SelectChangeEvent<string>): void => {
+    const floorID = event.target.value;
+    setFloorID(event.target.value);
+    fetch(`https://localhost:7156/api/Desk/byFloor/${floorID}`)
+      .then((response) => response.json())
+      .then((data) => setDesks(data));
+    setAvailableDesks(false);
   };
-  const handleDeskChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setDesk(event.target.value);
+
+  const handleDeskChange = (event: SelectChangeEvent<string>): void => {
+    const deskID = event.target.value;
+    setDeskID(event.target.value);
   };
+
   return (
     <Box
       sx={{
@@ -101,78 +155,118 @@ function BasicSelect() {
         <Select
           labelId="select-office"
           id="select-office"
-          value={headquarters}
+          value={officeID || ""}
           label="Office"
-          onChange={handleHeadquartersChange}
+          onChange={handleOfficeChange}
+          disabled={!isDateCompleted || !isTimeCompleted}
         >
-          <MenuItem value={10}>Predeal</MenuItem>
-          <MenuItem value={20}>Brizei</MenuItem>
+          {offices?.map((office: Office, index: number) => (
+            <MenuItem key={officeUuids[index]} value={office.id}>
+              {office.name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
+
       <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
         <InputLabel id="select-floor">Floor</InputLabel>
         <Select
           labelId="select-floor"
           id="select-floor"
-          value={floor}
+          value={floorID || ""}
           label="Floor"
           onChange={handleFloorChange}
+          disabled={availableFloors}
         >
-          <MenuItem value={11}>0</MenuItem>
-          <MenuItem value={12}>1</MenuItem>
-          <MenuItem value={13}>2</MenuItem>
+          {floors?.map((floor: Floor, index: number) => (
+            <MenuItem key={floorsUuids[index]} value={floor.id}>
+              {floor.name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
+
       <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
         <InputLabel id="select-desk">Desk</InputLabel>
         <Select
           labelId="select-desk"
           id="select-desk"
-          value={desk}
+          value={deskID || ""}
           label="Desk"
           onChange={handleDeskChange}
+          disabled={availableDesks}
         >
-          <MenuItem value={16}>1</MenuItem>
-          <MenuItem value={17}>2</MenuItem>
-          <MenuItem value={18}>3</MenuItem>
-          <MenuItem value={19}>4</MenuItem>
-          <MenuItem value={20}>5</MenuItem>
+          {desks?.map((desk: Desk, index: number) => (
+            <MenuItem key={desksUuids[index]} value={desk.id}>
+              {desk.name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     </Box>
   );
 }
+
 function EditReservation() {
   const [startTime, setStartTime] = React.useState<Dayjs | null>(
     dayjs().set("hour", 7).set("minute", 0)
   );
-  const [endDateTime, setEndTime] = React.useState<Dayjs | null>(null);
+  const [endTime, setEndTime] = React.useState<Dayjs | null>(null);
   const [allDay, setAllDay] = React.useState<boolean>(false);
-  const handleStartTimeChange = (newValue: Dayjs | null) => {
-    setStartTime(newValue);
-    if (allDay) {
-      setEndTime(null);
+  const [value, setValue] = React.useState<Dayjs | null>(dayjs());
+
+  const [isDateCompleted, setDateCompleted] = React.useState(false);
+  const [isTimeCompleted, setTimeCompleted] = React.useState(false);
+
+  const handleDateChange = (newValue: Dayjs | null) => {
+    setValue(newValue);
+    if (newValue) {
+      setDateCompleted(true);
+    } else {
+      setDateCompleted(false);
     }
   };
-  const handleEndTimeChange = (newValue: Dayjs | null) => {
-    setEndTime(newValue);
-    if (allDay) {
+
+  const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllDay(event.target.checked);
+    if (event.target.checked) {
       setStartTime(null);
+      setEndTime(null);
+      setTimeCompleted(true);
+      console.log(startTime);
+      console.log(endTime);
+    } else {
+      setTimeCompleted(!!startTime && !!endTime);
     }
   };
-  const shouldDisableTime = (value: Dayjs, view: TimeView) => {
-    if (view === "hours") {
-      const hour = value.hour();
-      const minute = value.minute();
-      if (hour >= 17 || hour < 7) {
-        return true;
-      }
-      if (hour === 7 && minute < 30) {
-        return true;
-      }
-    }
-    return false;
+
+  const handleStartTimeChange = (newValue: Dayjs | null) => {
+    setStartTime(allDay ? null : newValue);
   };
+
+  const handleEndTimeChange = (newValue: Dayjs | null) => {
+    setEndTime(allDay ? null : newValue);
+    if (newValue) {
+      setTimeCompleted(true);
+    } else {
+      setTimeCompleted(false);
+    }
+  };
+
+  // const shouldDisableTime = (value: Dayjs, view: TimeView) => {
+  //   if (view === 'hours') {
+  //     const hour = value.hour();
+  //     const minute = value.minute();
+  //     if (hour >= 17 || hour < 7) {
+  //       return true;
+  //     }
+  //     if (hour === 7 && minute < 30) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // };
+
   const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
     if (view === "hours") {
       const startHour = startTime?.hour();
@@ -203,6 +297,7 @@ function EditReservation() {
           .set("hour", startHour)
           .set("minute", startMinute)
           .startOf("minute");
+
         const endTime = dayjs().set("hour", 16).startOf("hour");
         return (
           value.isBefore(startTime, "hour") || value.isAfter(endTime, "hour")
@@ -215,19 +310,7 @@ function EditReservation() {
     }
     return false;
   };
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const navigate = useNavigate();
-  const [confirmation, setConfirmation] = useState(false);
-  const handleNo = () => {
-    setConfirmation(false);
-    navigate("/reservationoverview");
-  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -254,6 +337,7 @@ function EditReservation() {
             <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
           </Toolbar>
         </AppBar>
+
         <Box
           sx={{
             display: "flex",
@@ -261,18 +345,18 @@ function EditReservation() {
             alignItems: "center",
             width: "100%",
             p: 2,
-            mb: 2,
+            mb: 3,
           }}
         >
+          <div></div>
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              flexDirection: "column",
               alignItems: "center",
               width: "100%",
-              mt: 4,
               p: 2,
+              mb: 2,
             }}
           ></Box>
           <Box sx={{ justifyContent: "flex-start", mt: 2, marginTop: 10 }}>
@@ -290,63 +374,84 @@ function EditReservation() {
             </Button>
           </Box>
         </Box>
-        <DatePickerValue />
-        <div>
-          <Box sx={{ display: "flex", mb: 2 }}>
-            <DemoItem component="TimePicker">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <>
-                    <TimePicker
-                      label="Start"
-                      onChange={handleStartTimeChange}
-                      shouldDisableTime={shouldDisableStartTime}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderColor: grey[900],
-                          width: "18ch",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: grey[900],
-                        },
-                        "& .MuiOutlinedInput-input": {
-                          color: grey[900],
-                        },
-                      }}
-                    />
-                    <Typography
-                      variant="body1"
-                      component="span"
-                      style={{ margin: "0 10px" }}
-                    >
-                      to
-                    </Typography>
-                    <TimePicker
-                      label="End"
-                      onChange={handleEndTimeChange}
-                      shouldDisableTime={shouldDisableEndTime}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderColor: grey[900],
-                          width: "18ch",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: grey[900],
-                        },
-                        "& .MuiOutlinedInput-input": {
-                          color: grey[900],
-                        },
-                      }}
-                    />
-                  </>
-                </div>
-              </LocalizationProvider>
-            </DemoItem>
-          </Box>
-        </div>
-        <BasicSelect />
+
+        <DatePickerValue
+          allDay={allDay}
+          handleAllDayToggle={handleAllDayToggle}
+          setValue={setValue}
+          startTime={startTime}
+          endTime={endTime}
+          handleStartTimeChange={handleStartTimeChange}
+          handleEndTimeChange={handleEndTimeChange}
+          setDateCompleted={setDateCompleted}
+          handleDateChange={handleDateChange}
+          isTimeCompleted={isTimeCompleted}
+        />
+
+        {!allDay && (
+          <div>
+            <Box sx={{ display: "flex", mb: 3 }}>
+              <DemoItem component="TimePicker">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <>
+                      <TimePicker
+                        label="Start"
+                        onChange={handleStartTimeChange}
+                        shouldDisableTime={shouldDisableStartTime}
+                        disabled={!isDateCompleted}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderColor: grey[900],
+                            width: "18ch",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: grey[900],
+                          },
+                          "& .MuiOutlinedInput-input": {
+                            color: grey[900],
+                          },
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        component="span"
+                        style={{ margin: "0 10px" }}
+                      >
+                        to
+                      </Typography>
+                      <TimePicker
+                        label="End"
+                        onChange={handleEndTimeChange}
+                        shouldDisableTime={shouldDisableEndTime}
+                        disabled={!isDateCompleted}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderColor: grey[900],
+                            width: "18ch",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: grey[900],
+                          },
+                          "& .MuiOutlinedInput-input": {
+                            color: grey[900],
+                          },
+                        }}
+                      />
+                    </>
+                  </div>
+                </LocalizationProvider>
+              </DemoItem>
+            </Box>
+          </div>
+        )}
+        <BasicSelect
+          isDateCompleted={isDateCompleted}
+          isTimeCompleted={isTimeCompleted}
+        />
       </Box>
     </ThemeProvider>
   );
 }
+
 export default EditReservation;

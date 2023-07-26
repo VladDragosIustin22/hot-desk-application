@@ -18,11 +18,12 @@ import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EditReservation from "./edit-reservation";
-import myProfile from "./my-profile";
 import Logout from "./logout";
 import MyProfile from "./my-profile";
+import ReserveDesk from "./reserve-a-desk";
+import Settings from "./settings";
 
-const settings = ["My Profile", "Settings"];
+const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
   position: "absolute" as "absolute",
@@ -36,6 +37,19 @@ const style = {
   p: 4,
 };
 
+const styleSettings = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  height: 600,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 3,
+};
+
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -43,7 +57,7 @@ function ReservationOverview() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-
+  // pt deschiderea meniului
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -81,6 +95,34 @@ function ReservationOverview() {
     setOpenDelete(false);
     setOpenEdit(false);
     navigate("/reservationoverview");
+  };
+
+  const [openReservation, setOpenReservation] = React.useState(false);
+  const handleOpenReservation = () => {
+    setOpenReservation(true);
+  };
+  const handleCloseReservation = () => {
+    setOpenReservation(false);
+  };
+
+  const [openMyProfile, setOpenMyProfile] = React.useState(false);
+  const handleOpenMyProfile = () => {
+    setOpenMyProfile(true);
+  };
+  const handleCloseMyProfile = () => {
+    setOpenMyProfile(false);
+  };
+
+  const [openSettings, setOpenSettingsModal] = React.useState(false);
+  const handleOpenSettingsModal = () => {
+    setOpenSettingsModal(true);
+  };
+  const handleCloseSettingsModal = () => {
+    setOpenSettingsModal(false);
+  };
+
+  const handleLogout = () => {
+    navigate("/login");
   };
 
   return (
@@ -152,7 +194,7 @@ function ReservationOverview() {
 
               <Avatar
                 alt="User Name"
-                src="https://mui.com/static/images/avatar/1.jpg"
+                src="/static/images/avatar/1.jpg"
                 sx={{ marginLeft: 5, marginRight: -6 }}
               />
 
@@ -220,7 +262,7 @@ function ReservationOverview() {
                 </MenuItem>
               ))}
               <MenuItem>
-                <Link onClick={Logout} color="black" to={"/login"} style={{ textDecoration: "none" }} >
+                <Link onClick={Logout} color="black" to={"/login"}>
                   Logout
                 </Link>
               </MenuItem>
@@ -228,6 +270,7 @@ function ReservationOverview() {
           </Box>
         </Toolbar>
       </AppBar>
+
       <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
         <Stack
           direction="row"
@@ -235,7 +278,10 @@ function ReservationOverview() {
           divider={<Divider orientation="vertical" flexItem />}
         >
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
+            <Avatar
+              alt="Remy Sharp"
+              src="https://mui.com/static/images/avatar/1.jpg"
+            />
             <Stack direction="column">
               <Typography variant="h6" marginRight={60} alignItems="center">
                 Vlad Dragos

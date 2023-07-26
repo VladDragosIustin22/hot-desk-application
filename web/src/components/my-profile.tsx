@@ -1,5 +1,14 @@
 import { grey, orange } from "@mui/material/colors";
-import { Box, Button, Typography, Toolbar, AppBar } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Toolbar,
+  AppBar,
+  TextField,
+  Avatar,
+  Stack,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -42,9 +51,16 @@ export default function MyProfile() {
             <Typography variant="h6" component="div">
               My Profile
             </Typography>
-            <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
+            <CloseIcon sx={{ marginLeft: 36 }}></CloseIcon>
           </Toolbar>
         </AppBar>
+        <Stack direction="row" spacing={2}>
+          <Avatar
+            alt="V"
+            src="/static/images/avatar/1.jpg"
+            sx={{ width: 100, height: 100, ml: -28, mr: -25, mt: 15 }}
+          />
+        </Stack>
         <Box
           sx={{
             display: "flex",
@@ -52,7 +68,8 @@ export default function MyProfile() {
             alignItems: "center",
             width: "100%",
             p: 2,
-            mb: 2,
+            mb: -10,
+            mt: -28,
           }}
         >
           <Box
@@ -63,23 +80,93 @@ export default function MyProfile() {
               alignItems: "center",
               width: "100%",
               mt: 4,
-              p: 2,
+              p: 1,
             }}
           ></Box>
-          <Box sx={{ justifyContent: "flex-start", mt: 2, marginTop: 10 }}>
-            <Button
-              variant="contained"
-              size="large"
-              color="secondary"
+          <Box
+            component="form"
+            sx={{
+              "& .MuiTextField-root": {
+                mb: -5,
+                width: "40ch",
+                mt: 10,
+                mr: -12,
+              },
+            }}
+            noValidate
+            autoComplete="off"
+          >
+            <TextField
+              label="Name"
+              id="outlined-size-normal"
+              defaultValue="Name"
+            />
+
+            <TextField
+              label="Job title"
+              id="outlined-size-normal"
+              defaultValue="Job title"
+            />
+
+            <TextField
+              label="E-mail"
+              defaultValue="E-mail"
+              InputProps={{
+                style: {
+                  width: "37ch",
+                  marginLeft: "-160px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  marginLeft: "-160px",
+                },
+                shrink: true,
+              }}
+            />
+            <TextField
+              label="Phone"
+              defaultValue="+407********"
+              InputProps={{
+                style: {
+                  width: "37ch",
+                  marginLeft: "-160px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  marginLeft: "-160px",
+                },
+                shrink: true,
+              }}
+            />
+          </Box>
+
+          <div>
+            <Box
               sx={{
-                height: "50px",
-                color: "white",
-                textTransform: "none",
+                justifyContent: "flex-start",
+                mt: 40,
+                marginBottom: -80,
+                ml: -7,
               }}
             >
-              Save
-            </Button>
-          </Box>
+              <Button
+                variant="contained"
+                size="large"
+                color="secondary"
+                sx={{
+                  height: "50px",
+                  color: "white",
+                  textTransform: "none",
+                  p: 2,
+                  ml: 1,
+                }}
+              >
+                Save
+              </Button>
+            </Box>
+          </div>
         </Box>
       </Box>
     </ThemeProvider>
