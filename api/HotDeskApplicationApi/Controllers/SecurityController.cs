@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
+using System;
+using System.IO;
 namespace HotDeskApplicationApi.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -45,13 +46,16 @@ namespace HotDeskApplicationApi.Controllers
 
             IdentityUser user = await userManager.FindByEmailAsync(registerModel.Email);
 
+            string imagePath = "Images/default-avatar.png";
+            byte[] imageBytes = System.IO.File.ReadAllBytes(imagePath);
+
             Profile profile = new Profile()
             {
                 ID = Guid.Parse(user.Id),
                 FirstName = registerModel.FirstName,
                 LastName = registerModel.LastName,
                 EmailAddress = registerModel.Email,
-                Avatar = "..\\Images\\default-avatar.png",
+                Avatar = imageBytes,
                 Role = "developer",
                 NickName = registerModel.LastName
             };

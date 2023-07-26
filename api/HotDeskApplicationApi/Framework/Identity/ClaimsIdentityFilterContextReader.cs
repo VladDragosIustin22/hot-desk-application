@@ -15,11 +15,11 @@ namespace HotDeskApplicationApi.Framework.Identity
 
         public bool IsAuthorized { get; set; }
 
-        public string NameIdentifier { get; set; }
+        public string? NameIdentifier { get; set; }
 
-        public string Sid { get; set; }
+        public string? Sid { get; set; }
 
-        public string OriginatorID { get; set; }
+        public string? OriginatorID { get; set; }
 
         public bool SkipSidCheck { get; set; }
     }
