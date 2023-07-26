@@ -25,14 +25,7 @@ namespace HotDeskApplicationApi.Controllers
         [HttpGet("GetAllProfileReservations/{profileID}")]
         public IActionResult GetAllProfileReservations(Guid profileID)
         {
-            
-            Identity identity = ControllerContext.GetIdentity();
 
-            if (identity.ID != profileID)
-            {
-                return Ok(new List<RegistrationView>());
-            }
-            
             var reservations = _dbContext.Reservations
             .Where(r => r.ProfileID == profileID)
             .Select(r => new RegistrationView
@@ -51,7 +44,12 @@ namespace HotDeskApplicationApi.Controllers
 
             return Ok(reservations);
         }
-
+        [HttpGet("{id}")]
+        public async Task<Reservation> GetReservation(Guid id)
+        {
+            var reservation = await _dbContext.Reservations.FindAsync(id);
+            return reservation;
+        }
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {

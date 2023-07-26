@@ -1,5 +1,5 @@
 export interface Desk{
-    ID : string;
-    DeskName : string;
-    FloorID : string;
+    id : string;
+    name : string;
+    floorID : string;
 }
