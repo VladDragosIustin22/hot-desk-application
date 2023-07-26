@@ -3,7 +3,8 @@
     public class Reservation
     {
         public Guid ID { get; set; }
-        public Guid ProfileID { get; set; }
+       // public Guid ProfileID { get; set; }
+        public string ProfileEmail { get; set; }
         public DateTime ArrivalTime { get; set; }
         public DateTime LeavingTime { get; set; }
         public Guid OfficeID { get; set; }

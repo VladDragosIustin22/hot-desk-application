@@ -191,124 +191,83 @@ function ReservationOverview() {
                   <MoreVertIcon sx={{ fontSize: 30 }}></MoreVertIcon>
                 </IconButton>
               </Tooltip>
-            </Stack>
-          </Box>
-          <Modal
-            open={openSettings}
-            onClose={handleCloseSettingsModal}
-            aria-labelledby="modal-modal-title"
-          >
-            <Box sx={styleSettings}>
-              <Settings />
-            </Box>
-          </Modal>
-          <Modal
-            open={openMyProfile}
-            onClose={handleCloseMyProfile}
-            aria-labelledby="modal-modal-title"
-          >
-            <Box sx={styleSettings}>
-              <MyProfile />
-            </Box>
-          </Modal>
-          <Avatar
-            alt="User Name"
-            src="/static/images/avatar/1.jpg"
-            sx={{ marginLeft: -9, marginRight: -1 }}
-          />
-          <Typography
-            variant="h6"
-            noWrap
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "roboto",
-              fontWeight: 700,
-              letterSpacing: ".0rem",
-              color: "#FFFFFF",
-              textDecoration: "none",
-              marginLeft: 2,
-              marginTop: 0,
-              padding: 1,
-            }}
-          >
-            User Name
-          </Typography>
-          <Box
-            margin={1}
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="flex-end"
-            sx={{
-              top: 100,
-              right: "60%",
-              marginRight: -100,
-              position: "absolute",
-            }}
-          >
-            <Button
-              sx={{
-                mt: 3,
-                mb: 2,
-                backgroundColor: "#EC7329",
-                textDecoration: "none",
-              }}
-              onClick={handleOpenReservation}
-            >
-              Make a reservation
-            </Button>
-            <Modal
-              open={openReservation}
-              onClose={handleCloseReservation}
-              aria-labelledby="modal-modal-title"
-            >
-              <Box sx={style}>
-                <ReserveDesk />
-              </Box>
-            </Modal>
-          </Box>
-          <Modal
-            open={openSettings}
-            onClose={handleCloseSettingsModal}
-            aria-labelledby="modal-modal-title"
-          >
-            <Box sx={styleSettings}>
-              <Settings />
-            </Box>
-          </Modal>
-          <Menu
-            sx={{ mt: "45px" }}
-            id="menu-appbar"
-            anchorEl={anchorElUser}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={Boolean(anchorElUser)}
-            onClose={handleCloseUserMenu}
-          >
-            {settings.map((setting) => (
-              <MenuItem
-                key={setting}
-                onClick={
-                  setting === "Settings"
-                    ? handleOpenSettingsModal
-                    : setting === "Logout"
-                    ? handleLogout
-                    : setting === "My Profile"
-                    ? handleOpenMyProfile
-                    : handleCloseUserMenu
-                }
+
+              <Avatar
+                alt="User Name"
+                src="/static/images/avatar/1.jpg"
+                sx={{ marginLeft: 5, marginRight: -6 }}
+              />
+
+              <Typography
+                variant="h6"
+                noWrap
+                sx={{
+                  mr: 2,
+                  display: { xs: "none", md: "flex" },
+                  fontFamily: "roboto",
+                  fontWeight: 700,
+                  letterSpacing: ".0rem",
+                  color: "#FFFFFF",
+                  textDecoration: "none",
+                  marginLeft: 2,
+                  marginTop: 0,
+                  padding: 1,
+                }}
               >
-                <Typography textAlign="center">{setting}</Typography>
+                User Name
+              </Typography>
+            </Stack>
+            <Box
+              margin={1}
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="flex-end"
+              sx={{
+                top: 100,
+                right: "60%",
+                marginRight: -100,
+                position: "absolute",
+              }}
+            >
+              <Button sx={{ mt: 3, mb: 2, backgroundColor: "#EC7329" }}>
+                <Link
+                  style={{ textDecoration: "none" }}
+                  to={"/reserve-a-desk"}
+                  color="#FFFFFF"
+                >
+                  Make a reservation
+                </Link>
+              </Button>
+            </Box>
+
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
+              <MenuItem>
+                <Link onClick={Logout} color="black" to={"/login"}>
+                  Logout
+                </Link>
               </MenuItem>
-            ))}
-          </Menu>
+            </Menu>
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -319,7 +278,10 @@ function ReservationOverview() {
           divider={<Divider orientation="vertical" flexItem />}
         >
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar
+              alt="Remy Sharp"
+              src="https://mui.com/static/images/avatar/1.jpg"
+            />
             <Stack direction="column">
               <Typography variant="h6" marginRight={60} alignItems="center">
                 Vlad Dragos
