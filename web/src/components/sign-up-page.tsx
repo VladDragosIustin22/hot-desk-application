@@ -14,14 +14,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import { InputAdornment, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import "@fontsource/roboto/500.css";
 import { SignUpModel } from "../models/signup-model";
+import { useNavigate } from "react-router";
 const defaultTheme = createTheme();
 
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
-
 const schema = Yup.object().shape({
   firstName: Yup.string().required("Required"),
   lastName: Yup.string().required("Required"),
@@ -39,10 +39,11 @@ const schema = Yup.object().shape({
     .oneOf([Yup.ref("password"), ""], "Passwords must match!")
     .required("Required"),
 });
-
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+  const navigate = useNavigate();
   const [tokenInfo, setTokenInfo] = useState<{ value: string; expiry: Date | null }>({
     value: "",
     expiry: null,
@@ -77,6 +78,7 @@ export default function SignUp() {
         email: values.email,
         password: values.password,
       };
+      try {
       const response = await fetch(`https://localhost:7156/api/Security/Register`, {
         method: "POST",
         headers: {
@@ -90,9 +92,18 @@ export default function SignUp() {
       localStorage.setItem("authToken", value);
       localStorage.setItem("authTokenExpiry", new Date(expiry).toISOString());
       setTokenInfo({ value: value, expiry: new Date(expiry) });
+      setRedirect(true);
+    }
+    catch{
+      setRedirect(false);
+    }
     },
   });
-
+  useEffect(() => {
+    if (redirect) {
+      navigate("/reservationoverview");
+    }
+  }, [redirect, navigate]);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>

@@ -10,8 +10,9 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
+import { useNavigate } from 'react-router-dom';
 import * as Yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "@fontsource/roboto/500.css";
@@ -35,12 +36,13 @@ const schema = Yup.object().shape({
 
 export default function LogIn() {
   const [showPassword, setShowPassword] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+  const navigate = useNavigate();
   const [tokenInfo, setTokenInfo] = useState<{ value: string; expiry: Date | null }>({
     value: "",
     expiry: null,
   });
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -57,6 +59,7 @@ export default function LogIn() {
         email: values.email,
         password: values.password,
       };
+      try {
       const response = await fetch(`https://localhost:7156/api/Security/Login`, {
         method: "POST",
         headers: {
@@ -70,10 +73,20 @@ export default function LogIn() {
       localStorage.setItem("authToken", value);
       localStorage.setItem("authTokenExpiry", new Date(expiry).toISOString());
       setTokenInfo({ value: value, expiry: new Date(expiry) });
+      setRedirect(true);
+    }
+    catch {
+      setRedirect(false);
+      alert("Email or password incorrect!");
+    }
     },
   });
   console.log(formik);
-
+  useEffect(() => {
+    if (redirect) {
+      navigate("/reservationoverview");
+    }
+  }, [redirect, navigate]);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
