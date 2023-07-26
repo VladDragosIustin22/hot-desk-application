@@ -20,25 +20,17 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Office>>> GetOffices()
+        public async Task<Office[]> GetOffices()
         {
-            if (dbContext.Offices == null)
-            {
-                return NotFound();
-            }
-            return await dbContext.Offices.ToListAsync();
+            return await dbContext.Offices.ToArrayAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Office>> GetOffice(Guid id)
+        public async Task<Office> GetOffice(Guid id)
         {
 
             var office = await dbContext.Offices.FindAsync(id);
 
-            if (office == null)
-            {
-                return this.NotFound();
-            }
             return office;
         }
 
