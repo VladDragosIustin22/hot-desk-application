@@ -14,8 +14,6 @@ namespace HotDeskApplicationApi.Controllers
     {
         private HotDeskDbContext hotDeskDbContext;
 
-
-
         public DeskController(HotDeskDbContext dbContext)
         {
             hotDeskDbContext = dbContext;
