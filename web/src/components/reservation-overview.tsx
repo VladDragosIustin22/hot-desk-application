@@ -333,7 +333,14 @@ function ReservationOverview() {
           </Toolbar>
         </AppBar>
 
-        <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
+        <Box
+          component="div"
+          sx={{
+            flexGrow: 1,
+            marginTop: 35,
+            marginLeft: 20,
+          }}
+        >
           <Stack
             direction="row"
             spacing={2}
@@ -367,7 +374,7 @@ function ReservationOverview() {
               </Stack>
               <Stack direction="column" gap={2}>
                 <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                  Interval: All day
+                  Interval: 12.22 -13.22
                 </Typography>
                 <Typography
                   variant="h6"
@@ -376,7 +383,7 @@ function ReservationOverview() {
                     marginTop: 2,
                   }}
                 >
-                  Floor: 1
+                  Floor: Ground Floor
                 </Typography>
               </Stack>
               <Stack direction="column" alignItems="center" gap={2}>

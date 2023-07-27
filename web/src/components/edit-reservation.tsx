@@ -15,6 +15,7 @@ import {
   AppBar,
   Toolbar,
   SelectChangeEvent,
+  IconButton,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
@@ -310,7 +311,9 @@ function EditReservation() {
     }
     return false;
   };
-
+  const [show, setShow] = useState(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -334,7 +337,9 @@ function EditReservation() {
             <Typography variant="h6" component="div">
               Reserve a desk
             </Typography>
-            <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
+            <IconButton onClick={handleClose}>
+              <CloseIcon sx={{ marginLeft: 92 }} />
+            </IconButton>
           </Toolbar>
         </AppBar>
 
