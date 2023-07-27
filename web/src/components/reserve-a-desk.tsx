@@ -363,7 +363,15 @@ function ReserveDesk() {
               mb: 2,
             }}
           ></Box>
-          <Box sx={{ justifyContent: "flex-start", mt: 2, marginTop: 10 }}>
+          <Box
+            sx={{
+              justifyContent: "flex-start",
+              mt: 2,
+              marginTop: 10,
+              mb: -116,
+              borderRadius: 1,
+            }}
+          >
             <Button
               variant="contained"
               size="large"
