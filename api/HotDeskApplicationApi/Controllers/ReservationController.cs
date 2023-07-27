@@ -30,13 +30,19 @@ namespace HotDeskApplicationApi.Controllers
             var reservation = await _dbContext.Reservations.FindAsync(id);
             return reservation;
         }
-        [HttpGet("GetAllProfileReservations/{email}")]
+
+        [HttpGet("GetAllProfileReservations")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult GetAllProfileReservations(string email)
+        public IActionResult GetAllProfileReservations()
         {
+            Framework.Identity.Identity identity = ControllerContext.GetIdentity();
+            
+            Guid userID = identity.ID;
+
+            Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == userID);
 
             var reservations = _dbContext.Reservations
-                .Where(r => r.ProfileEmail == email)
+                .Where(r => r.ProfileEmail == userProfile.EmailAddress)
                 .Select(r => new RegistrationView
                 {
                     ArrivalTime = r.ArrivalTime,
@@ -44,14 +50,15 @@ namespace HotDeskApplicationApi.Controllers
                     OfficaName = _dbContext.Offices.FirstOrDefault(o => o.ID == r.OfficeID).Name,
                     FloorName = _dbContext.Floors.FirstOrDefault(f => f.ID == r.FloorID).Name,
                     DeskName = _dbContext.Desks.FirstOrDefault(d => d.ID == r.DeskID).Name,
-                    Avatar = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == email).Avatar,
-                    ProfileRole = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == email).Role,
-                    ProfileName = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == email).NickName
+                    Avatar = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == userProfile.EmailAddress).Avatar,
+                    ProfileRole = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == userProfile.EmailAddress).Role,
+                    ProfileName = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == userProfile.EmailAddress).NickName
                 })
                 .ToList();
 
-            return Ok(reservations);
-        }
+    return Ok(reservations);
+    
+    }
 
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
