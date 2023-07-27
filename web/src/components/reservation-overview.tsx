@@ -90,7 +90,7 @@ function ReservationOverview() {
  
  
 
-const [reservation, setReservation] = useState([]);
+const [reservation, setReservation] = useState<Reservation[] | null>(null);
 const [Email, setEmail] = useState();
 const [token, setToken] = useState("");
 
@@ -255,7 +255,7 @@ const [token, setToken] = useState("");
           </Box>
         </Toolbar>
       </AppBar>
-  {/*  {reservation.map((reservations: Reservation, i: number) =>( */}
+    
       <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
         <Stack 
         //key ={reservations.profileEmail}
@@ -284,6 +284,7 @@ const [token, setToken] = useState("");
             <Stack direction="column" gap={2}>
               <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
              {/*}  {reservations.arrivalTime} */} 8:45
+             {}
               </Typography>
               <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
                 Office: Brizei
@@ -362,7 +363,7 @@ const [token, setToken] = useState("");
           </Stack>
         </Stack>
       </Box>
-   {/*}   ) )} */}
+
     </>
   );
 }
