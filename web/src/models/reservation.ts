@@ -1,8 +1,8 @@
 export interface Reservation {
     id: string;
-    profileID: string;
-    arrivalTime: string;
-    leavingTime: string;
+    profileEmail: string;
+    arrivalTime: Date;
+    leavingTime: Date;
     officeID: string;
     floorID: string;
     deskID: string;

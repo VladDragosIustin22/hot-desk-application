@@ -22,8 +22,9 @@ import Logout from "./logout";
 import MyProfile from "./my-profile";
 import ReserveDesk from "./reserve-a-desk";
 import Settings from "./settings";
-import { grey, orange } from "@mui/material/colors";
+import { blue, grey, orange } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ReservationView } from "../models/reservationView";
 
 const settings = ["My Profile", "Settings", "Logout"];
 
@@ -123,6 +124,36 @@ function ReservationOverview() {
     setOpenSettingsModal(false);
   };
 
+  const [reservationViews,setReservationViews] = useState<ReservationView[] | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+
+        if (!token) {
+          throw new Error("Authentication token not found in localStorage");
+        }
+          const response = await fetch("https://localhost:7156/api/Reservation/GetAllProfileReservations", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          setReservationViews(data);
+        } catch (error) {
+          console.error('Unknown error occurred:', error);
+        }
+      };
+      fetchData();
+  }, []);
+  {console.log(reservationViews)};
   const handleLogout = () => {
     navigate("/login");
   };
@@ -252,7 +283,7 @@ function ReservationOverview() {
                 padding: 1,
               }}
             >
-              User Name
+              Profile Name
             </Typography>
             <Box
               margin={1}
@@ -288,6 +319,7 @@ function ReservationOverview() {
                 </Box>
               </Modal>
             </Box>
+           
             <Modal
               open={openSettings}
               onClose={handleCloseSettingsModal}
@@ -333,24 +365,21 @@ function ReservationOverview() {
           </Toolbar>
         </AppBar>
 
-        <Box
-          component="div"
-          sx={{
-            flexGrow: 1,
-            marginTop: 35,
-            marginLeft: 20,
-          }}
-        >
+        
+        <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
+        {reservationViews?.map((reservationView : ReservationView) => (
+          <> 
+          <Box marginTop={6}>
           <Stack
             direction="row"
-            spacing={2}
+            spacing={5}
             divider={<Divider orientation="vertical" flexItem />}
           >
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+              <Avatar />
               <Stack direction="column">
                 <Typography variant="h6" marginRight={60} alignItems="center">
-                  Vlad Dragos
+                  {reservationView.profileName}
                 </Typography>
                 <Typography
                   variant="h6"
@@ -359,22 +388,27 @@ function ReservationOverview() {
                     marginRight: 72,
                   }}
                 >
-                  Developer
+                  {reservationView.profileRole}
                 </Typography>
               </Stack>
             </Stack>
-            <Stack direction="row" alignItems="center" spacing={15}>
+            <Stack direction="row" alignItems="center" spacing={2}>
               <Stack direction="column" gap={2}>
                 <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                  Date: 05.07.2023
+                  Date: 
+                  {new Date(reservationView.arrivalTime).getDay()}.
+                  {new Date (reservationView.arrivalTime).getMonth()}.
+                  { new Date (reservationView.arrivalTime).getFullYear()}
                 </Typography>
                 <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                  Office: Brizei
+                  Office: {reservationView.officaName}
                 </Typography>
               </Stack>
               <Stack direction="column" gap={2}>
                 <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                  Interval: 12.22 -13.22
+                  Interval: 
+                  {new Date(reservationView.arrivalTime).getHours()}.{new Date(reservationView.arrivalTime).getMinutes()} - 
+                  {new Date(reservationView.leavingTime).getHours()}.{new Date(reservationView.leavingTime).getMinutes()}.
                 </Typography>
                 <Typography
                   variant="h6"
@@ -383,7 +417,7 @@ function ReservationOverview() {
                     marginTop: 2,
                   }}
                 >
-                  Floor: Ground Floor
+                  Floor: {reservationView.floorName}
                 </Typography>
               </Stack>
               <Stack direction="column" alignItems="center" gap={2}>
@@ -398,7 +432,7 @@ function ReservationOverview() {
                     marginTop: 5,
                   }}
                 >
-                  Desk: 2
+                  Desk: {reservationView.deskName}
                 </Typography>
               </Stack>
               <Stack direction="column" alignItems="center" gap={3}>
@@ -444,7 +478,11 @@ function ReservationOverview() {
               </Stack>
             </Stack>
           </Stack>
+          </Box>
+          </>
+          ))}
         </Box>
+        
       </ThemeProvider>
     </>
   );

@@ -48,8 +48,6 @@ function DatePickerValue({
   allDay,
   handleAllDayToggle,
   value,
-  startTime,
-  endTime,
   setValue,
   setDateCompleted,
 }: any) {
@@ -88,9 +86,15 @@ function DatePickerValue({
 }
 
 function BasicSelect({
+  startTime,
+  endTime,
+  allDay,
   isDateCompleted,
   isTimeCompleted,
 }: {
+  startTime : any,
+  endTime : any,
+  allDay : any,
   isDateCompleted: boolean;
   isTimeCompleted: boolean;
 }) {
@@ -253,19 +257,19 @@ function ReserveDesk() {
     }
   };
 
-  // const shouldDisableTime = (value: Dayjs, view: TimeView) => {
-  //   if (view === 'hours') {
-  //     const hour = value.hour();
-  //     const minute = value.minute();
-  //     if (hour >= 17 || hour < 7) {
-  //       return true;
-  //     }
-  //     if (hour === 7 && minute < 30) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // };
+  const shouldDisableTime = (value: Dayjs, view: TimeView) => {
+    if (view === 'hours') {
+      const hour = value.hour();
+      const minute = value.minute();
+      if (hour >= 17 || hour < 7) {
+        return true;
+      }
+      if (hour === 7 && minute < 30) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
     if (view === "hours") {
@@ -454,6 +458,9 @@ function ReserveDesk() {
           </div>
         )}
         <BasicSelect
+          startTime = {startTime}
+          endTime ={endTime}
+          allDay = {allDay}
           isDateCompleted={isDateCompleted}
           isTimeCompleted={isTimeCompleted}
         />
