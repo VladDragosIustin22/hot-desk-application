@@ -18,11 +18,10 @@ import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EditReservation from "./edit-reservation";
-import myProfile from "./my-profile";
 import Logout from "./logout";
-import MyProfile from "./my-profile";
 import jwt_decode from 'jwt-decode';
 import { Reservation } from '../models/reservation';
+import { MyProfile } from "../models/my-profile";
 
 
 const settings = ["My Profile", "Settings"];
@@ -93,8 +92,10 @@ function ReservationOverview() {
 const [reservation, setReservation] = useState<Reservation[] | null>(null);
 const [Email, setEmail] = useState();
 const [token, setToken] = useState("");
+const [profile, setProfile] = useState<MyProfile[] | null>(null);
+const [profileID, setProfileID] = useState("");
 
-  useEffect(() =>{
+ useEffect(() =>{
     fetch(` https://localhost:7156/api/Reservation/GetAllProfileReservations/ ${Email}`)
     .then((response) =>response.json())
     .then(res => {
@@ -106,9 +107,8 @@ const [token, setToken] = useState("");
     }).catch(err =>{
       alert("Error!");
     })
-  },[]); 
+  },[]);
   
-
 
   return (
     <>
@@ -266,18 +266,21 @@ const [token, setToken] = useState("");
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
             <Stack direction="column">
-              <Typography variant="h6" marginRight={60} alignItems="center">
+           
+              <Typography variant="h6" marginRight={60} alignItems="center" >
                 Vlad Dragos
               </Typography>
-              <Typography
+          
+              <Typography 
                 variant="h6"
                 sx={{
                   fontSize: 13,
                   marginRight: 72,
                 }}
               >
-                Developer
+               Developer
               </Typography>
+            
             </Stack>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={15}>
