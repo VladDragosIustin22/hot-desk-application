@@ -2,6 +2,7 @@
 using HotDeskApplicationApi.Framework.Identity;
 using HotDeskApplicationApi.Models;
 using HotDeskApplicationApi.NewFolder2;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +13,7 @@ namespace HotDeskApplicationApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public class ReservationController : ControllerBase
     {
         private readonly HotDeskDbContext _dbContext;
@@ -30,8 +31,10 @@ namespace HotDeskApplicationApi.Controllers
             return reservation;
         }
         [HttpGet("GetAllProfileReservations/{email}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetAllProfileReservations(string email)
         {
+
             var reservations = _dbContext.Reservations
                 .Where(r => r.ProfileEmail == email)
                 .Select(r => new RegistrationView

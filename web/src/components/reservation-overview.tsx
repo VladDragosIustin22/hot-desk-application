@@ -21,7 +21,9 @@ import EditReservation from "./edit-reservation";
 import myProfile from "./my-profile";
 import Logout from "./logout";
 import MyProfile from "./my-profile";
-
+import { Reservation } from "../models/reservation";
+// import jwt_decode from 'jwt-decode';
+import jwt from 'jwt-decode';
 const settings = ["My Profile", "Settings"];
 
 const style = {
@@ -82,6 +84,45 @@ function ReservationOverview() {
     setOpenEdit(false);
     navigate("/reservationoverview");
   };
+
+  const [data, setData] = useState("");
+
+  const data1 = localStorage.getItem("authToken");
+  if (data1 !== null){
+        const decoded = jwt(data1);
+        {console.log(decoded)}
+  };
+
+  {console.log(data)};
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+
+        if (!token) {
+          throw new Error("Authentication token not found in localStorage");
+        }
+          const response = await fetch("https://localhost:7156/api/Reservation/GetAllProfileReservations", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          setData(data);
+        } catch (error) {
+          console.error('Unknown error occurred:', error);
+        }
+      };
+      fetchData();
+  }, []);
+  
 
   return (
     <>
@@ -337,3 +378,7 @@ function ReservationOverview() {
   );
 }
 export default ReservationOverview;
+function jwt_decode(token: any) {
+  throw new Error("Function not implemented.");
+}
+
