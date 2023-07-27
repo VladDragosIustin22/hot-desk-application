@@ -36,7 +36,7 @@ namespace HotDeskApplicationApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Desks");
+                    b.ToTable("Desks", (string)null);
                 });
 
             modelBuilder.Entity("HotDeskApplicationApi.Models.Floor", b =>
@@ -53,7 +53,7 @@ namespace HotDeskApplicationApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Floors");
+                    b.ToTable("Floors", (string)null);
                 });
 
             modelBuilder.Entity("HotDeskApplicationApi.Models.Office", b =>
@@ -67,7 +67,7 @@ namespace HotDeskApplicationApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Offices");
+                    b.ToTable("Offices", (string)null);
                 });
 
             modelBuilder.Entity("HotDeskApplicationApi.Models.Profile", b =>
@@ -97,7 +97,7 @@ namespace HotDeskApplicationApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Profile");
+                    b.ToTable("Profile", (string)null);
                 });
 
             modelBuilder.Entity("HotDeskApplicationApi.Models.Reservation", b =>
@@ -127,7 +127,7 @@ namespace HotDeskApplicationApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

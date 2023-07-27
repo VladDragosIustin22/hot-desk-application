@@ -89,6 +89,7 @@ namespace HotDeskApplicationApi.Migrations
                 {
                     ID = table.Column<Guid>(type: "uuid", nullable: false),
                     ProfileID = table.Column<Guid>(type: "uuid", nullable: false),
+                   // ProfileEmail = table.Column<string>(type: "string", nullable: false),
                     ArrivalTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LeavingTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     OfficeID = table.Column<Guid>(type: "uuid", nullable: false),
@@ -99,6 +100,7 @@ namespace HotDeskApplicationApi.Migrations
                 {
                     table.PrimaryKey("PK_Reservations", x => x.ID);
                 });
+           
         }
 
         /// <inheritdoc />

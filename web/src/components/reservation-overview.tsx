@@ -21,6 +21,9 @@ import EditReservation from "./edit-reservation";
 import myProfile from "./my-profile";
 import Logout from "./logout";
 import MyProfile from "./my-profile";
+import jwt_decode from 'jwt-decode';
+import { Reservation } from '../models/reservation';
+
 
 const settings = ["My Profile", "Settings"];
 
@@ -82,6 +85,30 @@ function ReservationOverview() {
     setOpenEdit(false);
     navigate("/reservationoverview");
   };
+
+
+ 
+ 
+
+const [reservation, setReservation] = useState([]);
+const [Email, setEmail] = useState();
+const [token, setToken] = useState("");
+
+  useEffect(() =>{
+    fetch(` https://localhost:7156/api/Reservation/GetAllProfileReservations/ ${Email}`)
+    .then((response) =>response.json())
+    .then(res => {
+      const token = res.token;
+      const reservationEmail = jwt_decode(token);
+      localStorage.setItem('token', token );
+      setToken(token); 
+      setReservation(res);
+    }).catch(err =>{
+      alert("Error!");
+    })
+  },[]); 
+  
+
 
   return (
     <>
@@ -228,8 +255,10 @@ function ReservationOverview() {
           </Box>
         </Toolbar>
       </AppBar>
+  {/*  {reservation.map((reservations: Reservation, i: number) =>( */}
       <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
-        <Stack
+        <Stack 
+        //key ={reservations.profileEmail}
           direction="row"
           spacing={2}
           divider={<Divider orientation="vertical" flexItem />}
@@ -254,7 +283,7 @@ function ReservationOverview() {
           <Stack direction="row" alignItems="center" spacing={15}>
             <Stack direction="column" gap={2}>
               <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                Date: 05.07.2023
+             {/*}  {reservations.arrivalTime} */} 8:45
               </Typography>
               <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
                 Office: Brizei
@@ -333,6 +362,7 @@ function ReservationOverview() {
           </Stack>
         </Stack>
       </Box>
+   {/*}   ) )} */}
     </>
   );
 }

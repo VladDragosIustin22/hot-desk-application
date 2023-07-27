@@ -11,6 +11,11 @@ namespace HotDeskApplicationApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+
+            migrationBuilder.DropTable(
+                name: "Reservations");
+
+
             migrationBuilder.CreateTable(
                name: "Reservations",
                columns: table => new

@@ -1,6 +1,6 @@
 export interface Reservation {
     id: string;
-    profileID: string;
+    profileEmail: string;
     arrivalTime: string;
     leavingTime: string;
     officeID: string;
