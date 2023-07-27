@@ -18,13 +18,14 @@ import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EditReservation from "./edit-reservation";
-import myProfile from "./my-profile";
 import Logout from "./logout";
 import MyProfile from "./my-profile";
-import { Reservation } from "../models/reservation";
-// import jwt_decode from 'jwt-decode';
-import jwt from 'jwt-decode';
-const settings = ["My Profile", "Settings"];
+import ReserveDesk from "./reserve-a-desk";
+import Settings from "./settings";
+import { grey, orange } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
   position: "absolute" as "absolute",
@@ -33,9 +34,22 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 1000,
   bgcolor: "background.paper",
-  border: "2px solid #000",
   boxShadow: 24,
+  borderRadius: 1,
   p: 4,
+};
+
+const styleSettings = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  height: 600,
+  bgcolor: "background.paper",
+  boxShadow: 5,
+  borderRadius: 1,
+  p: 3,
 };
 
 function ReservationOverview() {
@@ -45,7 +59,7 @@ function ReservationOverview() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-
+  // pt deschiderea meniului
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -85,137 +99,161 @@ function ReservationOverview() {
     navigate("/reservationoverview");
   };
 
-  const [data, setData] = useState("");
-
-  const data1 = localStorage.getItem("authToken");
-  if (data1 !== null){
-        const decoded = jwt(data1);
-        {console.log(decoded)}
+  const [openReservation, setOpenReservation] = React.useState(false);
+  const handleOpenReservation = () => {
+    setOpenReservation(true);
+  };
+  const handleCloseReservation = () => {
+    setOpenReservation(false);
   };
 
-  {console.log(data)};
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
+  const [openMyProfile, setOpenMyProfile] = React.useState(false);
+  const handleOpenMyProfile = () => {
+    setOpenMyProfile(true);
+  };
+  const handleCloseMyProfile = () => {
+    setOpenMyProfile(false);
+  };
 
-        if (!token) {
-          throw new Error("Authentication token not found in localStorage");
-        }
-          const response = await fetch("https://localhost:7156/api/Reservation/GetAllProfileReservations", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+  const [openSettings, setOpenSettingsModal] = React.useState(false);
+  const handleOpenSettingsModal = () => {
+    setOpenSettingsModal(true);
+  };
+  const handleCloseSettingsModal = () => {
+    setOpenSettingsModal(false);
+  };
 
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-
-          const data = await response.json();
-          setData(data);
-        } catch (error) {
-          console.error('Unknown error occurred:', error);
-        }
-      };
-      fetchData();
-  }, []);
-  
+  const handleLogout = () => {
+    navigate("/login");
+  };
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: grey[700],
+      },
+      secondary: {
+        main: orange[500],
+      },
+    },
+    typography: {
+      fontSize: 15,
+    },
+  });
 
   return (
     <>
-      <AppBar position="fixed">
-        <Modal
-          open={openEdit}
-          onClose={handleCloseEdit}
-          aria-labelledby="modal-modal-title"
-        >
-          <Box sx={style}>
-            <EditReservation />
-          </Box>
-        </Modal>
-
-        <Toolbar disableGutters>
-          <TodayIcon
-            sx={{
-              display: { xs: "none", md: "flex" },
-              mr: 1,
-              fontSize: 40,
-              marginLeft: 5,
-            }}
-          />{" "}
-          <Typography
-            variant="h4"
-            noWrap
-            component="a"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "roboto",
-              fontWeight: 700,
-              letterSpacing: ".1rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
+      <ThemeProvider theme={theme}>
+        <AppBar position="fixed">
+          <Modal
+            open={openEdit}
+            onClose={handleCloseEdit}
+            aria-labelledby="modal-modal-title"
           >
-            My Reservations
-          </Typography>
-          <TodayIcon
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1, fontSize: 40 }}
-          />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "roboto",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            My Reservations
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}></Box>
-          <Box sx={{ flexGrow: 0, marginRight: 10 }}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <MoreVertIcon sx={{ fontSize: 30 }}></MoreVertIcon>
-                </IconButton>
-              </Tooltip>
+            <Box sx={style}>
+              <EditReservation />
+            </Box>
+          </Modal>
 
-              <Avatar
-                alt="User Name"
-                src="https://mui.com/static/images/avatar/1.jpg"
-                sx={{ marginLeft: 5, marginRight: -6 }}
-              />
-
-              <Typography
-                variant="h6"
-                noWrap
-                sx={{
-                  mr: 2,
-                  display: { xs: "none", md: "flex" },
-                  fontFamily: "roboto",
-                  fontWeight: 700,
-                  letterSpacing: ".0rem",
-                  color: "#FFFFFF",
-                  textDecoration: "none",
-                  marginLeft: 2,
-                  marginTop: 0,
-                  padding: 1,
-                }}
-              >
-                User Name
-              </Typography>
-            </Stack>
+          <Toolbar disableGutters>
+            <TodayIcon
+              sx={{
+                display: { xs: "none", md: "flex" },
+                mr: 1,
+                fontSize: 40,
+                marginLeft: 5,
+              }}
+            />{" "}
+            <Typography
+              variant="h4"
+              noWrap
+              component="a"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "roboto",
+                fontWeight: 700,
+                letterSpacing: ".1rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              My Reservations
+            </Typography>
+            <TodayIcon
+              sx={{ display: { xs: "flex", md: "none" }, mr: 1, fontSize: 40 }}
+            />
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              sx={{
+                mr: 2,
+                display: { xs: "flex", md: "none" },
+                flexGrow: 1,
+                fontFamily: "roboto",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              My Reservations
+            </Typography>
+            <Box
+              sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}
+            ></Box>
+            <Box sx={{ flexGrow: 0, marginRight: 10 }}>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <MoreVertIcon
+                      sx={{ fontSize: 30, color: "white" }}
+                    ></MoreVertIcon>
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            </Box>
+            <Modal
+              open={openSettings}
+              onClose={handleCloseSettingsModal}
+              aria-labelledby="modal-modal-title"
+            >
+              <Box sx={styleSettings}>
+                <Settings />
+              </Box>
+            </Modal>
+            <Modal
+              open={openMyProfile}
+              onClose={handleCloseMyProfile}
+              aria-labelledby="modal-modal-title"
+            >
+              <Box sx={styleSettings}>
+                <MyProfile />
+              </Box>
+            </Modal>
+            <Avatar
+              alt="User Name"
+              src="/static/images/avatar/1.jpg"
+              sx={{ marginLeft: -9, marginRight: -1 }}
+            />
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "roboto",
+                fontWeight: 700,
+                letterSpacing: ".0rem",
+                color: "#FFFFFF",
+                textDecoration: "none",
+                marginLeft: 2,
+                marginTop: 0,
+                padding: 1,
+              }}
+            >
+              User Name
+            </Typography>
             <Box
               margin={1}
               display="flex"
@@ -228,17 +266,37 @@ function ReservationOverview() {
                 position: "absolute",
               }}
             >
-              <Button sx={{ mt: 3, mb: 2, backgroundColor: "#EC7329" }}>
-                <Link
-                  style={{ textDecoration: "none" }}
-                  to={"/reserve-a-desk"}
-                  color="#FFFFFF"
-                >
-                  Make a reservation
-                </Link>
+              <Button
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  backgroundColor: "#EC7329",
+                  textDecoration: "none",
+                  color: "white",
+                }}
+                onClick={handleOpenReservation}
+              >
+                Make a reservation
               </Button>
+              <Modal
+                open={openReservation}
+                onClose={handleCloseReservation}
+                aria-labelledby="modal-modal-title"
+              >
+                <Box sx={style}>
+                  <ReserveDesk />
+                </Box>
+              </Modal>
             </Box>
-
+            <Modal
+              open={openSettings}
+              onClose={handleCloseSettingsModal}
+              aria-labelledby="modal-modal-title"
+            >
+              <Box sx={styleSettings}>
+                <Settings />
+              </Box>
+            </Modal>
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"
@@ -256,129 +314,132 @@ function ReservationOverview() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem
+                  key={setting}
+                  onClick={
+                    setting === "Settings"
+                      ? handleOpenSettingsModal
+                      : setting === "Logout"
+                      ? handleLogout
+                      : setting === "My Profile"
+                      ? handleOpenMyProfile
+                      : handleCloseUserMenu
+                  }
+                >
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
-              <MenuItem>
-                <Link onClick={Logout} color="black" to={"/login"} style={{ textDecoration: "none" }} >
-                  Logout
-                </Link>
-              </MenuItem>
             </Menu>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
-        <Stack
-          direction="row"
-          spacing={2}
-          divider={<Divider orientation="vertical" flexItem />}
-        >
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
-            <Stack direction="column">
-              <Typography variant="h6" marginRight={60} alignItems="center">
-                Vlad Dragos
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: 13,
-                  marginRight: 72,
-                }}
-              >
-                Developer
-              </Typography>
-            </Stack>
-          </Stack>
-          <Stack direction="row" alignItems="center" spacing={15}>
-            <Stack direction="column" gap={2}>
-              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                Date: 05.07.2023
-              </Typography>
-              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                Office: Brizei
-              </Typography>
-            </Stack>
-            <Stack direction="column" gap={2}>
-              <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
-                Interval: All day
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: 15,
-                  marginTop: 2,
-                }}
-              >
-                Floor: 1
-              </Typography>
-            </Stack>
-            <Stack direction="column" alignItems="center" gap={2}>
-              <Typography
-                variant="h6"
-                sx={{ fontSize: 15, marginTop: 2 }}
-              ></Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: 15,
-                  marginTop: 5,
-                }}
-              >
-                Desk: 2
-              </Typography>
-            </Stack>
-            <Stack direction="column" alignItems="center" gap={3}>
-              <Button onClick={handleOpenEdit}>
-                <CreateIcon
-                  sx={{
-                    marginTop: 2,
-                    fontSize: 18,
-                  }}
-                ></CreateIcon>
-              </Button>
+          </Toolbar>
+        </AppBar>
 
-              <Button onClick={handleOpenDelete}>
-                <DeleteIcon
+        <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            divider={<Divider orientation="vertical" flexItem />}
+          >
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+              <Stack direction="column">
+                <Typography variant="h6" marginRight={60} alignItems="center">
+                  Vlad Dragos
+                </Typography>
+                <Typography
+                  variant="h6"
                   sx={{
-                    fontSize: 18,
+                    fontSize: 13,
+                    marginRight: 72,
                   }}
-                ></DeleteIcon>
-              </Button>
-              <Modal
-                open={openDelete}
-                onClose={handleCloseDelete}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-              >
-                <Box sx={style}>
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h5"
-                    component="h2"
-                  >
-                    My Reservations
-                  </Typography>
-                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Are you sure you want to delete this record?
-                  </Typography>
-                  <Box sx={{ marginTop: 2, marginLeft: 105 }}>
-                    <Button onClick={handleNo}>Cancel</Button>
-                    <Button onClick={handleYes}>Confirm</Button>
+                >
+                  Developer
+                </Typography>
+              </Stack>
+            </Stack>
+            <Stack direction="row" alignItems="center" spacing={15}>
+              <Stack direction="column" gap={2}>
+                <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
+                  Date: 05.07.2023
+                </Typography>
+                <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
+                  Office: Brizei
+                </Typography>
+              </Stack>
+              <Stack direction="column" gap={2}>
+                <Typography variant="h6" sx={{ fontSize: 15, marginTop: 2 }}>
+                  Interval: All day
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: 15,
+                    marginTop: 2,
+                  }}
+                >
+                  Floor: 1
+                </Typography>
+              </Stack>
+              <Stack direction="column" alignItems="center" gap={2}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontSize: 15, marginTop: 2 }}
+                ></Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: 15,
+                    marginTop: 5,
+                  }}
+                >
+                  Desk: 2
+                </Typography>
+              </Stack>
+              <Stack direction="column" alignItems="center" gap={3}>
+                <Button onClick={handleOpenEdit}>
+                  <CreateIcon
+                    sx={{
+                      marginTop: 2,
+                      fontSize: 18,
+                    }}
+                  ></CreateIcon>
+                </Button>
+
+                <Button onClick={handleOpenDelete}>
+                  <DeleteIcon
+                    sx={{
+                      fontSize: 18,
+                    }}
+                  ></DeleteIcon>
+                </Button>
+                <Modal
+                  open={openDelete}
+                  onClose={handleCloseDelete}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style}>
+                    <Typography
+                      id="modal-modal-title"
+                      variant="h5"
+                      component="h2"
+                    >
+                      My Reservations
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                      Are you sure you want to delete this record?
+                    </Typography>
+                    <Box sx={{ marginTop: 2, marginLeft: 100 }}>
+                      <Button onClick={handleNo}>Cancel</Button>
+                      <Button onClick={handleYes}>Confirm</Button>
+                    </Box>
                   </Box>
-                </Box>
-              </Modal>
+                </Modal>
+              </Stack>
             </Stack>
           </Stack>
-        </Stack>
-      </Box>
+        </Box>
+      </ThemeProvider>
     </>
   );
 }
 export default ReservationOverview;
-function jwt_decode(token: any) {
-  throw new Error("Function not implemented.");
-}
-

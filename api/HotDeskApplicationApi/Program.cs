@@ -18,7 +18,8 @@ namespace HotDeskApplicationApi
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
-                {   
+                {
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -39,7 +40,7 @@ namespace HotDeskApplicationApi
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
-
+            
             builder.Services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -82,7 +83,7 @@ namespace HotDeskApplicationApi
                 var securityScheme = new OpenApiSecurityScheme
                 {
                     Name = "JWT Authentication",
-                    Description = "Enter JWT Bearer token only",
+                    Description = "Enter JWT Bearer token **_only_**",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
@@ -99,7 +100,6 @@ namespace HotDeskApplicationApi
                     { securityScheme, new string[] { } }
                 });
             });
-
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())

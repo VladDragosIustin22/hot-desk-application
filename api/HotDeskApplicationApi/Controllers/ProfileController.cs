@@ -1,12 +1,13 @@
 ﻿using HotDeskApplicationApi.Data;
 using HotDeskApplicationApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotDeskApplicationApi.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProfileController : ControllerBase
@@ -19,14 +20,12 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<Profile[]> ListProfiles()
         {
             return await hotDeskDbContext.Profile.ToArrayAsync();
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<Profile> GetProfile(Guid id)
         {
             var profile = await hotDeskDbContext.Profile.FindAsync(id);
@@ -35,7 +34,6 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> PutProfile(Guid id, Profile profile)
         {
             hotDeskDbContext.Entry(profile).State = EntityState.Modified;
@@ -60,7 +58,6 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult<Profile>> PostProfile(Profile profile)
         {
             if (hotDeskDbContext.Profile == null)
@@ -76,7 +73,6 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> DeleteProfile(Guid id)
         {
             var profile = await hotDeskDbContext.Profile.FindAsync(id);
