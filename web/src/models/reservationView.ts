@@ -4,7 +4,7 @@ export interface ReservationView {
     officaName : string;
     floorName : string;
     deskName :string;
-    Avatar: Uint8Array;
+    avatar: Uint8Array;
     profileRole : string;
     profileName : string;
   }
