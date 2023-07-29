@@ -1,4 +1,5 @@
 ﻿using System;
+using HotDeskApplicationApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,8 @@ namespace HotDeskApplicationApi.Data
                 .HasKey(d => d.ID);
 
             base.OnModelCreating(modelBuilder);
+
+           
         }
     }
 }
