@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-
+import React from "react";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 const theme = createTheme({
   palette: {
@@ -111,6 +111,8 @@ export default function MyProfile() {
             <TextField
               label="E-mail"
               defaultValue="E-mail"
+              variant="outlined"
+              disabled
               InputProps={{
                 style: {
                   width: "37ch",
