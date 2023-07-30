@@ -43,11 +43,12 @@ function Settings() {
   const handleOfficeChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
-    setLanguage(event.target.value);
+    setOffice(event.target.value);
   };
 
   const [emailNotifications, setEmailNotifications] =
     React.useState<boolean>(false);
+
   const handleEmailNotificationsToggle = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -56,6 +57,7 @@ function Settings() {
 
   const [phoneNotifications, setPhoneNotifications] =
     React.useState<boolean>(false);
+
   const handlePhoneNotificationsToggle = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -138,8 +140,8 @@ function Settings() {
         <FormControl sx={{ width: "40ch", mb: 6, mt: -5 }}>
           <InputLabel id="select-language">Language</InputLabel>
           <Select
-            labelId="select-office"
-            id="select-office"
+            labelId="select-language"
+            id="select-language"
             value={language}
             label="Language"
             onChange={handleLanguageChange}
