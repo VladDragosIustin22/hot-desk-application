@@ -158,11 +158,7 @@ function ReservationOverview() {
     };
     fetchData();
   }, []);
-  {
-    reservationViews?.map((reservationView: ReservationView) =>
-      console.log("Ava " + reservationView.avatar)
-    );
-  }
+
   {
     console.log(reservationViews);
   }
@@ -376,7 +372,13 @@ function ReservationOverview() {
             </Menu>
           </Toolbar>
         </AppBar>
-        <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            marginTop: 35,
+            marginLeft: 20,
+          }}
+        >
           {reservationViews?.map((reservationView: ReservationView) => (
             <>
               <Box marginTop={6}>
@@ -408,7 +410,7 @@ function ReservationOverview() {
                       </Typography>
                     </Stack>
                   </Stack>
-                  <Stack direction="row" alignItems="center" spacing={2}>
+                  <Stack direction="row" alignItems="center" spacing={8}>
                     <Stack direction="column" gap={2}>
                       <Typography
                         variant="h6"
@@ -432,10 +434,10 @@ function ReservationOverview() {
                         sx={{ fontSize: 15, marginTop: 2 }}
                       >
                         Interval:
-                        {new Date(reservationView.arrivalTime).getHours()}.
+                        {new Date(reservationView.arrivalTime).getHours()}:
                         {new Date(reservationView.arrivalTime).getMinutes()} -
-                        {new Date(reservationView.leavingTime).getHours()}.
-                        {new Date(reservationView.leavingTime).getMinutes()}.
+                        {new Date(reservationView.leavingTime).getHours()}:
+                        {new Date(reservationView.leavingTime).getMinutes()}
                       </Typography>
                       <Typography
                         variant="h6"
@@ -462,7 +464,7 @@ function ReservationOverview() {
                         Desk: {reservationView.deskName}
                       </Typography>
                     </Stack>
-                    <Stack direction="column" alignItems="center" gap={3}>
+                    <Stack direction="column" alignItems="center" gap={2}>
                       <Button onClick={handleOpenEdit}>
                         <CreateIcon
                           sx={{
