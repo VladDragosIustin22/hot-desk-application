@@ -408,7 +408,7 @@ function ReservationOverview() {
                       </Typography>
                     </Stack>
                   </Stack>
-                  <Stack direction="row" alignItems="center" spacing={2}>
+                  <Stack direction="row" alignItems="center" spacing={10}>
                     <Stack direction="column" gap={2}>
                       <Typography
                         variant="h6"
@@ -432,9 +432,9 @@ function ReservationOverview() {
                         sx={{ fontSize: 15, marginTop: 2 }}
                       >
                         Interval:
-                        {new Date(reservationView.arrivalTime).getHours()}.
-                        {new Date(reservationView.arrivalTime).getMinutes()} -
-                        {new Date(reservationView.leavingTime).getHours()}.
+                        {new Date(reservationView.arrivalTime).getHours()}:
+                        {new Date(reservationView.arrivalTime).getMinutes()}-
+                        {new Date(reservationView.leavingTime).getHours()}:
                         {new Date(reservationView.leavingTime).getMinutes()}.
                       </Typography>
                       <Typography
