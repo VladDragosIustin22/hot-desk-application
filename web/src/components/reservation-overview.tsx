@@ -26,7 +26,6 @@ import { blue, grey, orange } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ReservationView } from "../models/reservationView";
 
-
 const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
@@ -128,9 +127,6 @@ function ReservationOverview() {
   const [reservationViews, setReservationViews] = useState<
     ReservationView[] | null
   >(null);
-  const [reservationViews, setReservationViews] = useState<
-    ReservationView[] | null
-  >(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -143,15 +139,10 @@ function ReservationOverview() {
         const response = await fetch(
           "https://localhost:7156/api/Reservation/GetAllProfileReservations",
           {
-        const response = await fetch(
-          "https://localhost:7156/api/Reservation/GetAllProfileReservations",
-          {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
-        );
           }
         );
 
@@ -159,13 +150,6 @@ function ReservationOverview() {
           throw new Error("Network response was not ok");
         }
 
-        const data = await response.json();
-        setReservationViews(data);
-      } catch (error) {
-        console.error("Unknown error occurred:", error);
-      }
-    };
-    fetchData();
         const data = await response.json();
         setReservationViews(data);
       } catch (error) {
@@ -338,7 +322,6 @@ function ReservationOverview() {
                 Make a reservation
               </Button>
 
-
               <Modal
                 open={openReservation}
                 onClose={handleCloseReservation}
@@ -393,13 +376,7 @@ function ReservationOverview() {
             </Menu>
           </Toolbar>
         </AppBar>
-        <Box
-          sx={{
-            flexGrow: 1,
-            marginTop: 35,
-            marginLeft: 20,
-          }}
-        >
+        <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
           {reservationViews?.map((reservationView: ReservationView) => (
             <>
               <Box marginTop={6}>
@@ -431,7 +408,7 @@ function ReservationOverview() {
                       </Typography>
                     </Stack>
                   </Stack>
-                  <Stack direction="row" alignItems="center" spacing={8}>
+                  <Stack direction="row" alignItems="center" spacing={2}>
                     <Stack direction="column" gap={2}>
                       <Typography
                         variant="h6"
@@ -455,10 +432,10 @@ function ReservationOverview() {
                         sx={{ fontSize: 15, marginTop: 2 }}
                       >
                         Interval:
-                        {new Date(reservationView.arrivalTime).getHours()}:
+                        {new Date(reservationView.arrivalTime).getHours()}.
                         {new Date(reservationView.arrivalTime).getMinutes()} -
-                        {new Date(reservationView.leavingTime).getHours()}:
-                        {new Date(reservationView.leavingTime).getMinutes()}
+                        {new Date(reservationView.leavingTime).getHours()}.
+                        {new Date(reservationView.leavingTime).getMinutes()}.
                       </Typography>
                       <Typography
                         variant="h6"
@@ -485,7 +462,7 @@ function ReservationOverview() {
                         Desk: {reservationView.deskName}
                       </Typography>
                     </Stack>
-                    <Stack direction="column" alignItems="center" gap={2}>
+                    <Stack direction="column" alignItems="center" gap={3}>
                       <Button onClick={handleOpenEdit}>
                         <CreateIcon
                           sx={{
@@ -495,44 +472,6 @@ function ReservationOverview() {
                         ></CreateIcon>
                       </Button>
 
-                      <Button onClick={handleOpenDelete}>
-                        <DeleteIcon
-                          sx={{
-                            fontSize: 18,
-                          }}
-                        ></DeleteIcon>
-                      </Button>
-                      <Modal
-                        open={openDelete}
-                        onClose={handleCloseDelete}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                      >
-                        <Box sx={style}>
-                          <Typography
-                            id="modal-modal-title"
-                            variant="h5"
-                            component="h2"
-                          >
-                            My Reservations
-                          </Typography>
-                          <Typography
-                            id="modal-modal-description"
-                            sx={{ mt: 2 }}
-                          >
-                            Are you sure you want to delete this record?
-                          </Typography>
-                          <Box sx={{ marginTop: 2, marginLeft: 100 }}>
-                            <Button onClick={handleNo}>Cancel</Button>
-                            <Button onClick={handleYes}>Confirm</Button>
-                          </Box>
-                        </Box>
-                      </Modal>
-                    </Stack>
-                  </Stack>
-                </Stack>
-              </Box>
-            </>
                       <Button onClick={handleOpenDelete}>
                         <DeleteIcon
                           sx={{
