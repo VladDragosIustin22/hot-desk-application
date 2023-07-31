@@ -26,6 +26,7 @@ import { blue, grey, orange } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ReservationView } from "../models/reservationView";
 
+
 const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
@@ -127,6 +128,9 @@ function ReservationOverview() {
   const [reservationViews, setReservationViews] = useState<
     ReservationView[] | null
   >(null);
+  const [reservationViews, setReservationViews] = useState<
+    ReservationView[] | null
+  >(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,10 +143,15 @@ function ReservationOverview() {
         const response = await fetch(
           "https://localhost:7156/api/Reservation/GetAllProfileReservations",
           {
+        const response = await fetch(
+          "https://localhost:7156/api/Reservation/GetAllProfileReservations",
+          {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
             },
+          }
+        );
           }
         );
 
@@ -150,6 +159,13 @@ function ReservationOverview() {
           throw new Error("Network response was not ok");
         }
 
+        const data = await response.json();
+        setReservationViews(data);
+      } catch (error) {
+        console.error("Unknown error occurred:", error);
+      }
+    };
+    fetchData();
         const data = await response.json();
         setReservationViews(data);
       } catch (error) {
@@ -322,6 +338,7 @@ function ReservationOverview() {
                 Make a reservation
               </Button>
 
+
               <Modal
                 open={openReservation}
                 onClose={handleCloseReservation}
@@ -478,6 +495,44 @@ function ReservationOverview() {
                         ></CreateIcon>
                       </Button>
 
+                      <Button onClick={handleOpenDelete}>
+                        <DeleteIcon
+                          sx={{
+                            fontSize: 18,
+                          }}
+                        ></DeleteIcon>
+                      </Button>
+                      <Modal
+                        open={openDelete}
+                        onClose={handleCloseDelete}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                      >
+                        <Box sx={style}>
+                          <Typography
+                            id="modal-modal-title"
+                            variant="h5"
+                            component="h2"
+                          >
+                            My Reservations
+                          </Typography>
+                          <Typography
+                            id="modal-modal-description"
+                            sx={{ mt: 2 }}
+                          >
+                            Are you sure you want to delete this record?
+                          </Typography>
+                          <Box sx={{ marginTop: 2, marginLeft: 100 }}>
+                            <Button onClick={handleNo}>Cancel</Button>
+                            <Button onClick={handleYes}>Confirm</Button>
+                          </Box>
+                        </Box>
+                      </Modal>
+                    </Stack>
+                  </Stack>
+                </Stack>
+              </Box>
+            </>
                       <Button onClick={handleOpenDelete}>
                         <DeleteIcon
                           sx={{
