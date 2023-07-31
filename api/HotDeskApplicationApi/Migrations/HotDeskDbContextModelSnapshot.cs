@@ -34,6 +34,9 @@ namespace HotDeskApplicationApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("OfficeID")
+                        .HasColumnType("uuid");
+
                     b.HasKey("ID");
 
                     b.ToTable("Desks");
@@ -41,117 +44,136 @@ namespace HotDeskApplicationApi.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("f1890e2c-9f87-49f2-9358-4fc8473f6859"),
-                            FloorID = new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"),
-                            Name = "PP1"
+                            ID = new Guid("2803fdf2-9f05-4fa5-86e1-7605893f6dd5"),
+                            FloorID = new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"),
+                            Name = "PP1",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("ab3765a1-dde6-44ba-97a2-cf9a9a8e79a9"),
-                            FloorID = new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"),
-                            Name = "PP2"
+                            ID = new Guid("96fa07a0-adf0-48ea-a2eb-01d5d34b0284"),
+                            FloorID = new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"),
+                            Name = "PP2",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("f7bcc4f7-8b8e-4d34-aca4-ca0fdd4b7348"),
-                            FloorID = new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"),
-                            Name = "PP3"
+                            ID = new Guid("2264edff-53ee-40dc-99d4-fbf19af30993"),
+                            FloorID = new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"),
+                            Name = "PP3",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("7f8b59bf-ac5a-4040-b5e5-9eda3fb2a479"),
-                            FloorID = new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"),
-                            Name = "PP4"
+                            ID = new Guid("65ce6d9b-9c61-4cc3-965d-ce5ee6727c8b"),
+                            FloorID = new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"),
+                            Name = "PP4",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("098b1240-a79f-4d15-88fe-ea86ffb7fb38"),
-                            FloorID = new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"),
-                            Name = "PP5"
+                            ID = new Guid("7661a08b-b64a-4587-8f69-cf18903ff4be"),
+                            FloorID = new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"),
+                            Name = "PP5",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("2129adbd-ccc5-49f6-b3ae-2a51caaf325b"),
-                            FloorID = new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"),
-                            Name = "PE11"
+                            ID = new Guid("b884a355-0968-440f-a15e-b617a3df61f4"),
+                            FloorID = new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"),
+                            Name = "PE11",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("c9a1288c-9e3c-42e8-98fa-e78cfd57cad3"),
-                            FloorID = new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"),
-                            Name = "PE12"
+                            ID = new Guid("2de9491c-be24-4a14-beef-794eaaa03473"),
+                            FloorID = new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"),
+                            Name = "PE12",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("e45b99b5-c5b9-4efe-8c35-9a79d4e3b72d"),
-                            FloorID = new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"),
-                            Name = "PE13"
+                            ID = new Guid("7474e87e-fbb5-4186-902d-64f223316ea2"),
+                            FloorID = new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"),
+                            Name = "PE13",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("6ee58175-299f-41ed-8b8f-045fc52b8838"),
-                            FloorID = new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"),
-                            Name = "PE14"
+                            ID = new Guid("6630a06e-0b86-472e-8384-580144d2a06a"),
+                            FloorID = new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"),
+                            Name = "PE14",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("e2b2a7fa-b035-456d-a327-1812145f734b"),
-                            FloorID = new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"),
-                            Name = "PE21"
+                            ID = new Guid("b9469428-42b3-42f6-911b-8e7eb28fe8aa"),
+                            FloorID = new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"),
+                            Name = "PE21",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("388cf175-973f-4ed0-8e57-cc169156ed90"),
-                            FloorID = new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"),
-                            Name = "PE22"
+                            ID = new Guid("b3222f2b-1454-4a06-880c-11f464a8bdca"),
+                            FloorID = new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"),
+                            Name = "PE22",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("67c0077b-388a-4b7f-b1ff-f7eeceaefcf6"),
-                            FloorID = new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"),
-                            Name = "PE23"
+                            ID = new Guid("fda0778f-3b18-42e8-a2c5-f597118a8020"),
+                            FloorID = new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"),
+                            Name = "PE23",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("10f4ee17-a519-49f3-b77e-4e94fdd462ee"),
-                            FloorID = new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"),
-                            Name = "PE24"
+                            ID = new Guid("e3625eaa-eefb-4a97-885a-194d18ce91e1"),
+                            FloorID = new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"),
+                            Name = "PE24",
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("0d031233-488d-42f3-bc5a-5b4b0e31d959"),
-                            FloorID = new Guid("57b3201b-0fe4-4b5b-8544-e5044173ed2a"),
-                            Name = "BE13"
+                            ID = new Guid("fb45eca2-53f7-4caa-b811-658fbf1b4be2"),
+                            FloorID = new Guid("ffe7527f-b3c3-480f-8c50-6538fbf832ed"),
+                            Name = "BE13",
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         },
                         new
                         {
-                            ID = new Guid("7bad3dd6-41b6-42f9-82a0-59e00f12e25a"),
-                            FloorID = new Guid("57b3201b-0fe4-4b5b-8544-e5044173ed2a"),
-                            Name = "BE14"
+                            ID = new Guid("fc8f5007-277c-4836-a7f5-ef88b0028de6"),
+                            FloorID = new Guid("ffe7527f-b3c3-480f-8c50-6538fbf832ed"),
+                            Name = "BE14",
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         },
                         new
                         {
-                            ID = new Guid("d43023e1-b793-4999-949d-1ee7fc9258e2"),
-                            FloorID = new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"),
-                            Name = "BE21"
+                            ID = new Guid("893c7450-576b-4e75-b89c-aa8f2b55f360"),
+                            FloorID = new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"),
+                            Name = "BE21",
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         },
                         new
                         {
-                            ID = new Guid("5d857fa8-b520-4dc7-b9cf-bf3e825b8275"),
-                            FloorID = new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"),
-                            Name = "BE22"
+                            ID = new Guid("dadd6897-4a03-463a-8bcd-3f04d30e4630"),
+                            FloorID = new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"),
+                            Name = "BE22",
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         },
                         new
                         {
-                            ID = new Guid("381bd954-be9e-4ad2-9868-d5a12625e8ab"),
-                            FloorID = new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"),
-                            Name = "BE23"
+                            ID = new Guid("43268651-56fb-47fb-9b42-43ed0d5a28cd"),
+                            FloorID = new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"),
+                            Name = "BE23",
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         },
                         new
                         {
-                            ID = new Guid("c66fe525-fd35-4edd-9b20-5aa45eff8b01"),
-                            FloorID = new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"),
-                            Name = "BE24"
+                            ID = new Guid("cab137b2-5385-4b05-adc7-5c56c9d16076"),
+                            FloorID = new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"),
+                            Name = "BE24",
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         });
                 });
 
@@ -174,33 +196,33 @@ namespace HotDeskApplicationApi.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"),
+                            ID = new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"),
                             Name = "Ground Floor",
-                            OfficeID = new Guid("633fab52-a103-44a2-abf7-3639249d61fd")
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"),
+                            ID = new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"),
                             Name = "Floor 1",
-                            OfficeID = new Guid("633fab52-a103-44a2-abf7-3639249d61fd")
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"),
+                            ID = new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"),
                             Name = "Floor 2",
-                            OfficeID = new Guid("633fab52-a103-44a2-abf7-3639249d61fd")
+                            OfficeID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546")
                         },
                         new
                         {
-                            ID = new Guid("57b3201b-0fe4-4b5b-8544-e5044173ed2a"),
+                            ID = new Guid("ffe7527f-b3c3-480f-8c50-6538fbf832ed"),
                             Name = "Floor 1",
-                            OfficeID = new Guid("21e7299d-6887-4585-8550-cc5c9961b397")
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         },
                         new
                         {
-                            ID = new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"),
+                            ID = new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"),
                             Name = "Floor 2",
-                            OfficeID = new Guid("21e7299d-6887-4585-8550-cc5c9961b397")
+                            OfficeID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9")
                         });
                 });
 
@@ -220,12 +242,12 @@ namespace HotDeskApplicationApi.Migrations
                     b.HasData(
                         new
                         {
-                            ID = new Guid("633fab52-a103-44a2-abf7-3639249d61fd"),
+                            ID = new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546"),
                             Name = "Predeal"
                         },
                         new
                         {
-                            ID = new Guid("21e7299d-6887-4585-8550-cc5c9961b397"),
+                            ID = new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9"),
                             Name = "Brizei"
                         });
                 });

@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HotDeskApplicationApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,7 +59,8 @@ namespace HotDeskApplicationApi.Migrations
                 {
                     ID = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    FloorID = table.Column<Guid>(type: "uuid", nullable: false)
+                    FloorID = table.Column<Guid>(type: "uuid", nullable: false),
+                    OfficeID = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -233,28 +234,28 @@ namespace HotDeskApplicationApi.Migrations
 
             migrationBuilder.InsertData(
                 table: "Desks",
-                columns: new[] { "ID", "FloorID", "Name" },
+                columns: new[] { "ID", "FloorID", "Name", "OfficeID" },
                 values: new object[,]
                 {
-                    { new Guid("098b1240-a79f-4d15-88fe-ea86ffb7fb38"), new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"), "PP5" },
-                    { new Guid("0d031233-488d-42f3-bc5a-5b4b0e31d959"), new Guid("57b3201b-0fe4-4b5b-8544-e5044173ed2a"), "BE13" },
-                    { new Guid("10f4ee17-a519-49f3-b77e-4e94fdd462ee"), new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"), "PE24" },
-                    { new Guid("2129adbd-ccc5-49f6-b3ae-2a51caaf325b"), new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"), "PE11" },
-                    { new Guid("381bd954-be9e-4ad2-9868-d5a12625e8ab"), new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"), "BE23" },
-                    { new Guid("388cf175-973f-4ed0-8e57-cc169156ed90"), new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"), "PE22" },
-                    { new Guid("5d857fa8-b520-4dc7-b9cf-bf3e825b8275"), new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"), "BE22" },
-                    { new Guid("67c0077b-388a-4b7f-b1ff-f7eeceaefcf6"), new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"), "PE23" },
-                    { new Guid("6ee58175-299f-41ed-8b8f-045fc52b8838"), new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"), "PE14" },
-                    { new Guid("7bad3dd6-41b6-42f9-82a0-59e00f12e25a"), new Guid("57b3201b-0fe4-4b5b-8544-e5044173ed2a"), "BE14" },
-                    { new Guid("7f8b59bf-ac5a-4040-b5e5-9eda3fb2a479"), new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"), "PP4" },
-                    { new Guid("ab3765a1-dde6-44ba-97a2-cf9a9a8e79a9"), new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"), "PP2" },
-                    { new Guid("c66fe525-fd35-4edd-9b20-5aa45eff8b01"), new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"), "BE24" },
-                    { new Guid("c9a1288c-9e3c-42e8-98fa-e78cfd57cad3"), new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"), "PE12" },
-                    { new Guid("d43023e1-b793-4999-949d-1ee7fc9258e2"), new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"), "BE21" },
-                    { new Guid("e2b2a7fa-b035-456d-a327-1812145f734b"), new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"), "PE21" },
-                    { new Guid("e45b99b5-c5b9-4efe-8c35-9a79d4e3b72d"), new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"), "PE13" },
-                    { new Guid("f1890e2c-9f87-49f2-9358-4fc8473f6859"), new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"), "PP1" },
-                    { new Guid("f7bcc4f7-8b8e-4d34-aca4-ca0fdd4b7348"), new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"), "PP3" }
+                    { new Guid("2264edff-53ee-40dc-99d4-fbf19af30993"), new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"), "PP3", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("2803fdf2-9f05-4fa5-86e1-7605893f6dd5"), new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"), "PP1", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("2de9491c-be24-4a14-beef-794eaaa03473"), new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"), "PE12", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("43268651-56fb-47fb-9b42-43ed0d5a28cd"), new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"), "BE23", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") },
+                    { new Guid("65ce6d9b-9c61-4cc3-965d-ce5ee6727c8b"), new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"), "PP4", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("6630a06e-0b86-472e-8384-580144d2a06a"), new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"), "PE14", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("7474e87e-fbb5-4186-902d-64f223316ea2"), new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"), "PE13", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("7661a08b-b64a-4587-8f69-cf18903ff4be"), new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"), "PP5", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("893c7450-576b-4e75-b89c-aa8f2b55f360"), new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"), "BE21", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") },
+                    { new Guid("96fa07a0-adf0-48ea-a2eb-01d5d34b0284"), new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"), "PP2", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("b3222f2b-1454-4a06-880c-11f464a8bdca"), new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"), "PE22", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("b884a355-0968-440f-a15e-b617a3df61f4"), new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"), "PE11", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("b9469428-42b3-42f6-911b-8e7eb28fe8aa"), new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"), "PE21", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("cab137b2-5385-4b05-adc7-5c56c9d16076"), new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"), "BE24", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") },
+                    { new Guid("dadd6897-4a03-463a-8bcd-3f04d30e4630"), new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"), "BE22", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") },
+                    { new Guid("e3625eaa-eefb-4a97-885a-194d18ce91e1"), new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"), "PE24", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("fb45eca2-53f7-4caa-b811-658fbf1b4be2"), new Guid("ffe7527f-b3c3-480f-8c50-6538fbf832ed"), "BE13", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") },
+                    { new Guid("fc8f5007-277c-4836-a7f5-ef88b0028de6"), new Guid("ffe7527f-b3c3-480f-8c50-6538fbf832ed"), "BE14", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") },
+                    { new Guid("fda0778f-3b18-42e8-a2c5-f597118a8020"), new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"), "PE23", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") }
                 });
 
             migrationBuilder.InsertData(
@@ -262,11 +263,11 @@ namespace HotDeskApplicationApi.Migrations
                 columns: new[] { "ID", "Name", "OfficeID" },
                 values: new object[,]
                 {
-                    { new Guid("57b3201b-0fe4-4b5b-8544-e5044173ed2a"), "Floor 1", new Guid("21e7299d-6887-4585-8550-cc5c9961b397") },
-                    { new Guid("6ff878bc-c827-4d9e-b892-bde6ebf3a55d"), "Floor 2", new Guid("21e7299d-6887-4585-8550-cc5c9961b397") },
-                    { new Guid("944e1316-5d1d-4a82-9148-3805252af5c3"), "Ground Floor", new Guid("633fab52-a103-44a2-abf7-3639249d61fd") },
-                    { new Guid("adc20ba6-0036-4fd6-83ca-7d620e98f9bd"), "Floor 2", new Guid("633fab52-a103-44a2-abf7-3639249d61fd") },
-                    { new Guid("c3cd5ef0-6a31-4f41-b865-4af13ba23ee3"), "Floor 1", new Guid("633fab52-a103-44a2-abf7-3639249d61fd") }
+                    { new Guid("2a965ccf-1862-4cb7-9731-c376bf299611"), "Ground Floor", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("b417af8e-66e0-4f83-9f94-cbf06fe92824"), "Floor 1", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("da3e4963-e5c6-4db1-b0cd-a93f21154cd0"), "Floor 2", new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546") },
+                    { new Guid("ef7df01f-276d-4b64-ad3a-87fdcaaa7b24"), "Floor 2", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") },
+                    { new Guid("ffe7527f-b3c3-480f-8c50-6538fbf832ed"), "Floor 1", new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9") }
                 });
 
             migrationBuilder.InsertData(
@@ -274,8 +275,8 @@ namespace HotDeskApplicationApi.Migrations
                 columns: new[] { "ID", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("21e7299d-6887-4585-8550-cc5c9961b397"), "Brizei" },
-                    { new Guid("633fab52-a103-44a2-abf7-3639249d61fd"), "Predeal" }
+                    { new Guid("49a001b2-5cd5-41c8-b640-a77d2e17f546"), "Predeal" },
+                    { new Guid("e9d74e64-823f-4eb8-a9fb-18bc59a8e5e9"), "Brizei" }
                 });
 
             migrationBuilder.CreateIndex(
