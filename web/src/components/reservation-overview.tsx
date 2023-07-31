@@ -158,7 +158,11 @@ function ReservationOverview() {
     };
     fetchData();
   }, []);
-
+  {
+    reservationViews?.map((reservationView: ReservationView) =>
+      console.log("Ava " + reservationView.avatar)
+    );
+  }
   {
     console.log(reservationViews);
   }
