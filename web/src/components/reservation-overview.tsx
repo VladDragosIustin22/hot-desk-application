@@ -157,6 +157,7 @@ function ReservationOverview() {
   ) )}
   {console.log(reservationViews)};
   const handleLogout = () => {
+    {Logout}
     navigate("/login");
   };
   const theme = createTheme({
