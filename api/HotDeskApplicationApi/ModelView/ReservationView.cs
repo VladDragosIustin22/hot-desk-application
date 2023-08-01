@@ -1,7 +1,11 @@
-﻿namespace HotDeskApplicationApi.NewFolder2
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace HotDeskApplicationApi.NewFolder2
 {
+    [Keyless]
     public class RegistrationView
     {
+        public Guid ReservationID { get; set; }
         public DateTime ArrivalTime { get; set; }
         public DateTime LeavingTime { get; set; }
         public string? OfficaName { get; set; }

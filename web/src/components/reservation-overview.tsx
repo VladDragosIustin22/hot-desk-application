@@ -92,6 +92,7 @@ function ReservationOverview() {
     setOpenEdit(false);
     navigate("/reservationoverview");
   };
+  
   const handleYes = () => {
     setConfirmation(true);
     setOpenDelete(false);
@@ -152,10 +153,6 @@ function ReservationOverview() {
       };
       fetchData();
   }, []);
-  {reservationViews?.map((reservationView : ReservationView) =>(
-    console.log("Ava " + reservationView.avatar)
-  ) )}
-  {console.log(reservationViews)};
   const handleLogout = () => {
     navigate("/login");
   };
@@ -467,6 +464,7 @@ function ReservationOverview() {
                       My Reservations
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+
                       Are you sure you want to delete this record?
                     </Typography>
                     <Box sx={{ marginTop: 2, marginLeft: 100 }}>

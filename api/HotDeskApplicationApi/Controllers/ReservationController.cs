@@ -45,6 +45,7 @@ namespace HotDeskApplicationApi.Controllers
                 .Where(r => r.ProfileEmail == userProfile.EmailAddress)
                 .Select(r => new RegistrationView
                 {
+                    ReservationID = r.ID,
                     ArrivalTime = r.ArrivalTime,
                     LeavingTime = r.LeavingTime,
                     OfficaName = _dbContext.Offices.FirstOrDefault(o => o.ID == r.OfficeID).Name,
@@ -70,26 +71,14 @@ namespace HotDeskApplicationApi.Controllers
             return CreatedAtAction("GetReservation", new { id = reservation.ID }, reservation);
         }
 
-        [HttpGet("AvailableDesks")]
-        public async Task<Desk[]> CheckDeskAvailability(DateTime arrivalTime, DateTime leavingTime, Guid officeID, Guid floorID)
-        {
-
-            var reservedDeskIDs = await _dbContext.Reservations
-                .Where(r => r.OfficeID == officeID && r.FloorID == floorID && !(r.ArrivalTime >= leavingTime || r.LeavingTime <= arrivalTime))
-                .Select(r => r.DeskID)
-                .ToListAsync();
-
-
-            var availableDesks = await _dbContext.Desks
-                .Where(d => d.FloorID == floorID && !reservedDeskIDs.Contains(d.ID))
-                .ToArrayAsync();
-
-            return availableDesks;
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservation(Guid id)
         {
+            Framework.Identity.Identity identity = ControllerContext.GetIdentity();
+
+            Guid userID = identity.ID;
+
+            Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == userID);
 
             var reservation = await _dbContext.Reservations.FindAsync(id);
 
