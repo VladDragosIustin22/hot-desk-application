@@ -1,5 +1,7 @@
 ﻿using HotDeskApplicationApi.Data;
 using HotDeskApplicationApi.Models;
+using HotDeskApplicationApi.ModelView;
+using HotDeskApplicationApi.NewFolder2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -93,6 +95,30 @@ namespace HotDeskApplicationApi.Controllers
             return NoContent();
         }
 
+        [HttpGet("availableDesks")]
+        public IActionResult GetAvailableDesks(DateTime arrivalTime,DateTime leavingTime)
+        {
+            List<Guid> busyDeskIds = hotDeskDbContext.Reservations
+                     .Where(r =>  (r.ArrivalTime <= leavingTime && r.LeavingTime >= arrivalTime)
+                        || (r.ArrivalTime >= arrivalTime && r.ArrivalTime <= leavingTime))
+                     .Select(r => r.DeskID)
+                     .ToList();
+
+            List<ReservationSetUp> availableDesks = hotDeskDbContext.Desks
+                    .Where(d => !busyDeskIds.Contains(d.ID))
+                    .Select(d => new ReservationSetUp
+                    {
+                        DeskID = d.ID,
+                        DeskName = d.Name,
+                        FloorID = d.FloorID,
+                        FloorName = hotDeskDbContext.Floors.FirstOrDefault(f => f.ID == d.FloorID).Name,
+                        OfficeID = hotDeskDbContext.Floors.FirstOrDefault(f => f.ID == d.FloorID).OfficeID,
+                        OfficeName = hotDeskDbContext.Offices.FirstOrDefault(o => o.ID == hotDeskDbContext.Floors.FirstOrDefault(f => f.ID == d.FloorID).OfficeID).Name,
+                    })
+                    .ToList();
+           
+            return Ok(availableDesks);
+        }
         private bool DeskExists(Guid id)
         {
             return (hotDeskDbContext.Desks?.Any(e => e.ID == id)).GetValueOrDefault();

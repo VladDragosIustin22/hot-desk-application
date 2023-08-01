@@ -44,6 +44,7 @@ const theme = createTheme({
   },
 });
 
+
 function DatePickerValue({
   allDay,
   handleAllDayToggle,
@@ -84,17 +85,18 @@ function DatePickerValue({
     </FormControl>
   );
 }
-
 function BasicSelect({
   startTime,
   endTime,
   allDay,
+  value,
   isDateCompleted,
   isTimeCompleted,
 }: {
-  startTime : any,
+  startTime : any
   endTime : any,
   allDay : any,
+  value: any,
   isDateCompleted: boolean;
   isTimeCompleted: boolean;
 }) {
@@ -115,16 +117,30 @@ function BasicSelect({
   const desksUuids = desks?.map((desk: Desk) => uuidv4()) || [];
 
   useEffect(() => {
-    fetch(`https://localhost:7156/api/Office`)
-      .then((response) => response.json())
-      .then((data) => setOffices(data));
-  }, []);
+    const fetchData = async () => {
+      try {
+          const token = localStorage.getItem("authToken");
+          const response = await fetch(`https://localhost:7156/api/Office`,{
+                method : "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+    const data = await response.json();
+    setOffices(data)
+  } catch (error) {
+    console.error('Unknown error occurred:', error);
+  }
+};
+fetchData();
+}, []);
 
   const handleOfficeChange = (event: SelectChangeEvent<string>): void => {
     const officeID = event.target.value;
     setofficeID(event.target.value);
 
     fetch(`https://localhost:7156/api/Floor/byOffice/${officeID}`)
+
       .then((response) => response.json())
       .then((data) => setFloors(data));
     setAvailableFloors(false);
@@ -138,6 +154,13 @@ function BasicSelect({
       .then((response) => response.json())
       .then((data) => setDesks(data));
     setAvailableDesks(false);
+    const dateYMD = new Date(value);
+    const arrivalTimeHours = new Date(startTime).getHours();
+    const arrivalTimeMinutes = new Date(startTime).getMinutes();
+    const leavingTimeHours = new Date(endTime).getHours();
+    const leavingTimeMinutes = new Date(endTime).getMinutes();
+    // console.log()
+
   };
 
   const handleDeskChange = (event: SelectChangeEvent<string>): void => {
@@ -145,6 +168,12 @@ function BasicSelect({
     setDeskID(event.target.value);
   };
 
+
+  // console.log(arrivalTimeHours)
+  // console.log(arrivalTimeMinutes)
+  // console.log(leavingTimeHours)
+  // console.log(leavingTimeMinutes)
+  // console.log(dateYMD)
   return (
     <Box
       sx={{
@@ -458,6 +487,7 @@ function ReserveDesk() {
           </div>
         )}
         <BasicSelect
+          value = {value}
           startTime = {startTime}
           endTime ={endTime}
           allDay = {allDay}

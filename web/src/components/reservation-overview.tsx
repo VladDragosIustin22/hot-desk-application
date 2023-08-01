@@ -25,7 +25,6 @@ import Settings from "./settings";
 import { blue, grey, orange } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ReservationView } from "../models/reservationView";
-
 const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
@@ -93,6 +92,7 @@ function ReservationOverview() {
     setOpenEdit(false);
     navigate("/reservationoverview");
   };
+  
   const handleYes = () => {
     setConfirmation(true);
     setOpenDelete(false);
@@ -153,7 +153,6 @@ function ReservationOverview() {
       };
       fetchData();
   }, []);
-  {console.log(reservationViews)};
   const handleLogout = () => {
     navigate("/login");
   };
@@ -170,7 +169,7 @@ function ReservationOverview() {
       fontSize: 15,
     },
   });
-
+  // const base64String = Buffer.from(data).toString('base64');
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -364,8 +363,6 @@ function ReservationOverview() {
             </Menu>
           </Toolbar>
         </AppBar>
-
-        
         <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
         {reservationViews?.map((reservationView : ReservationView) => (
           <> 
@@ -376,7 +373,7 @@ function ReservationOverview() {
             divider={<Divider orientation="vertical" flexItem />}
           >
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Avatar />
+             < Avatar src ={`data:image/png;base64,${reservationView.avatar}`}/>
               <Stack direction="column">
                 <Typography variant="h6" marginRight={60} alignItems="center">
                   {reservationView.profileName}
@@ -467,6 +464,7 @@ function ReservationOverview() {
                       My Reservations
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+
                       Are you sure you want to delete this record?
                     </Typography>
                     <Box sx={{ marginTop: 2, marginLeft: 100 }}>
