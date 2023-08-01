@@ -28,6 +28,7 @@ import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
+import backgroundImage from "../models/background.jpg";
 const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
@@ -54,7 +55,19 @@ const styleSettings = {
   borderRadius: 1,
   p: 3,
 };
-
+const backgroundImageStyle: React.CSSProperties = {
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  opacity: 0.15,
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  zIndex: -1,
+};
 function ReservationOverview() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -180,7 +193,7 @@ function ReservationOverview() {
         main: grey[700],
       },
       secondary: {
-        main: orange[500],
+        main: orange[900],
       },
     },
     typography: {
@@ -190,6 +203,7 @@ function ReservationOverview() {
   // const base64String = Buffer.from(data).toString('base64');
   return (
     <>
+      <div style={backgroundImageStyle} />
       <ThemeProvider theme={theme}>
         <AppBar position="fixed">
           <Toolbar disableGutters>
@@ -208,8 +222,8 @@ function ReservationOverview() {
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
-                fontFamily: "roboto",
-                fontWeight: 700,
+                fontFamily: "Segoe UI",
+                fontWeight: 400,
                 letterSpacing: ".1rem",
                 color: "inherit",
                 textDecoration: "none",
@@ -228,7 +242,7 @@ function ReservationOverview() {
                 mr: 2,
                 display: { xs: "flex", md: "none" },
                 flexGrow: 1,
-                fontFamily: "roboto",
+                fontFamily: "Segoe UI",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
                 color: "inherit",
@@ -274,7 +288,7 @@ function ReservationOverview() {
                       sx={{ marginLeft: 44 }}
                       onClick={handleCloseSettingsModal}
                     >
-                      <CloseIcon />
+                      <CloseIcon sx={{ color: "white" }} />
                     </IconButton>
                   </Toolbar>
                 </AppBar>
@@ -304,7 +318,7 @@ function ReservationOverview() {
                       sx={{ marginLeft: 39 }}
                       onClick={handleCloseMyProfile}
                     >
-                      <CloseIcon />
+                      <CloseIcon sx={{ color: "white" }} />
                     </IconButton>
                   </Toolbar>
                 </AppBar>
@@ -322,8 +336,8 @@ function ReservationOverview() {
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
-                fontFamily: "roboto",
-                fontWeight: 700,
+                fontFamily: "Segoe UI",
+                fontWeight: 400,
                 letterSpacing: ".0rem",
                 color: "#FFFFFF",
                 textDecoration: "none",
@@ -346,18 +360,23 @@ function ReservationOverview() {
                 position: "absolute",
               }}
             >
-              <Button
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  backgroundColor: "#EC7329",
-                  textDecoration: "none",
-                  color: "white",
-                }}
-                onClick={handleOpenReservation}
+              <Box
+                sx={{ justifyContent: "flex-start", mt: 10, marginBottom: 200 }}
               >
-                Make a reservation
-              </Button>
+                <Button
+                  variant="contained"
+                  size="large"
+                  color="secondary"
+                  sx={{
+                    height: "50px",
+                    color: "white",
+                    textTransform: "none",
+                  }}
+                  onClick={handleOpenReservation}
+                >
+                  Make a reservation
+                </Button>
+              </Box>
               <Modal
                 open={openReservation}
                 // onClose={handleCloseReservation}
@@ -370,7 +389,7 @@ function ReservationOverview() {
                         sx={{
                           display: { xs: "none", md: "flex" },
                           mr: 1,
-                          fontSize: 40,
+                          fontSize: 35,
                           marginLeft: 3,
                         }}
                       />{" "}
@@ -381,7 +400,7 @@ function ReservationOverview() {
                         sx={{ marginLeft: 97 }}
                         onClick={handleCloseReservation}
                       >
-                        <CloseIcon />
+                        <CloseIcon sx={{ color: "white" }} />
                       </IconButton>
                     </Toolbar>
                   </AppBar>
@@ -424,175 +443,204 @@ function ReservationOverview() {
             </Menu>
           </Toolbar>
         </AppBar>
-        <Box sx={{ flexGrow: 1, marginTop: 35, marginLeft: 20 }}>
-          {reservationViews?.map((reservationView: ReservationView) => (
-            <>
-              <Box marginTop={6}>
-                <Stack
-                  direction="row"
-                  spacing={5}
-                  divider={<Divider orientation="vertical" flexItem />}
-                >
-                  <Stack direction="row" alignItems="center" spacing={2}>
-                    <Avatar
-                      src={`data:image/png;base64,${reservationView.avatar}`}
-                    />
-                    <Stack direction="column">
-                      <Typography
-                        variant="h6"
-                        marginRight={60}
-                        alignItems="center"
-                      >
-                        {reservationView.profileName}
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontSize: 13,
-                          marginRight: 72,
-                        }}
-                      >
-                        {reservationView.profileRole}
-                      </Typography>
-                    </Stack>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" spacing={10}>
-                    <Stack direction="column" gap={2}>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontSize: 15, marginTop: 2 }}
-                      >
-                        Date:
-                        {new Date(reservationView.arrivalTime).getDay()}.
-                        {new Date(reservationView.arrivalTime).getMonth()}.
-                        {new Date(reservationView.arrivalTime).getFullYear()}
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontSize: 15, marginTop: 2 }}
-                      >
-                        Office: {reservationView.officaName}
-                      </Typography>
-                    </Stack>
-                    <Stack direction="column" gap={2}>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontSize: 15, marginTop: 2 }}
-                      >
-                        Interval:
-                        {new Date(reservationView.arrivalTime).getHours()}:
-                        {new Date(reservationView.arrivalTime).getMinutes()}-
-                        {new Date(reservationView.leavingTime).getHours()}:
-                        {new Date(reservationView.leavingTime).getMinutes()}.
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontSize: 15,
-                          marginTop: 2,
-                        }}
-                      >
-                        Floor: {reservationView.floorName}
-                      </Typography>
-                    </Stack>
-                    <Stack direction="column" alignItems="center" gap={2}>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontSize: 15, marginTop: 2 }}
-                      ></Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontSize: 15,
-                          marginTop: 5,
-                        }}
-                      >
-                        Desk: {reservationView.deskName}
-                      </Typography>
-                    </Stack>
-                    <Box>
-                      <Modal
-                        open={openEdit}
-                        // onClose={handleCloseEdit}
-                        aria-labelledby="modal-modal-title"
-                      >
-                        <Box sx={style}>
-                          <AppBar position="fixed" sx={{ width: "100%" }}>
-                            <Toolbar disableGutters>
-                              <MobileFriendlyIcon
-                                sx={{
-                                  display: { xs: "none", md: "flex" },
-                                  mr: 1,
-                                  fontSize: 40,
-                                  marginLeft: 3,
-                                }}
-                              />{" "}
-                              <Typography variant="h6" component="div">
-                                Reserve a desk
-                              </Typography>
-                              <IconButton
-                                sx={{ marginLeft: 97 }}
-                                onClick={handleCloseEdit}
-                              >
-                                <CloseIcon />
-                              </IconButton>
-                            </Toolbar>
-                          </AppBar>
 
-                          <EditReservation />
-                        </Box>
-                      </Modal>
-                    </Box>
-
-                    <Stack direction="column" alignItems="center" gap={3}>
-                      <Button onClick={handleOpenEdit}>
-                        <CreateIcon
+        <Box
+          sx={{
+            flexGrow: 1,
+            marginTop: 35,
+            marginLeft: "auto",
+            marginRight: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
+        >
+          {reservationViews?.length === 0 ? (
+            <Typography variant="h6" color="textSecondary" sx={{ mt: 20 }}>
+              No reservations found. To initiate the reservation process, click
+              on the button "Make a reservation."
+            </Typography>
+          ) : (
+            reservationViews?.map((reservationView: ReservationView) => (
+              <>
+                <Box marginTop={6}>
+                  <Stack
+                    direction="row"
+                    spacing={5}
+                    divider={<Divider orientation="vertical" flexItem />}
+                    sx={{
+                      backgroundColor: "rgba(128, 128, 128, 0.8)",
+                      padding: "10px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <Stack direction="row" alignItems="center" spacing={2}>
+                      <Avatar
+                        src={`data:image/png;base64,${reservationView.avatar}`}
+                      />
+                      <Stack direction="column">
+                        <Typography
+                          variant="h6"
+                          marginRight={60}
+                          alignItems="center"
+                          color={"white"}
+                        >
+                          {reservationView.profileName}
+                        </Typography>
+                        <Typography
+                          variant="h6"
                           sx={{
+                            fontSize: 13,
+                            marginRight: 72,
+                          }}
+                        >
+                          {reservationView.profileRole}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" spacing={10}>
+                      <Stack direction="column" gap={2}>
+                        <Typography
+                          variant="h6"
+                          sx={{ fontSize: 15, marginTop: 2, color: "white" }}
+                        >
+                          Date:
+                          {new Date(reservationView.arrivalTime).getDay()}.
+                          {new Date(reservationView.arrivalTime).getMonth()}.
+                          {new Date(reservationView.arrivalTime).getFullYear()}
+                        </Typography>
+                        <Typography
+                          variant="h6"
+                          sx={{ fontSize: 15, marginTop: 2, color: "white" }}
+                        >
+                          Office: {reservationView.officaName}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="column" gap={2}>
+                        <Typography
+                          variant="h6"
+                          sx={{ fontSize: 15, marginTop: 2, color: "white" }}
+                        >
+                          Interval:
+                          {new Date(reservationView.arrivalTime).getHours()}:
+                          {new Date(reservationView.arrivalTime).getMinutes()}-
+                          {new Date(reservationView.leavingTime).getHours()}:
+                          {new Date(reservationView.leavingTime).getMinutes()}.
+                        </Typography>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontSize: 15,
                             marginTop: 2,
-                            fontSize: 18,
+                            color: "white",
                           }}
-                        ></CreateIcon>
-                      </Button>
-
-                      <Button onClick={handleOpenDelete}>
-                        <DeleteIcon
+                        >
+                          Floor: {reservationView.floorName}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="column" alignItems="center" gap={2}>
+                        <Typography
+                          variant="h6"
+                          sx={{ fontSize: 15, marginTop: 2 }}
+                        ></Typography>
+                        <Typography
+                          variant="h6"
                           sx={{
-                            fontSize: 18,
+                            fontSize: 15,
+                            marginTop: 5,
+                            color: "white",
                           }}
-                        ></DeleteIcon>
-                      </Button>
-                      <Modal
-                        open={openDelete}
-                        onClose={handleCloseDelete}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                      >
-                        <Box sx={style}>
-                          <Typography
-                            id="modal-modal-title"
-                            variant="h5"
-                            component="h2"
-                          >
-                            My Reservations
-                          </Typography>
-                          <Typography
-                            id="modal-modal-description"
-                            sx={{ mt: 2 }}
-                          >
-                            Are you sure you want to delete this record?
-                          </Typography>
-                          <Box sx={{ marginTop: 2, marginLeft: 100 }}>
-                            <Button onClick={handleNo}>Cancel</Button>
-                            <Button onClick={handleYes}>Confirm</Button>
+                        >
+                          Desk: {reservationView.deskName}
+                        </Typography>
+                      </Stack>
+                      <Box>
+                        <Modal
+                          open={openEdit}
+                          // onClose={handleCloseEdit}
+                          aria-labelledby="modal-modal-title"
+                        >
+                          <Box sx={style}>
+                            <AppBar position="fixed" sx={{ width: "100%" }}>
+                              <Toolbar disableGutters>
+                                <MobileFriendlyIcon
+                                  sx={{
+                                    display: { xs: "none", md: "flex" },
+                                    mr: 1,
+                                    fontSize: 35,
+                                    marginLeft: 3,
+                                  }}
+                                />{" "}
+                                <Typography variant="h6" component="div">
+                                  Reserve a desk
+                                </Typography>
+                                <IconButton
+                                  sx={{ marginLeft: 97 }}
+                                  onClick={handleCloseEdit}
+                                >
+                                  <CloseIcon sx={{ color: "white" }} />
+                                </IconButton>
+                              </Toolbar>
+                            </AppBar>
+
+                            <EditReservation />
                           </Box>
-                        </Box>
-                      </Modal>
+                        </Modal>
+                      </Box>
+
+                      <Stack direction="column" alignItems="center" gap={3}>
+                        <Button onClick={handleOpenEdit}>
+                          <CreateIcon
+                            sx={{
+                              marginTop: 2,
+                              fontSize: 18,
+                              color: "white",
+                            }}
+                          ></CreateIcon>
+                        </Button>
+
+                        <Button onClick={handleOpenDelete}>
+                          <DeleteIcon
+                            sx={{
+                              fontSize: 18,
+                              color: orange[900],
+                            }}
+                          ></DeleteIcon>
+                        </Button>
+                        <Modal
+                          open={openDelete}
+                          onClose={handleCloseDelete}
+                          aria-labelledby="modal-modal-title"
+                          aria-describedby="modal-modal-description"
+                        >
+                          <Box sx={style}>
+                            <Typography
+                              id="modal-modal-title"
+                              variant="h5"
+                              component="h2"
+                            >
+                              My Reservations
+                            </Typography>
+                            <Typography
+                              id="modal-modal-description"
+                              sx={{ mt: 2 }}
+                            >
+                              Are you sure you want to delete this record?
+                            </Typography>
+                            <Box sx={{ marginTop: 2, marginLeft: 100 }}>
+                              <Button onClick={handleNo}>Cancel</Button>
+                              <Button onClick={handleYes}>Confirm</Button>
+                            </Box>
+                          </Box>
+                        </Modal>
+                      </Stack>
                     </Stack>
                   </Stack>
-                </Stack>
-              </Box>
-            </>
-          ))}
+                </Box>
+              </>
+            ))
+          )}
         </Box>
       </ThemeProvider>
     </>
