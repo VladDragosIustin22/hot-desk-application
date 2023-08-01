@@ -109,7 +109,7 @@ function ReservationOverview() {
   const handleCloseReservation = () => {
     setOpenReservation(false);
   };
-  
+
   const [openMyProfile, setOpenMyProfile] = React.useState(false);
   const handleOpenMyProfile = () => {
     setOpenMyProfile(true);
@@ -169,7 +169,9 @@ function ReservationOverview() {
   //   console.log(reservationViews);
   // }
   const handleLogout = () => {
-    {Logout}
+    {
+      Logout;
+    }
     navigate("/login");
   };
   const theme = createTheme({
@@ -255,55 +257,60 @@ function ReservationOverview() {
               aria-labelledby="modal-modal-title"
             >
               <Box sx={styleSettings}>
-              <AppBar position="fixed" sx={{ width: "100%" }}>
-              <Toolbar disableGutters>
-              <SettingsIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 30,
-                marginLeft: 2,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Settings
-            </Typography>
-            <IconButton sx={{ marginLeft: 44 }} onClick={handleCloseSettingsModal} >
-            <CloseIcon  />
-              </IconButton>
-            </Toolbar>
-            </AppBar>
-            <Settings />
-            </Box>
+                <AppBar position="fixed" sx={{ width: "100%" }}>
+                  <Toolbar disableGutters>
+                    <SettingsIcon
+                      sx={{
+                        display: { xs: "none", md: "flex" },
+                        mr: 1,
+                        fontSize: 30,
+                        marginLeft: 2,
+                      }}
+                    />{" "}
+                    <Typography variant="h6" component="div">
+                      Settings
+                    </Typography>
+                    <IconButton
+                      sx={{ marginLeft: 44 }}
+                      onClick={handleCloseSettingsModal}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Toolbar>
+                </AppBar>
+                <Settings />
+              </Box>
             </Modal>
-            
             <Modal
               open={openMyProfile}
-             // onClose={handleCloseMyProfile}
+              // onClose={handleCloseMyProfile}
               aria-labelledby="modal-modal-title"
             >
               <Box sx={styleSettings}>
-              <AppBar position="fixed" sx={{ width: "100%" }}>
-           <Toolbar disableGutters>
-            <PersonOutlineIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              My Profile
-            </Typography>
-            <IconButton sx={{ marginLeft: 39 }} onClick={handleCloseMyProfile} >
-              <CloseIcon  />
-              </IconButton>
-              </Toolbar>
-              </AppBar>
-              <MyProfile />
+                <AppBar position="fixed" sx={{ width: "100%" }}>
+                  <Toolbar disableGutters>
+                    <PersonOutlineIcon
+                      sx={{
+                        display: { xs: "none", md: "flex" },
+                        mr: 1,
+                        fontSize: 40,
+                        marginLeft: 3,
+                      }}
+                    />{" "}
+                    <Typography variant="h6" component="div">
+                      My Profile
+                    </Typography>
+                    <IconButton
+                      sx={{ marginLeft: 39 }}
+                      onClick={handleCloseMyProfile}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Toolbar>
+                </AppBar>
+                <MyProfile />
               </Box>
-              </Modal>
+            </Modal>
             <Avatar
               alt="User Name"
               src="/static/images/avatar/1.jpg"
@@ -357,50 +364,53 @@ function ReservationOverview() {
                 aria-labelledby="modal-modal-title"
               >
                 <Box sx={style}>
-                <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <MobileFriendlyIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Reserve a desk
-            </Typography>
-            <IconButton sx={{ marginLeft: 92 }} onClick={handleCloseReservation} >
-              <CloseIcon  />
-              </IconButton>
-              </Toolbar>
-              </AppBar>
-              <ReserveDesk />
-              </Box>
+                  <AppBar position="fixed" sx={{ width: "100%" }}>
+                    <Toolbar disableGutters>
+                      <MobileFriendlyIcon
+                        sx={{
+                          display: { xs: "none", md: "flex" },
+                          mr: 1,
+                          fontSize: 40,
+                          marginLeft: 3,
+                        }}
+                      />{" "}
+                      <Typography variant="h6" component="div">
+                        Reserve a desk
+                      </Typography>
+                      <IconButton
+                        sx={{ marginLeft: 92 }}
+                        onClick={handleCloseReservation}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </Toolbar>
+                  </AppBar>
+                  <ReserveDesk />
+                </Box>
               </Modal>
-              </Box>
+            </Box>
             <Modal
               open={openSettings}
               onClose={handleCloseSettingsModal}
               aria-labelledby="modal-modal-title"
             >
               <Box sx={styleSettings}>
-              <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <SettingsIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 30,
-                marginLeft: 2,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Settings
-            </Typography>
-            <CloseIcon sx={{ marginLeft: 44 }}></CloseIcon>
-          </Toolbar>
-        </AppBar>
+                <AppBar position="fixed" sx={{ width: "100%" }}>
+                  <Toolbar disableGutters>
+                    <SettingsIcon
+                      sx={{
+                        display: { xs: "none", md: "flex" },
+                        mr: 1,
+                        fontSize: 30,
+                        marginLeft: 2,
+                      }}
+                    />{" "}
+                    <Typography variant="h6" component="div">
+                      Settings
+                    </Typography>
+                    <CloseIcon sx={{ marginLeft: 44 }}></CloseIcon>
+                  </Toolbar>
+                </AppBar>
                 <Settings />
               </Box>
             </Modal>
@@ -525,39 +535,40 @@ function ReservationOverview() {
                         Desk: {reservationView.deskName}
                       </Typography>
                     </Stack>
-                    <Box
-                    >
+                    <Box>
                       <Modal
-
-                            open={openEdit }
-                           // onClose={handleCloseEdit}
-                            aria-labelledby="modal-modal-title"
-                          >
+                        open={openEdit}
+                        // onClose={handleCloseEdit}
+                        aria-labelledby="modal-modal-title"
+                      >
                         <Box sx={style}>
-                        <AppBar position="fixed" sx={{ width: "100%" }}>
-                        <Toolbar disableGutters>
-                          <MobileFriendlyIcon
-                            sx={{
-                              display: { xs: "none", md: "flex" },
-                              mr: 1,
-                              fontSize: 40,
-                              marginLeft: 3,
-                            }}
-                          />{" "}
-                          <Typography variant="h6" component="div">
-                            Reserve a desk
-                          </Typography>
-                          <IconButton sx={{ marginLeft: 92 }} onClick={handleCloseEdit} >
-                            <CloseIcon  />
-                          </IconButton>
-                        </Toolbar>
-                      </AppBar>
-                      
-                          <EditReservation  />
+                          <AppBar position="fixed" sx={{ width: "100%" }}>
+                            <Toolbar disableGutters>
+                              <MobileFriendlyIcon
+                                sx={{
+                                  display: { xs: "none", md: "flex" },
+                                  mr: 1,
+                                  fontSize: 40,
+                                  marginLeft: 3,
+                                }}
+                              />{" "}
+                              <Typography variant="h6" component="div">
+                                Reserve a desk
+                              </Typography>
+                              <IconButton
+                                sx={{ marginLeft: 92 }}
+                                onClick={handleCloseEdit}
+                              >
+                                <CloseIcon />
+                              </IconButton>
+                            </Toolbar>
+                          </AppBar>
+
+                          <EditReservation />
                         </Box>
-                     </Modal> 
-                     </Box>
-                      
+                      </Modal>
+                    </Box>
+
                     <Stack direction="column" alignItems="center" gap={3}>
                       <Button onClick={handleOpenEdit}>
                         <CreateIcon
