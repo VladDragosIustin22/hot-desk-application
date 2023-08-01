@@ -9,26 +9,19 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import { InputAdornment, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import "@fontsource/roboto/500.css";
+import { SignUpModel } from "../models/signup-model";
+import { useNavigate } from "react-router";
 const defaultTheme = createTheme();
 
-interface Values {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
-
 const schema = Yup.object().shape({
   firstName: Yup.string().required("Required"),
   lastName: Yup.string().required("Required"),
@@ -46,17 +39,19 @@ const schema = Yup.object().shape({
     .oneOf([Yup.ref("password"), ""], "Passwords must match!")
     .required("Required"),
 });
-
-const handleSubmit = () => {
-  console.log("Submitted");
-};
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+  const navigate = useNavigate();
+  const [tokenInfo, setTokenInfo] = useState<{ value: string; expiry: Date | null }>({
+    value: "",
+    expiry: null,
+  });
   const handleClickShowPassword = (fieldId: string) => {
     if (fieldId === "password") {
       setShowPassword((prevShowPassword) => !prevShowPassword);
-    } else if (fieldId === "confirmPassword") {
+    } else {
       setShowConfirmedPassword(
         (prevShowConfirmedPassword) => !prevShowConfirmedPassword
       );
@@ -67,7 +62,7 @@ export default function SignUp() {
   ) => {
     event.preventDefault();
   };
-  const formik = useFormik<Values>({
+  const formik = useFormik<SignUpModel>({
     initialValues: {
       firstName: "",
       lastName: "",
@@ -76,9 +71,39 @@ export default function SignUp() {
       confirmPassword: "",
     },
     validationSchema: schema,
-    onSubmit: handleSubmit,
+    onSubmit: async (values) => {
+      const addedProfile = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        password: values.password,
+      };
+      try {
+      const response = await fetch(`https://localhost:7156/api/Security/Register`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addedProfile),
+      });
+      const responseData = await response.json();
+      const { value, expiry } = responseData;
+      localStorage.setItem("authToken", value);
+      localStorage.setItem("authTokenExpiry", new Date(expiry).toISOString());
+      setTokenInfo({ value: value, expiry: new Date(expiry) });
+      setRedirect(true);
+    }
+    catch{
+      setRedirect(false);
+    }
+    },
   });
-
+  useEffect(() => {
+    if (redirect) {
+      navigate("/reservationoverview");
+    }
+  }, [redirect, navigate]);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
@@ -229,7 +254,7 @@ export default function SignUp() {
                           <IconButton
                             aria-label="toggle password visibility"
                             onClick={() =>
-                              handleClickShowPassword("confirmPassword")
+                              handleClickShowPassword("")
                             }
                             onMouseDown={handleMouseDownPassword}
                           >
@@ -263,7 +288,7 @@ export default function SignUp() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="/login-page" variant="body2">
+                  <Link href="/login" variant="body2">
                     Already have an account? Sign in
                   </Link>
                 </Grid>

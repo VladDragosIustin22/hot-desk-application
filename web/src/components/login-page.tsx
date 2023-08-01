@@ -7,27 +7,19 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormik } from "formik";
+import { useNavigate } from 'react-router-dom';
 import * as Yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "@fontsource/roboto/500.css";
+import { LogInModel } from "../models/login-model";
 
 const defaultTheme = createTheme();
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
-
-interface Values {
-  email: string;
-  password: string;
-}
-
-const handleSubmit = () => {
-  console.log("Submitted");
-};
 
 const schema = Yup.object().shape({
   email: Yup.string()
@@ -44,24 +36,57 @@ const schema = Yup.object().shape({
 
 export default function LogIn() {
   const [showPassword, setShowPassword] = useState(false);
-
+  const [redirect, setRedirect] = useState(false);
+  const navigate = useNavigate();
+  const [tokenInfo, setTokenInfo] = useState<{ value: string; expiry: Date | null }>({
+    value: "",
+    expiry: null,
+  });
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
   };
-  const formik = useFormik<Values>({
+  const formik = useFormik<LogInModel>({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: schema,
-    onSubmit: handleSubmit,
+    onSubmit: async (values) => {
+      const validatedProfile = {
+        email: values.email,
+        password: values.password,
+      };
+      try {
+      const response = await fetch(`https://localhost:7156/api/Security/Login`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(validatedProfile),
+      });
+      const responseData = await response.json();
+      const { value, expiry } = responseData;
+      localStorage.setItem("authToken", value);
+      localStorage.setItem("authTokenExpiry", new Date(expiry).toISOString());
+      setTokenInfo({ value: value, expiry: new Date(expiry) });
+      setRedirect(true);
+    }
+    catch {
+      setRedirect(false);
+      alert("Email or password incorrect!");
+    }
+    },
   });
   console.log(formik);
-
+  useEffect(() => {
+    if (redirect) {
+      navigate("/reservationoverview");
+    }
+  }, [redirect, navigate]);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
@@ -155,7 +180,7 @@ export default function LogIn() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="/SignUp" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
