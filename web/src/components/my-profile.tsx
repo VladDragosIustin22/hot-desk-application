@@ -2,17 +2,11 @@ import { grey, orange } from "@mui/material/colors";
 import {
   Box,
   Button,
-  Typography,
-  Toolbar,
-  AppBar,
   TextField,
   Avatar,
   Stack,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CloseIcon from "@mui/icons-material/Close";
-import React from "react";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 const theme = createTheme({
   palette: {
     primary: {
@@ -38,22 +32,7 @@ export default function MyProfile() {
           justifyContent: "center",
         }}
       >
-        <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <PersonOutlineIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              My Profile
-            </Typography>
-            <CloseIcon sx={{ marginLeft: 39 }}></CloseIcon>
-          </Toolbar>
-        </AppBar>
+
         <Stack direction="row" spacing={2}>
           <Avatar
             alt="V"

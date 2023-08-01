@@ -12,10 +12,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  AppBar,
-  Toolbar,
   SelectChangeEvent,
-  IconButton,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
@@ -24,8 +21,6 @@ import { TimeView } from "@mui/x-date-pickers";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
-import CloseIcon from "@mui/icons-material/Close";
 import { Office } from "../models/office";
 import { Floor } from "../models/floor";
 import { v4 as uuidv4 } from "uuid";
@@ -45,12 +40,11 @@ const theme = createTheme({
   },
 });
 
+
 function DatePickerValue({
   allDay,
   handleAllDayToggle,
   value,
-  startTime,
-  endTime,
   setValue,
   setDateCompleted,
 }: any) {
@@ -87,11 +81,18 @@ function DatePickerValue({
     </FormControl>
   );
 }
-
 function BasicSelect({
+  startTime,
+  endTime,
+  allDay,
+  value,
   isDateCompleted,
   isTimeCompleted,
 }: {
+  startTime : any
+  endTime : any,
+  allDay : any,
+  value: any,
   isDateCompleted: boolean;
   isTimeCompleted: boolean;
 }) {
@@ -112,16 +113,30 @@ function BasicSelect({
   const desksUuids = desks?.map((desk: Desk) => uuidv4()) || [];
 
   useEffect(() => {
-    fetch(`https://localhost:7156/api/Office`)
-      .then((response) => response.json())
-      .then((data) => setOffices(data));
-  }, []);
+    const fetchData = async () => {
+      try {
+          const token = localStorage.getItem("authToken");
+          const response = await fetch(`https://localhost:7156/api/Office`,{
+                method : "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+    const data = await response.json();
+    setOffices(data)
+  } catch (error) {
+    console.error('Unknown error occurred:', error);
+  }
+};
+fetchData();
+}, []);
 
   const handleOfficeChange = (event: SelectChangeEvent<string>): void => {
     const officeID = event.target.value;
     setofficeID(event.target.value);
 
     fetch(`https://localhost:7156/api/Floor/byOffice/${officeID}`)
+
       .then((response) => response.json())
       .then((data) => setFloors(data));
     setAvailableFloors(false);
@@ -135,6 +150,13 @@ function BasicSelect({
       .then((response) => response.json())
       .then((data) => setDesks(data));
     setAvailableDesks(false);
+    const dateYMD = new Date(value);
+    const arrivalTimeHours = new Date(startTime).getHours();
+    const arrivalTimeMinutes = new Date(startTime).getMinutes();
+    const leavingTimeHours = new Date(endTime).getHours();
+    const leavingTimeMinutes = new Date(endTime).getMinutes();
+    // console.log()
+
   };
 
   const handleDeskChange = (event: SelectChangeEvent<string>): void => {
@@ -142,6 +164,12 @@ function BasicSelect({
     setDeskID(event.target.value);
   };
 
+
+  // console.log(arrivalTimeHours)
+  // console.log(arrivalTimeMinutes)
+  // console.log(leavingTimeHours)
+  // console.log(leavingTimeMinutes)
+  // console.log(dateYMD)
   return (
     <Box
       sx={{
@@ -254,19 +282,19 @@ function EditReservation() {
     }
   };
 
-  // const shouldDisableTime = (value: Dayjs, view: TimeView) => {
-  //   if (view === 'hours') {
-  //     const hour = value.hour();
-  //     const minute = value.minute();
-  //     if (hour >= 17 || hour < 7) {
-  //       return true;
-  //     }
-  //     if (hour === 7 && minute < 30) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // };
+  const shouldDisableTime = (value: Dayjs, view: TimeView) => {
+    if (view === 'hours') {
+      const hour = value.hour();
+      const minute = value.minute();
+      if (hour >= 17 || hour < 7) {
+        return true;
+      }
+      if (hour === 7 && minute < 30) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
     if (view === "hours") {
@@ -311,9 +339,7 @@ function EditReservation() {
     }
     return false;
   };
-  const [show, setShow] = useState(true);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -324,24 +350,7 @@ function EditReservation() {
           justifyContent: "center",
         }}
       >
-        <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <MobileFriendlyIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Reserve a desk
-            </Typography>
-            <IconButton onClick={handleClose}>
-              <CloseIcon sx={{ marginLeft: 92 }} />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
+        
 
         <Box
           sx={{
@@ -353,6 +362,7 @@ function EditReservation() {
             mb: 3,
           }}
         >
+          <div></div>
           <Box
             sx={{
               display: "flex",
@@ -458,6 +468,10 @@ function EditReservation() {
           </div>
         )}
         <BasicSelect
+          value = {value}
+          startTime = {startTime}
+          endTime ={endTime}
+          allDay = {allDay}
           isDateCompleted={isDateCompleted}
           isTimeCompleted={isTimeCompleted}
         />
