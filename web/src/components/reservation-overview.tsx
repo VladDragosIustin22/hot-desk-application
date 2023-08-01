@@ -253,7 +253,7 @@ function ReservationOverview() {
             </Box>
             <Modal
               open={openSettings}
-              //onClose={handleCloseSettingsModal}
+              onClose={handleCloseSettingsModal}
               aria-labelledby="modal-modal-title"
             >
               <Box sx={styleSettings}>
@@ -378,7 +378,7 @@ function ReservationOverview() {
                         Reserve a desk
                       </Typography>
                       <IconButton
-                        sx={{ marginLeft: 92 }}
+                        sx={{ marginLeft: 97 }}
                         onClick={handleCloseReservation}
                       >
                         <CloseIcon />
@@ -389,31 +389,6 @@ function ReservationOverview() {
                 </Box>
               </Modal>
             </Box>
-            <Modal
-              open={openSettings}
-              onClose={handleCloseSettingsModal}
-              aria-labelledby="modal-modal-title"
-            >
-              <Box sx={styleSettings}>
-                <AppBar position="fixed" sx={{ width: "100%" }}>
-                  <Toolbar disableGutters>
-                    <SettingsIcon
-                      sx={{
-                        display: { xs: "none", md: "flex" },
-                        mr: 1,
-                        fontSize: 30,
-                        marginLeft: 2,
-                      }}
-                    />{" "}
-                    <Typography variant="h6" component="div">
-                      Settings
-                    </Typography>
-                    <CloseIcon sx={{ marginLeft: 44 }}></CloseIcon>
-                  </Toolbar>
-                </AppBar>
-                <Settings />
-              </Box>
-            </Modal>
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"
@@ -556,7 +531,7 @@ function ReservationOverview() {
                                 Reserve a desk
                               </Typography>
                               <IconButton
-                                sx={{ marginLeft: 92 }}
+                                sx={{ marginLeft: 97 }}
                                 onClick={handleCloseEdit}
                               >
                                 <CloseIcon />
