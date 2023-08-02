@@ -1,4 +1,5 @@
 ﻿using HotDeskApplicationApi.Data;
+using HotDeskApplicationApi.Migrations;
 using HotDeskApplicationApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<Profile[]> ListProfiles()
         {
             return await hotDeskDbContext.Profile.ToArrayAsync();
