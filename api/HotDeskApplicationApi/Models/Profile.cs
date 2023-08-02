@@ -17,6 +17,8 @@ namespace HotDeskApplicationApi.Models
 
         public string EmailAddress { get; set; } = default!;
 
+        public bool IsAdmin { get; set; }
+
     }
 }
 
