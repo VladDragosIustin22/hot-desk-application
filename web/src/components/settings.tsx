@@ -74,22 +74,7 @@ function Settings() {
           justifyContent: "center",
         }}
       >
-        <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <SettingsIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 30,
-                marginLeft: 2,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Settings
-            </Typography>
-            <CloseIcon sx={{ marginLeft: 44 }}></CloseIcon>
-          </Toolbar>
-        </AppBar>
+        
         <Box
           sx={{
             display: "flex",

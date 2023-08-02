@@ -354,22 +354,7 @@ function ReserveDesk() {
           justifyContent: "center",
         }}
       >
-        <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <MobileFriendlyIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Reserve a desk
-            </Typography>
-            <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
-          </Toolbar>
-        </AppBar>
+        
 
         <Box
           sx={{
