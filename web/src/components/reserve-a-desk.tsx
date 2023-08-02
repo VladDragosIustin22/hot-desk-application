@@ -119,21 +119,21 @@ function BasicSelect({
   useEffect(() => {
     const fetchData = async () => {
       try {
-          const token = localStorage.getItem("authToken");
-          const response = await fetch(`https://localhost:7156/api/Office`,{
-                method : "GET",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-    const data = await response.json();
-    setOffices(data)
-  } catch (error) {
-    console.error('Unknown error occurred:', error);
-  }
-};
-fetchData();
-}, []);
+        const token = localStorage.getItem("authToken");
+        const response = await fetch(`https://localhost:7156/api/Office`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setOffices(data)
+      } catch (error) {
+        console.error('Unknown error occurred:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleOfficeChange = (event: SelectChangeEvent<string>): void => {
     const officeID = event.target.value;
@@ -160,7 +160,7 @@ fetchData();
     const leavingTimeHours = new Date(endTime).getHours();
     const leavingTimeMinutes = new Date(endTime).getMinutes();
     // console.log()
-
+    //arrivalTime + LeavingTime
   };
 
   const handleDeskChange = (event: SelectChangeEvent<string>): void => {
@@ -354,7 +354,22 @@ function ReserveDesk() {
           justifyContent: "center",
         }}
       >
-        
+        <AppBar position="fixed" sx={{ width: "100%" }}>
+          <Toolbar disableGutters>
+            <MobileFriendlyIcon
+              sx={{
+                display: { xs: "none", md: "flex" },
+                mr: 1,
+                fontSize: 40,
+                marginLeft: 3,
+              }}
+            />{" "}
+            <Typography variant="h6" component="div">
+              Reserve a desk
+            </Typography>
+            <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
+          </Toolbar>
+        </AppBar>
 
         <Box
           sx={{
@@ -472,10 +487,10 @@ function ReserveDesk() {
           </div>
         )}
         <BasicSelect
-          value = {value}
-          startTime = {startTime}
-          endTime ={endTime}
-          allDay = {allDay}
+          value={value}
+          startTime={startTime}
+          endTime={endTime}
+          allDay={allDay}
           isDateCompleted={isDateCompleted}
           isTimeCompleted={isTimeCompleted}
         />
