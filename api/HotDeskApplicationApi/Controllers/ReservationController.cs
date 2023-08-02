@@ -72,14 +72,9 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> DeleteReservation(Guid id)
         {
-            Framework.Identity.Identity identity = ControllerContext.GetIdentity();
-
-            Guid userID = identity.ID;
-
-            Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == userID);
-
             var reservation = await _dbContext.Reservations.FindAsync(id);
 
             _dbContext.Reservations.Remove(reservation);
