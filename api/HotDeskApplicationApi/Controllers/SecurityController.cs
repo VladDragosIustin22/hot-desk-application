@@ -24,6 +24,7 @@ namespace HotDeskApplicationApi.Controllers
 
         private readonly HotDeskDbContext hotDeskDbContext;
 
+
         public SecurityController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
@@ -57,14 +58,15 @@ namespace HotDeskApplicationApi.Controllers
                 EmailAddress = registerModel.Email,
                 Avatar = imageBytes,
                 Role = "developer",
-                NickName = registerModel.LastName
+                NickName = registerModel.LastName,
+                IsAdmin = false,
             };
 
             hotDeskDbContext.Profile.Add(profile);
 
             hotDeskDbContext.SaveChanges();
 
-            return GenerateToken(user);
+            return GenerateToken(user, "User");
         }
 
         [HttpPost]
@@ -75,15 +77,21 @@ namespace HotDeskApplicationApi.Controllers
 
             Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.CheckPasswordSignInAsync(identityUser, loginModel.Password, true);
 
-            return GenerateToken(identityUser);
+            var profile = await hotDeskDbContext.Profile.FindAsync(Guid.Parse(identityUser.Id));
+            string role = "User";
+            if (profile.IsAdmin)
+                role = "Admin";
+
+            return GenerateToken(identityUser, role);
         }
 
-        private Token GenerateToken(IdentityUser user)
+        private Token GenerateToken(IdentityUser user, string userRole)
         {
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, userRole),
             };
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetValue<string>("Authentication:Secret")));
