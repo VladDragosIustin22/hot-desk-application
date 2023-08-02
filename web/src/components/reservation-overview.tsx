@@ -195,8 +195,8 @@ const handleYes = (id : string) => {
 };
   const handleLogout = () => {
     {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('authTokenExpiry');
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authTokenExpiry");
       localStorage.clear();
     }
     navigate("/login");
