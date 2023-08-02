@@ -17,7 +17,6 @@ import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EditReservation from "./edit-reservation";
-import Logout from "./logout";
 import MyProfile from "./my-profile";
 import ReserveDesk from "./reserve-a-desk";
 import Settings from "./settings";
@@ -183,7 +182,9 @@ function ReservationOverview() {
   // }
   const handleLogout = () => {
     {
-      Logout;
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('authTokenExpiry');
+      localStorage.clear();
     }
     navigate("/login");
   };
