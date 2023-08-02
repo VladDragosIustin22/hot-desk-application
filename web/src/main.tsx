@@ -4,12 +4,9 @@ import "./index.css";
 import App from "./App";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./components/sign-up-page";
-import Header from "./components/main-screen";
 import LogIn from "./components/login-page";
 import ReserveDesk from "./components/reserve-a-desk";
 import ReservationOverview from "./components/reservation-overview";
-
-import EditReservation from "./components/edit-reservation";
 import MyProfile from "./components/my-profile";
 import Settings from "./components/settings";
 
@@ -25,10 +22,6 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LogIn />,
-  },
-  {
-    path: "/mainscreen",
-    element: <Header />,
   },
   {
     path: "/reserve-a-desk",
