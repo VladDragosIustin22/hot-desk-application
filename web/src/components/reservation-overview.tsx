@@ -27,7 +27,7 @@ import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
-import backgroundImage from "../models/background.jpg";
+import backgroundImage from "../assests/background.jpg"
 const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {

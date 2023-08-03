@@ -25,10 +25,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
 import CloseIcon from "@mui/icons-material/Close";
-import { Office } from "../models/office";
-import { Floor } from "../models/floor";
-import { v4 as uuidv4 } from "uuid";
-import { Desk } from "../models/desk";
+import { ReservationSetUp } from "../models/reservationSetup";
+import { Reservation } from "../models/reservation";
 
 const theme = createTheme({
   palette: {
@@ -59,10 +57,7 @@ function DatePickerValue({
     } else {
       setDateCompleted(false);
     }
-  }; 
-  useEffect(() => {
-    setValue(dayjs()); 
-  }, []); 
+  };
 
   return (
     <FormControl sx={{ width: "64ch", mb: 5 }}>
@@ -73,7 +68,6 @@ function DatePickerValue({
             value={value}
             onChange={handleDateChange}
             sx={{ width: "64ch" }}
-            minDate={dayjs()} 
           />
 
           <FormGroup sx={{ mr: -20, ml: "auto" }}>
@@ -102,28 +96,32 @@ function BasicSelect({
   isDateCompleted: boolean;
   isTimeCompleted: boolean;
 }) {
-  const [offices, setOffices] = useState<Office[] | null>(null);
-  const [officeID, setofficeID] = useState<string | null>(null);
 
-  const [floors, setFloors] = useState<Floor[] | null>(null);
-  const [floorID, setFloorID] = useState<string | null>(null);
-
-  const [desks, setDesks] = useState<Desk[] | null>(null);
-  const [deskID, setDeskID] = useState<string | null>(null);
-
-  const [availableFloors, setAvailableFloors] = useState(true);
-  const [availableDesks, setAvailableDesks] = useState(true);
-
-  const officeUuids = offices?.map((office: Office) => uuidv4()) || [];
-  const floorsUuids = floors?.map((floor: Floor) => uuidv4()) || [];
-  const desksUuids = desks?.map((desk: Desk) => uuidv4()) || [];
-
+  const [reservationSetUp,setReservationSetUp] = useState<ReservationSetUp[] | null>(null);
+  const [selectedOfficeID, setSelectedOfficeID] = useState('');
+  const [selectedFloorID, setSelectedFloorID] = useState('');
+  const [selectedDeskID, setSelectedDeskID] = useState('');
+ 
   const[arrivalTime,setArrivalTime] = React.useState<Dayjs | null>(dayjs()
   );
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
     dayjs()
   );
+  
+  const [reservation,setReservation] = useState<Reservation | null>(null);
+  const createReservation =() =>{
+    const reservationData : Reservation ={
+      arrivalTime : arrivalTime?.toDate() || new Date(),
+      leavingTime : leavingTime?.toDate() || new Date(),
+      officeID : selectedOfficeID,
+      floorID : selectedFloorID,
+      deskID :selectedDeskID,
+    };
+    setReservation(reservationData);
 
+    
+  }
+  console.log(reservation);
   useEffect(() => {
     if (value) {
       const datePart = value.format("YYYY-MM-DD");
@@ -139,48 +137,74 @@ function BasicSelect({
   useEffect(() => {
     const fetchData = async () => {
       try {
-          const token = localStorage.getItem("authToken");
-          const response = await fetch(`https://localhost:7156/api/Office`,{
-                method : "GET",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-    const data = await response.json();
-    setOffices(data)
-  } catch (error) {
-    console.error('Unknown error occurred:', error);
-  }
-};
-fetchData();
-}, []);
+        const token = localStorage.getItem("authToken");
+        
+        const response = await fetch(`https://localhost:7156/api/Desk/availableDesks?arrivalTime=${arrivalTime}&leavingTime=${leavingTime}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setReservationSetUp(data)
+        console.log(reservationSetUp);
+      } catch (error) {
+        console.error('Unknown error occurred:', error);
+      }
+    };
+    fetchData();
+  }, [arrivalTime, leavingTime, value, startTime, endTime]);
 
-  const handleOfficeChange = (event: SelectChangeEvent<string>): void => {
-    const officeID = event.target.value;
-    setofficeID(event.target.value);
+  const uniqueOffices: ReservationSetUp[] = reservationSetUp
+  ? reservationSetUp.reduce((acc: ReservationSetUp[], curr: ReservationSetUp) => {
+      if (!acc.find((item: ReservationSetUp) => item.officeID === curr.officeID)) {
+        acc.push(curr);
+      }
+      return acc;
+    }, [])
+    .map((reservationSetUp: ReservationSetUp) => ({
+      officeID: reservationSetUp.officeID,
+      officeName: reservationSetUp.officeName,
+      floorID : reservationSetUp.floorID,
+      floorName : reservationSetUp.floorName,
+      deskID : reservationSetUp.deskID,
+      deskName : reservationSetUp.deskName
+    }))
+  : [];
 
-    fetch(`https://localhost:7156/api/Floor/byOffice/${officeID}`)
+  const uniqueFloors: ReservationSetUp[] = reservationSetUp
+  ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
+      const firstIndex = arr.findIndex((item) => item.floorID === curr.floorID);
+      
+      return index === firstIndex && curr.officeID === selectedOfficeID;
 
-      .then((response) => response.json())
-      .then((data) => setFloors(data));
-    setAvailableFloors(false);
-    setAvailableDesks(true);
-  };
+    })
+    .map((reservationSetUp: ReservationSetUp) => ({
+      officeID: reservationSetUp.officeID,
+      officeName: reservationSetUp.officeName,
+      floorID: reservationSetUp.floorID,
+      floorName: reservationSetUp.floorName,
+      deskID: reservationSetUp.deskID,
+      deskName: reservationSetUp.deskName,
+    }))
+  : [];
+  const uniqueDesks: ReservationSetUp[] = reservationSetUp
+  ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
+    const firstIndex = arr.findIndex((item) => item.deskID === curr.deskID);
+    
+    return index === firstIndex && curr.officeID === selectedOfficeID && curr.floorID === selectedFloorID;
 
-  const handleFloorChange = (event: SelectChangeEvent<string>): void => {
-    const floorID = event.target.value;
-    setFloorID(event.target.value);
-    fetch(`https://localhost:7156/api/Desk/byFloor/${floorID}`)
-      .then((response) => response.json())
-      .then((data) => setDesks(data));
-    setAvailableDesks(false);
-  };
+  })
+  .map((reservationSetUp: ReservationSetUp) => ({
+    officeID: reservationSetUp.officeID,
+    officeName: reservationSetUp.officeName,
+    floorID: reservationSetUp.floorID,
+    floorName: reservationSetUp.floorName,
+    deskID: reservationSetUp.deskID,
+    deskName: reservationSetUp.deskName,
+  }))
+: [];
 
-  const handleDeskChange = (event: SelectChangeEvent<string>): void => {
-    const deskID = event.target.value;
-    setDeskID(event.target.value);
-  };
-  console.log(startTime);
   return (
     <Box
       sx={{
@@ -195,16 +219,16 @@ fetchData();
         <Select
           labelId="select-office"
           id="select-office"
-          value={officeID || ""}
+          value={selectedOfficeID}
           label="Office"
-          onChange={handleOfficeChange}
           disabled={!isDateCompleted || !isTimeCompleted}
+          onChange={(event) => setSelectedOfficeID(event.target.value)}
         >
-          {offices?.map((office: Office, index: number) => (
-            <MenuItem key={officeUuids[index]} value={office.id}>
-              {office.name}
+          {uniqueOffices?.map((reservationSetUp : ReservationSetUp, index: number) => (
+            <MenuItem key={reservationSetUp.officeID} value={reservationSetUp.officeID}>
+              {reservationSetUp.officeName}
             </MenuItem>
-          ))}
+          ))} 
         </Select>
       </FormControl>
 
@@ -213,16 +237,16 @@ fetchData();
         <Select
           labelId="select-floor"
           id="select-floor"
-          value={floorID || ""}
+          value={selectedFloorID}
           label="Floor"
-          onChange={handleFloorChange}
-          disabled={availableFloors}
+          disabled={selectedOfficeID===""}
+          onChange={(event) => setSelectedFloorID(event.target.value)}
         >
-          {floors?.map((floor: Floor, index: number) => (
-            <MenuItem key={floorsUuids[index]} value={floor.id}>
-              {floor.name}
+          {uniqueFloors?.map((reservationSetUp : ReservationSetUp, index: number) => (
+            <MenuItem key={index} value={reservationSetUp.floorID}>
+              {reservationSetUp.floorName}
             </MenuItem>
-          ))}
+          ))} 
         </Select>
       </FormControl>
 
@@ -231,20 +255,32 @@ fetchData();
         <Select
           labelId="select-desk"
           id="select-desk"
-          value={deskID || ""}
+          value={selectedDeskID}
           label="Desk"
-          onChange={handleDeskChange}
-          disabled={availableDesks}
+          onChange={(event) => setSelectedDeskID(event.target.value)}
+          disabled={selectedFloorID===''}
         >
-          {desks?.map((desk: Desk, index: number) => (
-            <MenuItem key={desksUuids[index]} value={desk.id}>
-              {desk.name}
+         {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
+            <MenuItem key={reservationSetUp.deskID} value={reservationSetUp.deskID}>
+              {reservationSetUp.deskName}
             </MenuItem>
-          ))}
+          ))} 
         </Select>
       </FormControl>
-     
-            </Box>
+      <Button
+      variant="contained"
+      size="large"
+      color="secondary"
+      sx={{
+        height: "50px",
+        color: "white",
+        textTransform: "none",
+      }}
+      onClick={createReservation}
+      >
+        Saved
+      </Button>
+    </Box>
   );
 }
 
@@ -346,7 +382,6 @@ function ReserveDesk() {
           justifyContent: "center",
         }}
       >
-       
         <Box
           sx={{
             display: "flex",
@@ -368,30 +403,7 @@ function ReserveDesk() {
               mb: 2,
             }}
           ></Box>
-           <Box
-            sx={{
-              justifyContent: "flex-start",
-              mt: 2,
-              marginTop: 10,
-              mb: -116,
-              borderRadius: 1,
-            }}
-          >
-      <Button
-              variant="contained"
-              size="large"
-              color="secondary"
-              sx={{
-                height: "50px",
-                color: "white",
-                textTransform: "none",
-              }}
-            >
-              Save
-            </Button> 
-            </Box>
         </Box>
-
         <DatePickerValue
           allDay={allDay}
           handleAllDayToggle={handleAllDayToggle}

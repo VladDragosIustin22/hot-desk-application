@@ -62,13 +62,26 @@ namespace HotDeskApplicationApi.Controllers
     }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
+            Framework.Identity.Identity identity = ControllerContext.GetIdentity();
 
-            _dbContext.Reservations.Add(reservation);
-            await _dbContext.SaveChangesAsync();
+            Guid userID = identity.ID;
 
-            return CreatedAtAction("GetReservation", new { id = reservation.ID }, reservation);
+            Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == userID);
+            var userEmail = userProfile.EmailAddress;
+            reservation.ProfileEmail = userEmail;
+
+            ModelState.Remove("ProfileEmail");
+            if (ModelState.IsValid)
+            {
+                _dbContext.Reservations.Add(reservation);
+                await _dbContext.SaveChangesAsync();
+                return CreatedAtAction("GetReservation", new { id = reservation.ID }, reservation);
+            }
+
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("{id}")]

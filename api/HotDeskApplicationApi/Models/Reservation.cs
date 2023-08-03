@@ -1,9 +1,12 @@
-﻿namespace HotDeskApplicationApi.Models
+﻿using System.Text.Json.Serialization;
+
+namespace HotDeskApplicationApi.Models
 {
     public class Reservation
     {
         public Guid ID { get; set; }
-       // public Guid ProfileID { get; set; }
+        // public Guid ProfileID { get; set; }
+        [JsonIgnore]
         public string ProfileEmail { get; set; }
         public DateTime ArrivalTime { get; set; }
         public DateTime LeavingTime { get; set; }
