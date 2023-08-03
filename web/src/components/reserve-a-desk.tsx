@@ -155,7 +155,6 @@ function BasicSelect({
     fetchData();
   }, [arrivalTime, leavingTime, value, startTime, endTime]);
 
-
   const uniqueOffices: ReservationSetUp[] = reservationSetUp
   ? reservationSetUp.reduce((acc: ReservationSetUp[], curr: ReservationSetUp) => {
       if (!acc.find((item: ReservationSetUp) => item.officeID === curr.officeID)) {
@@ -189,7 +188,6 @@ function BasicSelect({
       deskName: reservationSetUp.deskName,
     }))
   : [];
-  // console.log(uniqueFloors)
   const uniqueDesks: ReservationSetUp[] = reservationSetUp
   ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
     const firstIndex = arr.findIndex((item) => item.deskID === curr.deskID);
@@ -207,7 +205,6 @@ function BasicSelect({
   }))
 : [];
 
-// const handleSubmit = ();
   return (
     <Box
       sx={{
@@ -224,7 +221,6 @@ function BasicSelect({
           id="select-office"
           value={selectedOfficeID}
           label="Office"
-          // onChange={handleOfficeChange}
           disabled={!isDateCompleted || !isTimeCompleted}
           onChange={(event) => setSelectedOfficeID(event.target.value)}
         >
@@ -243,7 +239,6 @@ function BasicSelect({
           id="select-floor"
           value={selectedFloorID}
           label="Floor"
-          // onChange={handleFloorChange}
           disabled={selectedOfficeID===""}
           onChange={(event) => setSelectedFloorID(event.target.value)}
         >
@@ -387,23 +382,6 @@ function ReserveDesk() {
           justifyContent: "center",
         }}
       >
-        <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <MobileFriendlyIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Reserve a desk
-            </Typography>
-            <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
-          </Toolbar>
-        </AppBar>
-
         <Box
           sx={{
             display: "flex",
@@ -425,9 +403,7 @@ function ReserveDesk() {
               mb: 2,
             }}
           ></Box>
-          
         </Box>
-
         <DatePickerValue
           allDay={allDay}
           handleAllDayToggle={handleAllDayToggle}
