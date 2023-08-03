@@ -59,7 +59,10 @@ function DatePickerValue({
     } else {
       setDateCompleted(false);
     }
-  };
+  }; 
+  useEffect(() => {
+    setValue(dayjs()); 
+  }, []); 
 
   return (
     <FormControl sx={{ width: "64ch", mb: 5 }}>
@@ -70,6 +73,7 @@ function DatePickerValue({
             value={value}
             onChange={handleDateChange}
             sx={{ width: "64ch" }}
+            minDate={dayjs()} 
           />
 
           <FormGroup sx={{ mr: -20, ml: "auto" }}>
@@ -88,14 +92,12 @@ function DatePickerValue({
 function BasicSelect({
   startTime,
   endTime,
-  allDay,
   value,
   isDateCompleted,
   isTimeCompleted,
 }: {
   startTime : any
   endTime : any,
-  allDay : any,
   value: any,
   isDateCompleted: boolean;
   isTimeCompleted: boolean;
@@ -116,24 +118,42 @@ function BasicSelect({
   const floorsUuids = floors?.map((floor: Floor) => uuidv4()) || [];
   const desksUuids = desks?.map((desk: Desk) => uuidv4()) || [];
 
+  const[arrivalTime,setArrivalTime] = React.useState<Dayjs | null>(dayjs()
+  );
+  const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
+    dayjs()
+  );
+
+  useEffect(() => {
+    if (value) {
+      const datePart = value.format("YYYY-MM-DD");
+      if (startTime) {
+        setArrivalTime(dayjs(`${datePart}T${startTime.format("HH:mm:ss")}`));
+      }
+      if (endTime) {
+        setLeavingTime(dayjs(`${datePart}T${endTime.format("HH:mm:ss")}`));
+      }
+    }
+  }, [startTime,endTime,value]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        const response = await fetch(`https://localhost:7156/api/Office`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setOffices(data)
-      } catch (error) {
-        console.error('Unknown error occurred:', error);
-      }
-    };
-    fetchData();
-  }, []);
+          const token = localStorage.getItem("authToken");
+          const response = await fetch(`https://localhost:7156/api/Office`,{
+                method : "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+    const data = await response.json();
+    setOffices(data)
+  } catch (error) {
+    console.error('Unknown error occurred:', error);
+  }
+};
+fetchData();
+}, []);
 
   const handleOfficeChange = (event: SelectChangeEvent<string>): void => {
     const officeID = event.target.value;
@@ -154,26 +174,13 @@ function BasicSelect({
       .then((response) => response.json())
       .then((data) => setDesks(data));
     setAvailableDesks(false);
-    const dateYMD = new Date(value);
-    const arrivalTimeHours = new Date(startTime).getHours();
-    const arrivalTimeMinutes = new Date(startTime).getMinutes();
-    const leavingTimeHours = new Date(endTime).getHours();
-    const leavingTimeMinutes = new Date(endTime).getMinutes();
-    // console.log()
-    //arrivalTime + LeavingTime
   };
 
   const handleDeskChange = (event: SelectChangeEvent<string>): void => {
     const deskID = event.target.value;
     setDeskID(event.target.value);
   };
-
-
-  // console.log(arrivalTimeHours)
-  // console.log(arrivalTimeMinutes)
-  // console.log(leavingTimeHours)
-  // console.log(leavingTimeMinutes)
-  // console.log(dateYMD)
+  console.log(startTime);
   return (
     <Box
       sx={{
@@ -236,15 +243,16 @@ function BasicSelect({
           ))}
         </Select>
       </FormControl>
-    </Box>
+     
+            </Box>
   );
 }
 
 function ReserveDesk() {
-  const [startTime, setStartTime] = React.useState<Dayjs | null>(
-    dayjs().set("hour", 7).set("minute", 0)
+  const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs()
   );
-  const [endTime, setEndTime] = React.useState<Dayjs | null>(null);
+  const [endTime, setEndTime] = React.useState<Dayjs | null>(dayjs()
+  );
   const [allDay, setAllDay] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<Dayjs | null>(dayjs());
 
@@ -263,11 +271,9 @@ function ReserveDesk() {
   const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAllDay(event.target.checked);
     if (event.target.checked) {
-      setStartTime(null);
-      setEndTime(null);
+      setStartTime(dayjs().set("hour", 7).set("minute", 0));
+      setEndTime(dayjs().set("hour", 18).set("minute", 0));
       setTimeCompleted(true);
-      console.log(startTime);
-      console.log(endTime);
     } else {
       setTimeCompleted(!!startTime && !!endTime);
     }
@@ -284,20 +290,6 @@ function ReserveDesk() {
     } else {
       setTimeCompleted(false);
     }
-  };
-
-  const shouldDisableTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const hour = value.hour();
-      const minute = value.minute();
-      if (hour >= 17 || hour < 7) {
-        return true;
-      }
-      if (hour === 7 && minute < 30) {
-        return true;
-      }
-    }
-    return false;
   };
 
   const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
@@ -354,23 +346,7 @@ function ReserveDesk() {
           justifyContent: "center",
         }}
       >
-        <AppBar position="fixed" sx={{ width: "100%" }}>
-          <Toolbar disableGutters>
-            <MobileFriendlyIcon
-              sx={{
-                display: { xs: "none", md: "flex" },
-                mr: 1,
-                fontSize: 40,
-                marginLeft: 3,
-              }}
-            />{" "}
-            <Typography variant="h6" component="div">
-              Reserve a desk
-            </Typography>
-            <CloseIcon sx={{ marginLeft: 92 }}></CloseIcon>
-          </Toolbar>
-        </AppBar>
-
+       
         <Box
           sx={{
             display: "flex",
@@ -392,7 +368,7 @@ function ReserveDesk() {
               mb: 2,
             }}
           ></Box>
-          <Box
+           <Box
             sx={{
               justifyContent: "flex-start",
               mt: 2,
@@ -401,7 +377,7 @@ function ReserveDesk() {
               borderRadius: 1,
             }}
           >
-            <Button
+      <Button
               variant="contained"
               size="large"
               color="secondary"
@@ -412,8 +388,8 @@ function ReserveDesk() {
               }}
             >
               Save
-            </Button>
-          </Box>
+            </Button> 
+            </Box>
         </Box>
 
         <DatePickerValue
@@ -490,7 +466,6 @@ function ReserveDesk() {
           value={value}
           startTime={startTime}
           endTime={endTime}
-          allDay={allDay}
           isDateCompleted={isDateCompleted}
           isTimeCompleted={isTimeCompleted}
         />
