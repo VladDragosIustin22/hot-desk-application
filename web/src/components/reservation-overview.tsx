@@ -100,15 +100,8 @@ function ReservationOverview() {
   const handleCloseEdit = () => setOpenEdit(false);
   const [confirmation, setConfirmation] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams();
   const handleNo = () => {
     setConfirmation(false);
-    setOpenDelete(false);
-    setOpenEdit(false);
-    navigate("/reservationoverview");
-  };
-  const handleYes = () => {
-    setConfirmation(true);
     setOpenDelete(false);
     setOpenEdit(false);
     navigate("/reservationoverview");
@@ -172,18 +165,38 @@ function ReservationOverview() {
     };
     fetchData();
   }, []);
-  // {
-  //   reservationViews?.map((reservationView: ReservationView) =>
-  //     console.log("Ava " + reservationView.avatar)
-  //   );
-  // }
-  // {
-  //   console.log(reservationViews);
-  // }
+  const fetchDelete = async (id : string) => {
+    try {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        throw new Error("Authentication token not found in localStorage");
+      }
+      const response = await fetch(`https://localhost:7156/api/Reservation/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      setReservationViews((prevData) => prevData?.filter((reservation) => reservation.reservationID !== id) || null);
+    
+    } catch (error) {
+      console.error("Unknown error occurred:", error);
+    }
+  };
+const handleYes = (id : string) => {
+  fetchDelete(id);
+  setConfirmation(true);
+  setOpenDelete(false);
+  setOpenEdit(false);
+};
   const handleLogout = () => {
     {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('authTokenExpiry');
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authTokenExpiry");
       localStorage.clear();
     }
     navigate("/login");
@@ -631,7 +644,7 @@ function ReservationOverview() {
                             </Typography>
                             <Box sx={{ marginTop: 2, marginLeft: 100 }}>
                               <Button onClick={handleNo}>Cancel</Button>
-                              <Button onClick={handleYes}>Confirm</Button>
+                              <Button onClick={(event) => handleYes(reservationView.reservationID)}>Confirm</Button>
                             </Box>
                           </Box>
                         </Modal>

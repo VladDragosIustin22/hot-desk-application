@@ -1,4 +1,5 @@
 export interface ReservationView {
+    reservationID : string;
     arrivalTime :Date ;
     leavingTime :Date;
     officaName : string;
