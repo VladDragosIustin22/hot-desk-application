@@ -102,6 +102,7 @@ namespace HotDeskApplicationApi.Controllers
                         || (r.ArrivalTime >= arrivalTime && r.ArrivalTime < leavingTime))
                     .Select(r => r.DeskID)
                     .ToList();
+
             List<ReservationSetUp> availableDesks = hotDeskDbContext.Desks
                     .Where(d => !busyDeskIds.Contains(d.ID))
                     .Select(d => new ReservationSetUp

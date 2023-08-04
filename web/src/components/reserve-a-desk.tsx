@@ -12,9 +12,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  AppBar,
-  Toolbar,
-  SelectChangeEvent,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
@@ -23,8 +20,6 @@ import { TimeView } from "@mui/x-date-pickers";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
-import CloseIcon from "@mui/icons-material/Close";
 import { ReservationSetUp } from "../models/reservationSetup";
 import { Reservation } from "../models/reservation";
 
@@ -58,7 +53,6 @@ function DatePickerValue({
       setDateCompleted(false);
     }
   };
-
   return (
     <FormControl sx={{ width: "64ch", mb: 5 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -102,6 +96,9 @@ function BasicSelect({
   const [selectedFloorID, setSelectedFloorID] = useState('');
   const [selectedDeskID, setSelectedDeskID] = useState('');
  
+
+  const token = localStorage.getItem("authToken");
+
   const[arrivalTime,setArrivalTime] = React.useState<Dayjs | null>(dayjs()
   );
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
@@ -119,25 +116,37 @@ function BasicSelect({
     };
     setReservation(reservationData);
 
-    
+  //   fetch("https://localhost:7156/api/Reservation", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json", // Add this line to set the Content-Type header
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  //   body: JSON.stringify(reservation), // Make sure to stringify the data before sending
+  // });
   }
-  console.log(reservation);
+  // console.log(reservation);
+
   useEffect(() => {
     if (value) {
       const datePart = value.format("YYYY-MM-DD");
+  
       if (startTime) {
-        setArrivalTime(dayjs(`${datePart}T${startTime.format("HH:mm:ss")}`));
+        const adjustedStartTime = startTime.add(3, 'hour');
+        setArrivalTime(dayjs(`${datePart}T${adjustedStartTime.format("HH:mm:ss")}`));
       }
+  
       if (endTime) {
-        setLeavingTime(dayjs(`${datePart}T${endTime.format("HH:mm:ss")}`));
+        const adjustedEndTime = endTime.add(3, 'hour');
+        setLeavingTime(dayjs(`${datePart}T${adjustedEndTime.format("HH:mm:ss")}`));
       }
     }
-  }, [startTime,endTime,value]);
+  }, [startTime, endTime, value]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
         
         const response = await fetch(`https://localhost:7156/api/Desk/availableDesks?arrivalTime=${arrivalTime}&leavingTime=${leavingTime}`, {
           method: "GET",
@@ -145,15 +154,19 @@ function BasicSelect({
             Authorization: `Bearer ${token}`,
           },
         });
+        
         const data = await response.json();
         setReservationSetUp(data)
         console.log(reservationSetUp);
+        console.log("Arival time: ",arrivalTime);
+        console.log("Leaving time:", leavingTime);
+
       } catch (error) {
         console.error('Unknown error occurred:', error);
       }
     };
     fetchData();
-  }, [arrivalTime, leavingTime, value, startTime, endTime]);
+  }, [arrivalTime, leavingTime]);
 
   const uniqueOffices: ReservationSetUp[] = reservationSetUp
   ? reservationSetUp.reduce((acc: ReservationSetUp[], curr: ReservationSetUp) => {
@@ -204,7 +217,6 @@ function BasicSelect({
     deskName: reservationSetUp.deskName,
   }))
 : [];
-
   return (
     <Box
       sx={{
@@ -224,8 +236,9 @@ function BasicSelect({
           disabled={!isDateCompleted || !isTimeCompleted}
           onChange={(event) => setSelectedOfficeID(event.target.value)}
         >
+          
           {uniqueOffices?.map((reservationSetUp : ReservationSetUp, index: number) => (
-            <MenuItem key={reservationSetUp.officeID} value={reservationSetUp.officeID}>
+            <MenuItem key={index} value={reservationSetUp.officeID}>
               {reservationSetUp.officeName}
             </MenuItem>
           ))} 
@@ -242,6 +255,7 @@ function BasicSelect({
           disabled={selectedOfficeID===""}
           onChange={(event) => setSelectedFloorID(event.target.value)}
         >
+          
           {uniqueFloors?.map((reservationSetUp : ReservationSetUp, index: number) => (
             <MenuItem key={index} value={reservationSetUp.floorID}>
               {reservationSetUp.floorName}
@@ -260,11 +274,13 @@ function BasicSelect({
           onChange={(event) => setSelectedDeskID(event.target.value)}
           disabled={selectedFloorID===''}
         >
+          
          {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
-            <MenuItem key={reservationSetUp.deskID} value={reservationSetUp.deskID}>
+            <MenuItem key={index} value={reservationSetUp.deskID}>
               {reservationSetUp.deskName}
             </MenuItem>
           ))} 
+          
         </Select>
       </FormControl>
       <Button

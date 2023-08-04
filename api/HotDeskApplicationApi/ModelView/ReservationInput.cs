@@ -1,11 +1,7 @@
-﻿using System.Text.Json.Serialization;
-
-namespace HotDeskApplicationApi.Models
+﻿namespace HotDeskApplicationApi.ModelView
 {
-    public class Reservation
+    public class ReservationInput
     {
-        public Guid ID { get; set; }
-        public Guid ProfileID { get; set; }
         public DateTime ArrivalTime { get; set; }
         public DateTime LeavingTime { get; set; }
         public Guid OfficeID { get; set; }
