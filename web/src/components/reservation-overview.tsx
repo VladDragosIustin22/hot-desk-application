@@ -15,7 +15,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EditReservation from "./edit-reservation";
 import MyProfile from "./my-profile";
 import ReserveDesk from "./reserve-a-desk";
@@ -193,6 +193,7 @@ const handleYes = (id : string) => {
   setOpenDelete(false);
   setOpenEdit(false);
 };
+
   const handleLogout = () => {
     {
       localStorage.removeItem("authToken");
@@ -214,7 +215,6 @@ const handleYes = (id : string) => {
       fontSize: 15,
     },
   });
-  // const base64String = Buffer.from(data).toString('base64');
   return (
     <>
       <div style={backgroundImageStyle} />
@@ -477,7 +477,8 @@ const handleYes = (id : string) => {
             </Typography>
           ) : (
             reservationViews?.map((reservationView: ReservationView) => (
-              <>
+              <React.Fragment key={reservationView.reservationID}>
+
                 <Box marginTop={6}>
                   <Stack
                     direction="row"
@@ -518,8 +519,10 @@ const handleYes = (id : string) => {
                         <Typography
                           variant="h6"
                           sx={{ fontSize: 15, marginTop: 2, color: "white" }}
+                          
                         >
                           Date:
+                          
                           {new Date(reservationView.arrivalTime).getDay()}.
                           {new Date(reservationView.arrivalTime).getMonth()}.
                           {new Date(reservationView.arrivalTime).getFullYear()}
@@ -644,7 +647,7 @@ const handleYes = (id : string) => {
                             </Typography>
                             <Box sx={{ marginTop: 2, marginLeft: 100 }}>
                               <Button onClick={handleNo}>Cancel</Button>
-                              <Button onClick={(event) => handleYes(reservationView.reservationID)}>Confirm</Button>
+                              <Button onClick={() => handleYes(reservationView.reservationID)}>Confirm</Button>
                             </Box>
                           </Box>
                         </Modal>
@@ -652,7 +655,7 @@ const handleYes = (id : string) => {
                     </Stack>
                   </Stack>
                 </Box>
-              </>
+                </React.Fragment>
             ))
           )}
         </Box>
