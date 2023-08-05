@@ -82,6 +82,7 @@ namespace HotDeskApplicationApi.Controllers
             _dbContext.Reservations.Add(reservation);
 
             await _dbContext.SaveChangesAsync();
+
         }
 
         [HttpDelete("{id}")]

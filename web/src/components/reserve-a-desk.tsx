@@ -54,9 +54,6 @@ function DatePickerValue({
       setDateCompleted(false);
     }
   };
-  useEffect(() => {
-    setValue(dayjs()); 
-  }, []); 
   return (
     <FormControl sx={{ width: "64ch", mb: 5 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -66,7 +63,6 @@ function DatePickerValue({
             value={value}
             onChange={handleDateChange}
             sx={{ width: "64ch" }}
-            minDate={dayjs()} 
           />
 
           <FormGroup sx={{ mr: -20, ml: "auto" }}>
@@ -101,7 +97,9 @@ function BasicSelect({
   const [selectedFloorID, setSelectedFloorID] = useState('');
   const [selectedDeskID, setSelectedDeskID] = useState('');
  
+
   const token = localStorage.getItem("authToken");
+
   const[arrivalTime,setArrivalTime] = React.useState<Dayjs | null>(dayjs()
   );
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
@@ -167,11 +165,13 @@ function BasicSelect({
             Authorization: `Bearer ${token}`,
           },
         });
+        
         const data = await response.json();
         setReservationSetUp(data)
         console.log(reservationSetUp);
         console.log("Arival time: ",arrivalTime);
         console.log("Leaving time:", leavingTime);
+
       } catch (error) {
         console.error('Unknown error occurred:', error);
       }
@@ -228,7 +228,6 @@ function BasicSelect({
     deskName: reservationSetUp.deskName,
   }))
 : [];
-// console.log(reservationSetUp);
   return (
     <Box
       sx={{
@@ -248,6 +247,7 @@ function BasicSelect({
           disabled={!isDateCompleted || !isTimeCompleted}
           onChange={(event) => setSelectedOfficeID(event.target.value)}
         >
+          
           {uniqueOffices?.map((reservationSetUp : ReservationSetUp, index: number) => (
             <MenuItem key={index} value={reservationSetUp.officeID}>
               {reservationSetUp.officeName}
@@ -266,6 +266,7 @@ function BasicSelect({
           disabled={selectedOfficeID===""}
           onChange={(event) => setSelectedFloorID(event.target.value)}
         >
+          
           {uniqueFloors?.map((reservationSetUp : ReservationSetUp, index: number) => (
             <MenuItem key={index} value={reservationSetUp.floorID}>
               {reservationSetUp.floorName}
@@ -284,11 +285,13 @@ function BasicSelect({
           onChange={(event) => setSelectedDeskID(event.target.value)}
           disabled={selectedFloorID===''}
         >
+          
          {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
             <MenuItem key={index} value={reservationSetUp.deskID}>
               {reservationSetUp.deskName}
             </MenuItem>
           ))} 
+          
         </Select>
       </FormControl>
       <Button
