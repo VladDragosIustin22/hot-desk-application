@@ -150,13 +150,7 @@ fetchData();
       .then((response) => response.json())
       .then((data) => setDesks(data));
     setAvailableDesks(false);
-    const dateYMD = new Date(value);
-    const arrivalTimeHours = new Date(startTime).getHours();
-    const arrivalTimeMinutes = new Date(startTime).getMinutes();
-    const leavingTimeHours = new Date(endTime).getHours();
-    const leavingTimeMinutes = new Date(endTime).getMinutes();
-    // console.log()
-
+  
   };
 
   const handleDeskChange = (event: SelectChangeEvent<string>): void => {
@@ -164,12 +158,6 @@ fetchData();
     setDeskID(event.target.value);
   };
 
-
-  // console.log(arrivalTimeHours)
-  // console.log(arrivalTimeMinutes)
-  // console.log(leavingTimeHours)
-  // console.log(leavingTimeMinutes)
-  // console.log(dateYMD)
   return (
     <Box
       sx={{

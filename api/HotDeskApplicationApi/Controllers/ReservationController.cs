@@ -1,6 +1,7 @@
 ﻿using HotDeskApplicationApi.Data;
 using HotDeskApplicationApi.Framework.Identity;
 using HotDeskApplicationApi.Models;
+using HotDeskApplicationApi.ModelView;
 using HotDeskApplicationApi.NewFolder2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -42,7 +43,7 @@ namespace HotDeskApplicationApi.Controllers
             Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == userID);
 
             var reservations = _dbContext.Reservations
-                .Where(r => r.ProfileEmail == userProfile.EmailAddress)
+                .Where(r => r.ProfileID == identity.ID)
                 .Select(r => new RegistrationView
                 {
                     ReservationID = r.ID,
@@ -51,9 +52,9 @@ namespace HotDeskApplicationApi.Controllers
                     OfficaName = _dbContext.Offices.FirstOrDefault(o => o.ID == r.OfficeID).Name,
                     FloorName = _dbContext.Floors.FirstOrDefault(f => f.ID == r.FloorID).Name,
                     DeskName = _dbContext.Desks.FirstOrDefault(d => d.ID == r.DeskID).Name,
-                    Avatar = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == userProfile.EmailAddress).Avatar,
-                    ProfileRole = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == userProfile.EmailAddress).Role,
-                    ProfileName = _dbContext.Profile.FirstOrDefault(p => p.EmailAddress == userProfile.EmailAddress).NickName
+                    Avatar = userProfile.Avatar,
+                    ProfileRole = userProfile.Role,
+                    ProfileName = userProfile.NickName
                 })
                 .ToList();
 
@@ -62,13 +63,26 @@ namespace HotDeskApplicationApi.Controllers
     }
 
         [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task PostReservation(ReservationInput reservationInput)
         {
+            Identity identity = ControllerContext.GetIdentity();
+
+            var reservation = new Reservation
+            {
+                ID = Guid.NewGuid(),
+                ProfileID = identity.ID,
+                ArrivalTime = reservationInput.ArrivalTime,
+                LeavingTime = reservationInput.LeavingTime,
+                OfficeID = reservationInput.OfficeID,
+                FloorID = reservationInput.FloorID,
+                DeskID = reservationInput.DeskID,
+            };
 
             _dbContext.Reservations.Add(reservation);
+
             await _dbContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetReservation", new { id = reservation.ID }, reservation);
         }
 
         [HttpDelete("{id}")]

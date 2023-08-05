@@ -3,6 +3,7 @@ using System;
 using HotDeskApplicationApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HotDeskApplicationApi.Migrations
 {
     [DbContext(typeof(HotDeskDbContext))]
-    partial class HotDeskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230803155935_Rename_Column_ProfileEmail_Into_ProfileID_In_Table_Reservation")]
+    partial class Rename_Column_ProfileEmail_Into_ProfileID_In_Table_Reservation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
