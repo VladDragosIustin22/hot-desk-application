@@ -193,9 +193,11 @@ const handleYes = (reservationId: string) => {
   setConfirmation(true);
   setOpenDelete(false);
   setOpenEdit(false);
+
  };
 
-const handleLogout = () => {
+
+  const handleLogout = () => {
     {
       localStorage.removeItem("authToken");
       localStorage.removeItem("authTokenExpiry");
