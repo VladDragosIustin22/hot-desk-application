@@ -165,10 +165,11 @@ function ReservationOverview() {
     };
     fetchData();
   }, []);
-  const fetchDelete = async (id : string) => {
+
+  const fetchDelete = async (id: string) => {
     try {
       const token = localStorage.getItem("authToken");
-
+      
       if (!token) {
         throw new Error("Authentication token not found in localStorage");
       }
@@ -187,12 +188,14 @@ function ReservationOverview() {
       console.error("Unknown error occurred:", error);
     }
   };
-const handleYes = (id : string) => {
-  fetchDelete(id);
+const handleYes = (reservationId: string) => {
+  fetchDelete(reservationId);
   setConfirmation(true);
   setOpenDelete(false);
   setOpenEdit(false);
-};
+
+ };
+
 
   const handleLogout = () => {
     {
@@ -647,7 +650,7 @@ const handleYes = (id : string) => {
                             </Typography>
                             <Box sx={{ marginTop: 2, marginLeft: 100 }}>
                               <Button onClick={handleNo}>Cancel</Button>
-                              <Button onClick={() => handleYes(reservationView.reservationID)}>Confirm</Button>
+                              <Button  key={reservationView.reservationID} onClick={() => handleYes(reservationView.reservationID)}>Confirm</Button>
                             </Box>
                           </Box>
                         </Modal>
