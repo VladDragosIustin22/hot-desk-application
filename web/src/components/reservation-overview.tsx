@@ -166,10 +166,10 @@ function ReservationOverview() {
     fetchData();
   }, []);
 
-  const fetchDelete = async (id: string) => {
+  const fetchDelete = async (reservationView: ReservationView) => {
     try {
       const token = localStorage.getItem("authToken");
-      
+      const id = reservationView.reservationID;
       if (!token) {
         throw new Error("Authentication token not found in localStorage");
       }
@@ -188,8 +188,10 @@ function ReservationOverview() {
       console.error("Unknown error occurred:", error);
     }
   };
-const handleYes = (reservationId: string) => {
-  fetchDelete(reservationId);
+const handleYes = (reservationView: ReservationView) => {
+  fetchDelete(reservationView);
+  
+  console.log(reservationView);
   setConfirmation(true);
   setOpenDelete(false);
   setOpenEdit(false);
@@ -524,11 +526,7 @@ const handleYes = (reservationId: string) => {
                           sx={{ fontSize: 15, marginTop: 2, color: "white" }}
                           
                         >
-                          Date:
-                          
-                          {new Date(reservationView.arrivalTime).getDay()}.
-                          {new Date(reservationView.arrivalTime).getMonth()}.
-                          {new Date(reservationView.arrivalTime).getFullYear()}
+                          Date: { reservationView.arrivalTime.slice(0,10)}
                         </Typography>
                         <Typography
                           variant="h6"
@@ -542,11 +540,7 @@ const handleYes = (reservationId: string) => {
                           variant="h6"
                           sx={{ fontSize: 15, marginTop: 2, color: "white" }}
                         >
-                          Interval:
-                          {new Date(reservationView.arrivalTime).getHours()}:
-                          {new Date(reservationView.arrivalTime).getMinutes()}-
-                          {new Date(reservationView.leavingTime).getHours()}:
-                          {new Date(reservationView.leavingTime).getMinutes()}.
+                          Interval: {reservationView.arrivalTime.slice(11,16)} - {reservationView.leavingTime.slice(11,16)}
                         </Typography>
                         <Typography
                           variant="h6"
@@ -650,7 +644,7 @@ const handleYes = (reservationId: string) => {
                             </Typography>
                             <Box sx={{ marginTop: 2, marginLeft: 100 }}>
                               <Button onClick={handleNo}>Cancel</Button>
-                              <Button  key={reservationView.reservationID} onClick={() => handleYes(reservationView.reservationID)}>Confirm</Button>
+                              <Button  key={reservationView.reservationID}  onClick={() => handleYes(reservationView)}>Confirm</Button>
                             </Box>
                           </Box>
                         </Modal>
