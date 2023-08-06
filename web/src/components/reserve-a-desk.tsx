@@ -21,8 +21,8 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { ReservationSetUp } from "../models/reservationSetup";
-import { Reservation } from "../models/reservation";
 import { useNavigate } from "react-router-dom";
+import { ReservationInput } from "../models/reservation";
 
 const theme = createTheme({
   palette: {
@@ -110,7 +110,7 @@ function BasicSelect({
 
   const createReservation = async () =>{
 
-    const reservationData : Reservation ={
+    const reservationData : ReservationInput ={
       arrivalTime : arrivalTime?.toDate() || new Date(),
       leavingTime : leavingTime?.toDate() || new Date(),
       officeID : selectedOfficeID,
@@ -286,7 +286,7 @@ function BasicSelect({
           disabled={selectedFloorID===''}
         >
           
-         {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
+           {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
             <MenuItem key={index} value={reservationSetUp.deskID}>
               {reservationSetUp.deskName}
             </MenuItem>
