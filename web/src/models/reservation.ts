@@ -1,4 +1,4 @@
-export interface Reservation {
+export interface ReservationInput {
     arrivalTime: Date;
     leavingTime: Date;
     officeID: string;
