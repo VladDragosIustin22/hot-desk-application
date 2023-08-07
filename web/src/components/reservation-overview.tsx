@@ -15,7 +15,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EditReservation from "./edit-reservation";
 import MyProfile from "./my-profile";
 import ReserveDesk from "./reserve-a-desk";
@@ -23,11 +23,12 @@ import Settings from "./settings";
 import { grey, orange } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ReservationView } from "../models/reservationView";
+import { Profile } from "../models/profile";
 import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
-import backgroundImage from "../models/background.jpg";
+import backgroundImage from "../assests/background.jpg"
 const settings = ["My Profile", "Settings", "Logout"];
 
 const style = {
@@ -134,6 +135,7 @@ function ReservationOverview() {
   const [reservationViews, setReservationViews] = useState<
     ReservationView[] | null
   >(null);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,10 +167,42 @@ function ReservationOverview() {
     };
     fetchData();
   }, []);
-  const fetchDelete = async (id : string) => {
+
+  const [userProfile,setUserProfile] = useState<Profile | null>(null);
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+           const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("Authentication token not found in localStorage");
+        }
+        const response = await fetch(
+          "https://localhost:7156/api/Profile/GetProfile",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        setUserProfile(data);
+      } catch (error) {
+        console.error("Unknown error occurred:", error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
+  const fetchDelete = async (reservationView: ReservationView) => {
     try {
       const token = localStorage.getItem("authToken");
-
+      const id = reservationView.reservationID;
       if (!token) {
         throw new Error("Authentication token not found in localStorage");
       }
@@ -187,12 +221,17 @@ function ReservationOverview() {
       console.error("Unknown error occurred:", error);
     }
   };
-const handleYes = (id : string) => {
-  fetchDelete(id);
+const handleYes = (reservationView: ReservationView) => {
+  fetchDelete(reservationView);
+  
+  console.log(reservationView);
   setConfirmation(true);
   setOpenDelete(false);
   setOpenEdit(false);
-};
+
+ };
+
+
   const handleLogout = () => {
     {
       localStorage.removeItem("authToken");
@@ -214,7 +253,6 @@ const handleYes = (id : string) => {
       fontSize: 15,
     },
   });
-  // const base64String = Buffer.from(data).toString('base64');
   return (
     <>
       <div style={backgroundImageStyle} />
@@ -341,7 +379,7 @@ const handleYes = (id : string) => {
             </Modal>
             <Avatar
               alt="User Name"
-              src="/static/images/avatar/1.jpg"
+              src={`data:image/png;base64,${userProfile?.avatar}`}
               sx={{ marginLeft: -9, marginRight: -1 }}
             />
             <Typography
@@ -360,7 +398,7 @@ const handleYes = (id : string) => {
                 padding: 1,
               }}
             >
-              Profile Name
+              {userProfile?.nickName}
             </Typography>
             <Box
               margin={1}
@@ -477,7 +515,8 @@ const handleYes = (id : string) => {
             </Typography>
           ) : (
             reservationViews?.map((reservationView: ReservationView) => (
-              <>
+              <React.Fragment key={reservationView.reservationID}>
+
                 <Box marginTop={6}>
                   <Stack
                     direction="row"
@@ -518,11 +557,9 @@ const handleYes = (id : string) => {
                         <Typography
                           variant="h6"
                           sx={{ fontSize: 15, marginTop: 2, color: "white" }}
+                          
                         >
-                          Date:
-                          {new Date(reservationView.arrivalTime).getDay()}.
-                          {new Date(reservationView.arrivalTime).getMonth()}.
-                          {new Date(reservationView.arrivalTime).getFullYear()}
+                          Date: { reservationView.arrivalTime.slice(0,10)}
                         </Typography>
                         <Typography
                           variant="h6"
@@ -536,11 +573,7 @@ const handleYes = (id : string) => {
                           variant="h6"
                           sx={{ fontSize: 15, marginTop: 2, color: "white" }}
                         >
-                          Interval:
-                          {new Date(reservationView.arrivalTime).getHours()}:
-                          {new Date(reservationView.arrivalTime).getMinutes()}-
-                          {new Date(reservationView.leavingTime).getHours()}:
-                          {new Date(reservationView.leavingTime).getMinutes()}.
+                          Interval: {reservationView.arrivalTime.slice(11,16)} - {reservationView.leavingTime.slice(11,16)}
                         </Typography>
                         <Typography
                           variant="h6"
@@ -644,7 +677,7 @@ const handleYes = (id : string) => {
                             </Typography>
                             <Box sx={{ marginTop: 2, marginLeft: 100 }}>
                               <Button onClick={handleNo}>Cancel</Button>
-                              <Button onClick={(event) => handleYes(reservationView.reservationID)}>Confirm</Button>
+                              <Button  key={reservationView.reservationID}  onClick={() => handleYes(reservationView)}>Confirm</Button>
                             </Box>
                           </Box>
                         </Modal>
@@ -652,7 +685,7 @@ const handleYes = (id : string) => {
                     </Stack>
                   </Stack>
                 </Box>
-              </>
+                </React.Fragment>
             ))
           )}
         </Box>
