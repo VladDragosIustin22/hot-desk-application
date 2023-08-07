@@ -23,6 +23,7 @@ import Settings from "./settings";
 import { grey, orange } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ReservationView } from "../models/reservationView";
+import { Profile } from "../models/profile";
 import MobileFriendlyIcon from "@mui/icons-material/MobileFriendly";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -134,6 +135,7 @@ function ReservationOverview() {
   const [reservationViews, setReservationViews] = useState<
     ReservationView[] | null
   >(null);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -164,6 +166,37 @@ function ReservationOverview() {
       }
     };
     fetchData();
+  }, []);
+
+  const [userProfile,setUserProfile] = useState<Profile | null>(null);
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+           const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("Authentication token not found in localStorage");
+        }
+        const response = await fetch(
+          "https://localhost:7156/api/Profile/GetProfile",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        setUserProfile(data);
+      } catch (error) {
+        console.error("Unknown error occurred:", error);
+      }
+    };
+    fetchUserProfile();
   }, []);
 
   const fetchDelete = async (reservationView: ReservationView) => {
@@ -346,7 +379,7 @@ const handleYes = (reservationView: ReservationView) => {
             </Modal>
             <Avatar
               alt="User Name"
-              src="/static/images/avatar/1.jpg"
+              src={`data:image/png;base64,${userProfile?.avatar}`}
               sx={{ marginLeft: -9, marginRight: -1 }}
             />
             <Typography
@@ -365,7 +398,7 @@ const handleYes = (reservationView: ReservationView) => {
                 padding: 1,
               }}
             >
-              Profile Name
+              {userProfile?.nickName}
             </Typography>
             <Box
               margin={1}
