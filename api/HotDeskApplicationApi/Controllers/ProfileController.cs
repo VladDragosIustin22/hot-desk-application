@@ -1,4 +1,5 @@
 ﻿using HotDeskApplicationApi.Data;
+using HotDeskApplicationApi.Framework.Identity;
 using HotDeskApplicationApi.Migrations;
 using HotDeskApplicationApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,10 +28,11 @@ namespace HotDeskApplicationApi.Controllers
             return await hotDeskDbContext.Profile.ToArrayAsync();
         }
 
-        [HttpGet("{id}")]
-        public async Task<Profile> GetProfile(Guid id)
+        [HttpGet]
+        public async Task<Profile> GetProfile()
         {
-            var profile = await hotDeskDbContext.Profile.FindAsync(id);
+            Identity identity = ControllerContext.GetIdentity();
+            var profile = await hotDeskDbContext.Profile.FindAsync(identity.ID);
 
             return profile;
         }
