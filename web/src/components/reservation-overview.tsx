@@ -93,8 +93,16 @@ function ReservationOverview() {
 
   const [openDelete, setOpenDelete] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
-  const handleOpenDelete = () => setOpenDelete(true);
-  const handleCloseDelete = () => setOpenDelete(false);
+  const [openDeleteForReservationId, setOpenDeleteForReservationId] = React.useState<string | null>(null);
+
+const handleOpenDelete = (reservationId: string) => {
+  setOpenDeleteForReservationId(reservationId);
+};
+
+const handleCloseDelete = () => {
+  setOpenDeleteForReservationId(null);
+};
+
   const handleOpenEdit = () => {
     setOpenEdit(true);
   };
@@ -220,7 +228,8 @@ function ReservationOverview() {
     } catch (error) {
       console.error("Unknown error occurred:", error);
     }
-  };
+  }; 
+
 const handleYes = (reservationView: ReservationView) => {
   fetchDelete(reservationView);
   
@@ -647,7 +656,7 @@ const handleYes = (reservationView: ReservationView) => {
                           ></CreateIcon>
                         </Button>
 
-                        <Button onClick={handleOpenDelete}>
+                        <Button onClick={() => handleOpenDelete(reservationView.reservationID)}>
                           <DeleteIcon
                             sx={{
                               fontSize: 18,
@@ -656,7 +665,7 @@ const handleYes = (reservationView: ReservationView) => {
                           ></DeleteIcon>
                         </Button>
                         <Modal
-                          open={openDelete}
+                          open={openDeleteForReservationId === reservationView.reservationID}
                           onClose={handleCloseDelete}
                           aria-labelledby="modal-modal-title"
                           aria-describedby="modal-modal-description"
