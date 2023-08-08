@@ -85,6 +85,29 @@ namespace HotDeskApplicationApi.Controllers
 
         }
 
+        [HttpPost("MakeReservationForUsers")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Admin")]
+        public async Task PostReservationForUsers(AdminReservation adminReservation)
+        {
+            
+            var reservation = new Reservation
+            {
+                ID = Guid.NewGuid(),
+                ProfileID = adminReservation.UserID,
+                ArrivalTime = adminReservation.ArrivalTime,
+                LeavingTime = adminReservation.LeavingTime,
+                OfficeID = adminReservation.OfficeID,
+                FloorID = adminReservation.FloorID,
+                DeskID = adminReservation.DeskID,
+            };
+
+            _dbContext.Reservations.Add(reservation);
+
+            await _dbContext.SaveChangesAsync();
+
+        }
+
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> DeleteReservation(Guid id)
