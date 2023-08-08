@@ -21,7 +21,8 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { ReservationSetUp } from "../models/reservationSetup";
-import { Reservation } from "../models/reservation";
+import { useNavigate } from "react-router-dom";
+import { ReservationInput } from "../models/reservation";
 
 const theme = createTheme({
   palette: {
@@ -104,28 +105,38 @@ function BasicSelect({
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
     dayjs()
   );
-  
-  const [reservation,setReservation] = useState<Reservation | null>(null);
-  const createReservation =() =>{
-    const reservationData : Reservation ={
+  const [redirect, setRedirect] = useState(false);
+  const navigate = useNavigate();
+
+  const createReservation = async () =>{
+
+    const reservationData : ReservationInput ={
       arrivalTime : arrivalTime?.toDate() || new Date(),
       leavingTime : leavingTime?.toDate() || new Date(),
       officeID : selectedOfficeID,
       floorID : selectedFloorID,
       deskID :selectedDeskID,
     };
-    setReservation(reservationData);
-
-  //   fetch("https://localhost:7156/api/Reservation", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json", // Add this line to set the Content-Type header
-  //     Authorization: `Bearer ${token}`,
-  //   },
-  //   body: JSON.stringify(reservation), // Make sure to stringify the data before sending
-  // });
-  }
-  // console.log(reservation);
+   try {
+    await fetch("https://localhost:7156/api/Reservation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", 
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(reservationData), 
+    });
+    setRedirect(true);
+  } catch{
+    setRedirect(false);
+  }};
+  console.log(redirect);
+  
+  useEffect(() => {
+    if (redirect) {
+      navigate("/reservationoverview");
+    }
+  }, [redirect, navigate]);
 
   useEffect(() => {
     if (value) {
@@ -275,7 +286,7 @@ function BasicSelect({
           disabled={selectedFloorID===''}
         >
           
-         {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
+           {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
             <MenuItem key={index} value={reservationSetUp.deskID}>
               {reservationSetUp.deskName}
             </MenuItem>
@@ -294,7 +305,7 @@ function BasicSelect({
       }}
       onClick={createReservation}
       >
-        Saved
+        Save
       </Button>
     </Box>
   );
