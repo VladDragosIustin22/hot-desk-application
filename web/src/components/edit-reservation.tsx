@@ -48,14 +48,30 @@ function DatePickerValue({
   setValue,
   setDateCompleted,
 }: any) {
+  const [isDateSelected, setDateSelected] = useState(false); 
+  const [selectedOfficeID, setSelectedOfficeID] = useState('');
+  const [selectedFloorID, setSelectedFloorID] = useState('');
+  const [selectedDeskID, setSelectedDeskID] = useState('');
+
   const handleDateChange = (newValue: Dayjs | null) => {
     setValue(newValue);
     if (newValue) {
+      setDateSelected(true); 
       setDateCompleted(true);
+      setSelectedOfficeID('');  // astea nu merg
+      setSelectedFloorID(''); 
+      setSelectedDeskID('');   
     } else {
+      setDateSelected(false); 
       setDateCompleted(false);
     }
   };
+  useEffect(() => {
+    setValue(dayjs()); 
+    }, []);
+    const shouldDisableDate = (date: Dayjs) => {
+      return date.day() === 0 || date.day() === 6; 
+    };
 
   return (
     <FormControl sx={{ width: "64ch", mb: 5 }}>
@@ -65,13 +81,18 @@ function DatePickerValue({
             label="Date"
             value={value}
             onChange={handleDateChange}
+            minDate={dayjs()} 
+            shouldDisableDate={shouldDisableDate} 
             sx={{ width: "64ch" }}
           />
 
           <FormGroup sx={{ mr: -20, ml: "auto" }}>
             <FormControlLabel
               control={
-                <Switch checked={allDay} onChange={handleAllDayToggle} />
+                <Switch
+                  checked={allDay}
+                  onChange={handleAllDayToggle}
+                  disabled={!isDateSelected} />
               }
               label="All day"
             />
@@ -235,11 +256,21 @@ function EditReservation() {
   const [isDateCompleted, setDateCompleted] = React.useState(false);
   const [isTimeCompleted, setTimeCompleted] = React.useState(false);
 
+  const [isDateSelected, setDateSelected] = useState(false); 
+  const [selectedOfficeID, setSelectedOfficeID] = useState('');
+  const [selectedFloorID, setSelectedFloorID] = useState('');
+  const [selectedDeskID, setSelectedDeskID] = useState('');
+
   const handleDateChange = (newValue: Dayjs | null) => {
     setValue(newValue);
     if (newValue) {
+      setDateSelected(true); 
       setDateCompleted(true);
+      setSelectedOfficeID(''); 
+      setSelectedFloorID(''); 
+      setSelectedDeskID('');   
     } else {
+      setDateSelected(false); 
       setDateCompleted(false);
     }
   };
