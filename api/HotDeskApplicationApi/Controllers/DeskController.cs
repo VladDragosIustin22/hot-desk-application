@@ -103,6 +103,12 @@ namespace HotDeskApplicationApi.Controllers
                     .Select(r => r.DeskID)
                     .ToList();
 
+            var offices = hotDeskDbContext.Offices.ToList();
+
+            var floors = hotDeskDbContext.Floors.ToList();
+
+            var desks = hotDeskDbContext.Desks.ToList();
+
             List<ReservationSetUp> availableDesks = hotDeskDbContext.Desks
                     .Where(d => !busyDeskIds.Contains(d.ID))
                     .Select(d => new ReservationSetUp
@@ -111,7 +117,7 @@ namespace HotDeskApplicationApi.Controllers
                         DeskName = d.Name,
                         FloorID = d.FloorID,
                         FloorName = hotDeskDbContext.Floors.FirstOrDefault(f => f.ID == d.FloorID).Name,
-                        OfficeID = hotDeskDbContext.Floors.FirstOrDefault(f => f.ID == d.FloorID).OfficeID,
+                        OfficeID = d.OfficeID,
                         OfficeName = hotDeskDbContext.Offices.FirstOrDefault(o => o.ID == d.OfficeID).Name,
                     })
                     .ToList();

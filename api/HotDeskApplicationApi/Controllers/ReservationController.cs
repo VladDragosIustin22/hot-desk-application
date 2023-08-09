@@ -5,8 +5,6 @@ using HotDeskApplicationApi.ModelView;
 using HotDeskApplicationApi.NewFolder2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +12,7 @@ namespace HotDeskApplicationApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[AllowAnonymous]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ReservationController : ControllerBase
     {
         private readonly HotDeskDbContext _dbContext;
@@ -26,25 +24,52 @@ namespace HotDeskApplicationApi.Controllers
 
        
         [HttpGet("{id}")]
-        public async Task<Reservation> GetReservation(Guid id)
+        public async Task<EditReservation> GetReservation(Guid id)
         {
+            Identity identity = ControllerContext.GetIdentity();
+
+            Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == identity.ID);
+
             var reservation = await _dbContext.Reservations.FindAsync(id);
-            return reservation;
+
+            var office = _dbContext.Offices.ToList().FirstOrDefault(o => o.ID == reservation.OfficeID);
+
+            var floor = _dbContext.Floors.FirstOrDefault(f => f.ID == reservation.FloorID);
+
+            var desk = _dbContext.Desks.FirstOrDefault(d => d.ID == reservation.DeskID);
+
+            
+
+            var reservationView = new EditReservation()
+            {
+                ReservationID = id,
+                ArrivalTime = reservation.ArrivalTime,
+                LeavingTime = reservation.LeavingTime,
+                OfficeName = office.Name,
+                OfficeID = office.ID,
+                FloorName = floor.Name,
+                FloorID = floor.ID,
+                DeskName = desk.Name,
+                DeskID = desk.ID,
+                
+            };
+
+            return reservationView;
         }
 
         [HttpGet("GetAllProfileReservations")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+      
         public IActionResult GetAllProfileReservations()
         {
-            Framework.Identity.Identity identity = ControllerContext.GetIdentity();
-            
-            Guid userID = identity.ID;
+            Identity identity = ControllerContext.GetIdentity();
 
-            Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == userID);
+            Profile userProfile = _dbContext.Profile.FirstOrDefault(p => p.ID == identity.ID);
+
+            List<Guid> offices = _dbContext.Offices.Select(o => o.ID).ToList();
 
             var reservations = _dbContext.Reservations
                 .Where(r => r.ProfileID == identity.ID)
-                .Select(r => new RegistrationView
+                .Select(r => new ReservationView
                 {
                     ReservationID = r.ID,
                     ArrivalTime = r.ArrivalTime,
@@ -58,9 +83,8 @@ namespace HotDeskApplicationApi.Controllers
                 })
                 .ToList();
 
-    return Ok(reservations);
-    
-    }
+            return Ok(reservations);
+        }
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -84,6 +108,17 @@ namespace HotDeskApplicationApi.Controllers
             await _dbContext.SaveChangesAsync();
 
         }
+        /*
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDesk(Guid id, EditReservation reservationEdit)
+        {
+            var reservation = new Reservation
+            {
+
+            };
+
+            return NoContent();
+        }*/
 
         [HttpPost("MakeReservationForUsers")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

@@ -12,7 +12,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
@@ -21,10 +20,9 @@ import { TimeView } from "@mui/x-date-pickers";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import { Office } from "../models/office";
-import { Floor } from "../models/floor";
-import { v4 as uuidv4 } from "uuid";
-import { Desk } from "../models/desk";
+import { ReservationView } from "../models/reservationView";
+import { ReservationSetUp } from "../models/reservationSetup";
+// import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -47,15 +45,30 @@ function DatePickerValue({
   value,
   setValue,
   setDateCompleted,
+  reservationView,
+  setStartTime,
+  setEndTime
 }: any) {
   const handleDateChange = (newValue: Dayjs | null) => {
     setValue(newValue);
     if (newValue) {
       setDateCompleted(true);
+      setStartTime(null);
+      setEndTime(null);
     } else {
       setDateCompleted(false);
     }
   };
+
+  useEffect(() =>{
+    if (reservationView) {
+      const formattedArrivalTime = dayjs(reservationView.arrivalTime);
+      setValue(formattedArrivalTime);
+
+    }
+  }, [reservationView]);
+
+  console.log("Value:",value);
 
   return (
     <FormControl sx={{ width: "64ch", mb: 5 }}>
@@ -84,80 +97,124 @@ function DatePickerValue({
 function BasicSelect({
   startTime,
   endTime,
-  allDay,
   value,
   isDateCompleted,
   isTimeCompleted,
+  // reservationID
 }: {
   startTime : any
   endTime : any,
-  allDay : any,
   value: any,
   isDateCompleted: boolean;
   isTimeCompleted: boolean;
-}) {
-  const [offices, setOffices] = useState<Office[] | null>(null);
-  const [officeID, setofficeID] = useState<string | null>(null);
+  // reservationID: string;
+})  {
+  // console.log(reservationID);
+  const [reservationSetUp,setReservationSetUp] = useState<ReservationSetUp[] | null>(null);
+  const [selectedOfficeID, setSelectedOfficeID] = useState('');
+  const [selectedFloorID, setSelectedFloorID] = useState('');
+  const [selectedDeskID, setSelectedDeskID] = useState('');
+  // const [reservationoverView,setReservationView] = useState<ReservationView | null>(null);
 
-  const [floors, setFloors] = useState<Floor[] | null>(null);
-  const [floorID, setFloorID] = useState<string | null>(null);
+  const token = localStorage.getItem("authToken");
 
-  const [desks, setDesks] = useState<Desk[] | null>(null);
-  const [deskID, setDeskID] = useState<string | null>(null);
+  const[arrivalTime,setArrivalTime] = React.useState<Dayjs | null>(dayjs()
+  );
+  const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
+    dayjs()
+  );
+  // const [redirect, setRedirect] = useState(false);
+  // const navigate = useNavigate();
 
-  const [availableFloors, setAvailableFloors] = useState(true);
-  const [availableDesks, setAvailableDesks] = useState(true);
+  // useEffect(() => {
+  //   if (redirect) {
+  //     navigate("/reservationoverview");
+  //   }
+  // }, [redirect, navigate]);
 
-  const officeUuids = offices?.map((office: Office) => uuidv4()) || [];
-  const floorsUuids = floors?.map((floor: Floor) => uuidv4()) || [];
-  const desksUuids = desks?.map((desk: Desk) => uuidv4()) || [];
+  useEffect(() => {
+    if (value) {
+      const datePart = value.format("YYYY-MM-DD");
+  
+      if (startTime) {
+        const adjustedStartTime = startTime.add(3, 'hour');
+        setArrivalTime(dayjs(`${datePart}T${adjustedStartTime.format("HH:mm:ss")}`));
+      }
+  
+      if (endTime) {
+        const adjustedEndTime = endTime.add(3, 'hour');
+        setLeavingTime(dayjs(`${datePart}T${adjustedEndTime.format("HH:mm:ss")}`));
+      }
+    }
+  }, [startTime, endTime, value]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-          const token = localStorage.getItem("authToken");
-          const response = await fetch(`https://localhost:7156/api/Office`,{
-                method : "GET",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-    const data = await response.json();
-    setOffices(data)
-  } catch (error) {
-    console.error('Unknown error occurred:', error);
-  }
-};
-fetchData();
-}, []);
+        
+        const response = await fetch(`https://localhost:7156/api/Desk/availableDesks?arrivalTime=${arrivalTime}&leavingTime=${leavingTime}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        const data = await response.json();
+        setReservationSetUp(data)
 
-  const handleOfficeChange = (event: SelectChangeEvent<string>): void => {
-    const officeID = event.target.value;
-    setofficeID(event.target.value);
+      } catch (error) {
+        console.error('Unknown error occurred:', error);
+      }
+    };
+    fetchData();
+  }, [arrivalTime, leavingTime]);
 
-    fetch(`https://localhost:7156/api/Floor/byOffice/${officeID}`)
+  const uniqueOffices: ReservationSetUp[] = reservationSetUp
+  ? reservationSetUp.reduce((acc: ReservationSetUp[], curr: ReservationSetUp) => {
+      if (!acc.find((item: ReservationSetUp) => item.officeID === curr.officeID)) {
+        acc.push(curr);
+      }
+      return acc;
+    }, [])
+    .map((reservationSetUp: ReservationSetUp) => ({
+      officeID: reservationSetUp.officeID,
+      officeName: reservationSetUp.officeName,
+      floorID : reservationSetUp.floorID,
+      floorName : reservationSetUp.floorName,
+      deskID : reservationSetUp.deskID,
+      deskName : reservationSetUp.deskName
+    }))
+  : [];
 
-      .then((response) => response.json())
-      .then((data) => setFloors(data));
-    setAvailableFloors(false);
-    setAvailableDesks(true);
-  };
-
-  const handleFloorChange = (event: SelectChangeEvent<string>): void => {
-    const floorID = event.target.value;
-    setFloorID(event.target.value);
-    fetch(`https://localhost:7156/api/Desk/byFloor/${floorID}`)
-      .then((response) => response.json())
-      .then((data) => setDesks(data));
-    setAvailableDesks(false);
-  
-  };
-
-  const handleDeskChange = (event: SelectChangeEvent<string>): void => {
-    const deskID = event.target.value;
-    setDeskID(event.target.value);
-  };
-
+  const uniqueFloors: ReservationSetUp[] = reservationSetUp
+  ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
+      const firstIndex = arr.findIndex((item) => item.floorID === curr.floorID);
+      return index === firstIndex && curr.officeID === selectedOfficeID;
+    })
+    .map((reservationSetUp: ReservationSetUp) => ({
+      officeID: reservationSetUp.officeID,
+      officeName: reservationSetUp.officeName,
+      floorID: reservationSetUp.floorID,
+      floorName: reservationSetUp.floorName,
+      deskID: reservationSetUp.deskID,
+      deskName: reservationSetUp.deskName,
+    }))
+  : [];
+  const uniqueDesks: ReservationSetUp[] = reservationSetUp
+  ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
+    const firstIndex = arr.findIndex((item) => item.deskID === curr.deskID);
+    
+    return index === firstIndex && curr.officeID === selectedOfficeID && curr.floorID === selectedFloorID;
+  })
+  .map((reservationSetUp: ReservationSetUp) => ({
+    officeID: reservationSetUp.officeID,
+    officeName: reservationSetUp.officeName,
+    floorID: reservationSetUp.floorID,
+    floorName: reservationSetUp.floorName,
+    deskID: reservationSetUp.deskID,
+    deskName: reservationSetUp.deskName,
+  }))
+: [];
   return (
     <Box
       sx={{
@@ -172,16 +229,17 @@ fetchData();
         <Select
           labelId="select-office"
           id="select-office"
-          value={officeID || ""}
+          value={selectedOfficeID}
           label="Office"
-          onChange={handleOfficeChange}
           disabled={!isDateCompleted || !isTimeCompleted}
+          onChange={(event) => setSelectedOfficeID(event.target.value)}
         >
-          {offices?.map((office: Office, index: number) => (
-            <MenuItem key={officeUuids[index]} value={office.id}>
-              {office.name}
+          
+          {uniqueOffices?.map((reservationSetUp : ReservationSetUp, index: number) => (
+            <MenuItem key={index} value={reservationSetUp.officeID}>
+              {reservationSetUp.officeName}
             </MenuItem>
-          ))}
+          ))} 
         </Select>
       </FormControl>
 
@@ -190,16 +248,17 @@ fetchData();
         <Select
           labelId="select-floor"
           id="select-floor"
-          value={floorID || ""}
+          value={selectedFloorID}
           label="Floor"
-          onChange={handleFloorChange}
-          disabled={availableFloors}
+          disabled={selectedOfficeID===""}
+          onChange={(event) => setSelectedFloorID(event.target.value)}
         >
-          {floors?.map((floor: Floor, index: number) => (
-            <MenuItem key={floorsUuids[index]} value={floor.id}>
-              {floor.name}
+          
+          {uniqueFloors?.map((reservationSetUp : ReservationSetUp, index: number) => (
+            <MenuItem key={index} value={reservationSetUp.floorID}>
+              {reservationSetUp.floorName}
             </MenuItem>
-          ))}
+          ))} 
         </Select>
       </FormControl>
 
@@ -208,81 +267,118 @@ fetchData();
         <Select
           labelId="select-desk"
           id="select-desk"
-          value={deskID || ""}
+          value={selectedDeskID}
           label="Desk"
-          onChange={handleDeskChange}
-          disabled={availableDesks}
+          onChange={(event) => setSelectedDeskID(event.target.value)}
+          disabled={selectedFloorID===''}
         >
-          {desks?.map((desk: Desk, index: number) => (
-            <MenuItem key={desksUuids[index]} value={desk.id}>
-              {desk.name}
+          
+           {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
+            <MenuItem key={index} value={reservationSetUp.deskID}>
+              {reservationSetUp.deskName}
             </MenuItem>
-          ))}
+          ))} 
+          
         </Select>
       </FormControl>
+      <Button
+      variant="contained"
+      size="large"
+      color="secondary"
+      sx={{
+        height: "50px",
+        color: "white",
+        textTransform: "none",
+      }}
+      >
+        Save
+      </Button>
     </Box>
   );
 }
 
-function EditReservation() {
-  const [startTime, setStartTime] = React.useState<Dayjs | null>(
-    dayjs().set("hour", 7).set("minute", 0)
+function EditReservation({ reservationID }: { reservationID: string }){
+
+  const token = localStorage.getItem("authToken");
+  const [reservationView,setReservationView] = useState<ReservationView | null>(null);
+  
+  const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs()
   );
-  const [endTime, setEndTime] = React.useState<Dayjs | null>(null);
+  const [endTime, setEndTime] = React.useState<Dayjs | null>(dayjs()
+  );
   const [allDay, setAllDay] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<Dayjs | null>(dayjs());
 
   const [isDateCompleted, setDateCompleted] = React.useState(false);
   const [isTimeCompleted, setTimeCompleted] = React.useState(false);
 
-  const handleDateChange = (newValue: Dayjs | null) => {
-    setValue(newValue);
-    if (newValue) {
-      setDateCompleted(true);
-    } else {
-      setDateCompleted(false);
+  useEffect(() =>{
+    const fetchReservationView = async() =>{
+      try {
+       const response = await fetch(`https://localhost:7156/api/Reservation/${reservationID}`,
+       {
+         method : "GET",
+         headers: {
+           Authorization: `Bearer ${token}`,
+         },
+       });
+       
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       const Data = await response.json();
+       setReservationView(Data);
+       
+      } catch (error) {
+       console.error('Unknown error occurred:', error);
+     }
     }
-  };
+    fetchReservationView();
+  },[reservationID]);
+
+  useEffect(() =>{
+    if (reservationView) {
+      const formattedArrivalTime = dayjs(reservationView.arrivalTime);
+      setStartTime(formattedArrivalTime);
+      const formattedLeavingTime = dayjs(reservationView.leavingTime);
+      setEndTime(formattedLeavingTime);
+
+    }
+  }, [reservationView]);
+  
+
 
   const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAllDay(event.target.checked);
     if (event.target.checked) {
-      setStartTime(null);
-      setEndTime(null);
+      setStartTime(dayjs().set("hour", 7).set("minute", 0));
+      setEndTime(dayjs().set("hour", 18).set("minute", 0));
       setTimeCompleted(true);
-      console.log(startTime);
-      console.log(endTime);
     } else {
       setTimeCompleted(!!startTime && !!endTime);
     }
   };
-
   const handleStartTimeChange = (newValue: Dayjs | null) => {
-    setStartTime(allDay ? null : newValue);
+    if (newValue && !allDay) {
+      setStartTime(newValue);
+      setTimeCompleted(true);
+    }
   };
 
   const handleEndTimeChange = (newValue: Dayjs | null) => {
-    setEndTime(allDay ? null : newValue);
     if (newValue) {
+      setEndTime(newValue);
       setTimeCompleted(true);
-    } else {
-      setTimeCompleted(false);
     }
   };
 
-  const shouldDisableTime = (value: Dayjs, view: TimeView) => {
-    if (view === 'hours') {
-      const hour = value.hour();
-      const minute = value.minute();
-      if (hour >= 17 || hour < 7) {
-        return true;
-      }
-      if (hour === 7 && minute < 30) {
-        return true;
-      }
-    }
-    return false;
-  };
+  // useEffect(() => {
+  //   if (value && value.isSame(value)) {
+  //     setStartTime(null);
+  //     setEndTime(null);
+  //   }
+  //   setValue(value);
+  // }, [value]);
 
   const shouldDisableStartTime = (value: Dayjs, view: TimeView) => {
     if (view === "hours") {
@@ -328,6 +424,7 @@ function EditReservation() {
     return false;
   };
 
+ 
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -338,8 +435,6 @@ function EditReservation() {
           justifyContent: "center",
         }}
       >
-        
-
         <Box
           sx={{
             display: "flex",
@@ -361,41 +456,16 @@ function EditReservation() {
               mb: 2,
             }}
           ></Box>
-          <Box
-            sx={{
-              justifyContent: "flex-start",
-              mt: 2,
-              marginTop: 10,
-              mb: -116,
-              borderRadius: 1,
-            }}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              color="secondary"
-              sx={{
-                height: "50px",
-                color: "white",
-                textTransform: "none",
-              }}
-            >
-              Save
-            </Button>
-          </Box>
         </Box>
-
         <DatePickerValue
-          allDay={allDay}
-          handleAllDayToggle={handleAllDayToggle}
-          setValue={setValue}
-          startTime={startTime}
-          endTime={endTime}
-          handleStartTimeChange={handleStartTimeChange}
-          handleEndTimeChange={handleEndTimeChange}
-          setDateCompleted={setDateCompleted}
-          handleDateChange={handleDateChange}
-          isTimeCompleted={isTimeCompleted}
+          allDay={allDay} 
+          handleAllDayToggle={handleAllDayToggle} 
+          value ={value} 
+          setValue={setValue} 
+          setStartTime = {setStartTime}
+          setEndTime = {setEndTime}
+          setDateCompleted={setDateCompleted} 
+          reservationView = {reservationView}
         />
 
         {!allDay && (
@@ -407,9 +477,13 @@ function EditReservation() {
                     <>
                       <TimePicker
                         label="Start"
+                        value={startTime}
                         onChange={handleStartTimeChange}
-                        shouldDisableTime={shouldDisableStartTime}
-                        disabled={!isDateCompleted}
+                        shouldDisableTime={(time) => {
+                          const hour = dayjs(time).hour();
+                          const minutes = dayjs(time).minute();
+                          return hour < 7 ||   (minutes !== 0 && minutes !== 30) || hour > 17;
+                        }}
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             borderColor: grey[900],
@@ -433,8 +507,17 @@ function EditReservation() {
                       <TimePicker
                         label="End"
                         onChange={handleEndTimeChange}
-                        shouldDisableTime={shouldDisableEndTime}
-                        disabled={!isDateCompleted}
+                        shouldDisableTime={(time) => {
+                          const hour = dayjs(time).hour();
+                          const minutes = dayjs(time).minute();
+                          const startTimeHour = dayjs(startTime).hour();
+                          const startTimeMinutes = dayjs(startTime).minute();
+                        
+                          const timeDifference = (hour - startTimeHour) * 60 + (minutes - startTimeMinutes);
+                        
+                          return hour < 7 ||   (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference < 60;
+                        }}
+                        value={endTime}
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             borderColor: grey[900],
@@ -456,12 +539,12 @@ function EditReservation() {
           </div>
         )}
         <BasicSelect
-          value = {value}
-          startTime = {startTime}
-          endTime ={endTime}
-          allDay = {allDay}
+          value={value}
+          startTime={startTime}
+          endTime={endTime}
           isDateCompleted={isDateCompleted}
           isTimeCompleted={isTimeCompleted}
+          // reservationID = {reservationID}
         />
       </Box>
     </ThemeProvider>

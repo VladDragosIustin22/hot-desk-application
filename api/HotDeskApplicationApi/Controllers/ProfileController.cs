@@ -2,6 +2,7 @@
 using HotDeskApplicationApi.Framework.Identity;
 using HotDeskApplicationApi.Migrations;
 using HotDeskApplicationApi.Models;
+using HotDeskApplicationApi.ModelView;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,12 +30,25 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpGet]
-        public async Task<Profile> GetProfile()
+        public IActionResult GetProfile()
         {
             Identity identity = ControllerContext.GetIdentity();
-            var profile = await hotDeskDbContext.Profile.FindAsync(identity.ID);
 
-            return profile;
+            Profile userProfile = hotDeskDbContext.Profile.FirstOrDefault(p => p.ID == identity.ID);
+
+            var profile = new UserProfile
+            {
+                FirstName = userProfile.FirstName,
+                LastName = userProfile.LastName,
+                Avatar = userProfile.Avatar,
+                Role = userProfile.Role,
+                NickName = userProfile.NickName,
+                EmailAddress = userProfile.EmailAddress,
+
+            };
+            //var profile = await hotDeskDbContext.Profile.FindAsync(identity.ID);
+
+            return Ok(profile);
         }
 
         [HttpPut("{id}")]
