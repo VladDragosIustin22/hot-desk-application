@@ -87,7 +87,7 @@ namespace HotDeskApplicationApi.Controllers
 
         [HttpPost("MakeReservationForUsers")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = AppRoles.Admin)]
         public async Task PostReservationForUsers(AdminReservation adminReservation)
         {
             

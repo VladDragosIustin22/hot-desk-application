@@ -22,7 +22,7 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = AppRoles.Admin)]
         public async Task<Profile[]> ListProfiles()
         {
             return await hotDeskDbContext.Profile.ToArrayAsync();
