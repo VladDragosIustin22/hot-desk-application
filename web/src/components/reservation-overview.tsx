@@ -114,6 +114,7 @@ const handleCloseDelete = () => {
   const [confirmation, setConfirmation] = useState(false);
   const navigate = useNavigate();
   const handleNo = () => {
+    setOpenDeleteForReservationId(null);
     setConfirmation(false);
     setOpenEdit(false);
     navigate("/reservationoverview");
@@ -422,13 +423,18 @@ const handleYes = (reservationView: ReservationView) => {
               }}
             >
               <Box
-                sx={{ justifyContent: "flex-start", mt: 10, marginBottom: 200 }}
+                sx={{position:"sticky",
+                 justifyContent: "flex-start",
+                  mt: 10, 
+                  marginBottom: 200,
+                  zIndex: 1000}}
               >
                 <Button
-                  variant="contained"
+                  variant="contained" 
                   size="large"
                   color="secondary"
                   sx={{
+                    
                     height: "50px",
                     color: "white",
                     textTransform: "none",
@@ -438,6 +444,7 @@ const handleYes = (reservationView: ReservationView) => {
                   Make a reservation
                 </Button>
               </Box>
+
               <Modal
                 open={openReservation}
                 
