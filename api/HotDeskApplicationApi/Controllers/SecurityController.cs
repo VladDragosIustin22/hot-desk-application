@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
+using HotDeskApplicationApi.Framework.Identity;
+
 namespace HotDeskApplicationApi.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -84,9 +86,9 @@ namespace HotDeskApplicationApi.Controllers
 
         private Token GenerateToken(IdentityUser user, Boolean userRole)
         {
-            string role = "User";
+            string role = AppRoles.User;
             if (userRole)
-                role = "Admin";
+                role = AppRoles.Admin;
 
             List<Claim> claims = new List<Claim>
             {
