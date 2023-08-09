@@ -110,6 +110,7 @@ const handleCloseDelete = () => {
   const [confirmation, setConfirmation] = useState(false);
   const navigate = useNavigate();
   const handleNo = () => {
+    setOpenDeleteForReservationId(null);
     setConfirmation(false);
     setOpenDelete(false);
     setOpenEdit(false);
