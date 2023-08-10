@@ -145,7 +145,7 @@ function BasicSelect({
   const navigate = useNavigate();
 
   const createReservation = async () =>{
-
+    
     const reservationData : ReservationInput ={
       arrivalTime : arrivalTime?.toDate() || new Date(),
       leavingTime : leavingTime?.toDate() || new Date(),
@@ -153,6 +153,7 @@ function BasicSelect({
       floorID : selectedFloorID,
       deskID :selectedDeskID,
     };
+  if(selectedDeskID !== ""){
    try {
     await fetch("https://localhost:7156/api/Reservation", {
       method: "POST",
@@ -163,9 +164,11 @@ function BasicSelect({
       body: JSON.stringify(reservationData), 
     });
     setRedirect(true);
+    window.location.reload();
   } catch{
     setRedirect(false);
-  }};
+  }}
+};
   console.log(redirect);
   
   useEffect(() => {
