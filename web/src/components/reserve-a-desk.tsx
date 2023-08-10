@@ -42,23 +42,26 @@ const theme = createTheme({
 function DatePickerValue({
   allDay,
   handleAllDayToggle,
-  value,
-  setValue,
   setDateCompleted,
 }: any) {
   const [isDateSelected, setDateSelected] = useState(false); 
+  const [value, setValue] = useState<Dayjs | null>(null);
   const [selectedOfficeID, setSelectedOfficeID] = useState('');
   const [selectedFloorID, setSelectedFloorID] = useState('');
   const [selectedDeskID, setSelectedDeskID] = useState('');
+  useEffect(() => {
+    if (value) {
+      setSelectedOfficeID('');
+      setSelectedFloorID('');
+      setSelectedDeskID('');
+    }
+  }, [value]);
 
   const handleDateChange = (newValue: Dayjs | null) => {
     setValue(newValue);
     if (newValue) {
       setDateSelected(true); 
       setDateCompleted(true);
-      setSelectedOfficeID(''); 
-      setSelectedFloorID(''); 
-      setSelectedDeskID('');   
     } else {
       setDateSelected(false); 
       setDateCompleted(false);
@@ -108,18 +111,27 @@ function BasicSelect({
   value,
   isDateCompleted,
   isTimeCompleted,
+  selectedOfficeID,
+  setSelectedOfficeID,
+  selectedFloorID,
+  setSelectedFloorID,
+  selectedDeskID,
+  setSelectedDeskID,
 }: {
   startTime : any
   endTime : any,
   value: any,
   isDateCompleted: boolean;
   isTimeCompleted: boolean;
+  selectedOfficeID: any,
+  setSelectedOfficeID:any,
+  selectedFloorID:any,
+  setSelectedFloorID:any,
+  selectedDeskID:any,
+  setSelectedDeskID:any;
 }) {
 
   const [reservationSetUp,setReservationSetUp] = useState<ReservationSetUp[] | null>(null);
-  const [selectedOfficeID, setSelectedOfficeID] = useState('');
-  const [selectedFloorID, setSelectedFloorID] = useState('');
-  const [selectedDeskID, setSelectedDeskID] = useState('');
  
 
   const token = localStorage.getItem("authToken");
@@ -268,7 +280,7 @@ function BasicSelect({
           id="select-office"
           value={selectedOfficeID}
           label="Office"
-          disabled={!isDateCompleted || !isTimeCompleted}
+          disabled={!isDateCompleted || !isTimeCompleted }
           onChange={(event) => setSelectedOfficeID(event.target.value)}
         >
           
@@ -541,6 +553,12 @@ function ReserveDesk() {
           endTime={endTime}
           isDateCompleted={isDateCompleted}
           isTimeCompleted={isTimeCompleted}
+          selectedOfficeID={selectedOfficeID}
+          setSelectedOfficeID={setSelectedOfficeID}
+          selectedFloorID={selectedFloorID}
+          setSelectedFloorID={setSelectedFloorID}
+          selectedDeskID={selectedDeskID}
+          setSelectedDeskID={setSelectedDeskID}
         />
       </Box>
     </ThemeProvider>
