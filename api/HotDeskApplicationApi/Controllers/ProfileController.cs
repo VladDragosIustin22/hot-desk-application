@@ -115,7 +115,21 @@ namespace HotDeskApplicationApi.Controllers
             return NoContent();
         }
 
-        private bool ProfileExists(Guid id)
+        [HttpGet("searchProfiles")]
+        public ActionResult<UserProfile[]> SearchUserProfiles(string userName)
+        {
+            var AllUserProfiles = hotDeskDbContext.Profile.ToList();
+
+            var profiles = AllUserProfiles
+                   .Where(profile =>
+                       profile.NickName.Contains(userName, StringComparison.OrdinalIgnoreCase)
+                   )
+                   .ToList();
+
+            return Ok(profiles);
+
+        }
+            private bool ProfileExists(Guid id)
         {
             return (hotDeskDbContext.Profile?.Any(e => e.ID == id)).GetValueOrDefault();
         }
