@@ -108,17 +108,49 @@ namespace HotDeskApplicationApi.Controllers
             await _dbContext.SaveChangesAsync();
 
         }
-        /*
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDesk(Guid id, EditReservation reservationEdit)
+        
+        [HttpPut("EditReservation")]
+        public async Task<IActionResult> PutReservation(EditReservation reservationEdit)
         {
+            Identity identity = ControllerContext.GetIdentity();
+
             var reservation = new Reservation
             {
-
+                ID = reservationEdit.ReservationID,
+                ProfileID = identity.ID,
+                ArrivalTime = reservationEdit.ArrivalTime,
+                LeavingTime= reservationEdit.LeavingTime,
+                OfficeID = reservationEdit.OfficeID,
+                FloorID= reservationEdit.FloorID,
+                DeskID = reservationEdit.DeskID
             };
 
+            _dbContext.Entry(reservation).State = EntityState.Modified;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReservationExists(reservationEdit.ReservationID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
-        }*/
+        
+        }
+
+        private bool ReservationExists(Guid id)
+        {
+            return (_dbContext.Reservations?.Any(e => e.ID == id)).GetValueOrDefault();
+        }
 
         [HttpPost("MakeReservationForUsers")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

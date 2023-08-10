@@ -18,7 +18,7 @@ namespace HotDeskApplicationApi.ModelView
 
         public string? FloorName { get; set; }
 
-        public Guid? DeskID { get; set; }
+        public Guid DeskID { get; set; }
 
         public string? DeskName { get; set; }
     }
