@@ -19,6 +19,7 @@ import Paper from "@mui/material/Paper";
 import "@fontsource/roboto/500.css";
 import { SignUpModel } from "../models/signup-model";
 import { useNavigate } from "react-router";
+import backgroundImage2 from "../assests/bg2.png"
 const defaultTheme = createTheme();
 
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
@@ -115,7 +116,7 @@ export default function SignUp() {
           md={7}
           sx={{
             backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+            `url(${backgroundImage2})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"

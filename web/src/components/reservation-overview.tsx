@@ -91,9 +91,11 @@ function ReservationOverview() {
     setAnchorElUser(null);
   };
 
-  const [openDelete, setOpenDelete] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openDeleteForReservationId, setOpenDeleteForReservationId] = React.useState<string | null>(null);
+  const [openReservationIdForEdit, setOpenReservationIdForEdit] =  useState<
+  string | null
+>(null);
 
 const handleOpenDelete = (reservationId: string) => {
   setOpenDeleteForReservationId(reservationId);
@@ -103,16 +105,17 @@ const handleCloseDelete = () => {
   setOpenDeleteForReservationId(null);
 };
 
-  const handleOpenEdit = () => {
-    setOpenEdit(true);
+  const handleOpenEdit = (reservationId: string) => {
+    setOpenReservationIdForEdit(reservationId);
   };
-  const handleCloseEdit = () => setOpenEdit(false);
+
+
+  const handleCloseEdit = () => setOpenReservationIdForEdit(null);
   const [confirmation, setConfirmation] = useState(false);
   const navigate = useNavigate();
   const handleNo = () => {
     setOpenDeleteForReservationId(null);
     setConfirmation(false);
-    setOpenDelete(false);
     setOpenEdit(false);
     navigate("/reservationoverview");
   };
@@ -236,9 +239,7 @@ const handleYes = (reservationView: ReservationView) => {
   
   console.log(reservationView);
   setConfirmation(true);
-  setOpenDelete(false);
   setOpenEdit(false);
-
  };
 
 
@@ -359,7 +360,6 @@ const handleYes = (reservationView: ReservationView) => {
             </Modal>
             <Modal
               open={openMyProfile}
-              // onClose={handleCloseMyProfile}
               aria-labelledby="modal-modal-title"
             >
               <Box sx={styleSettings}>
@@ -620,8 +620,8 @@ const handleYes = (reservationView: ReservationView) => {
                       </Stack>
                       <Box>
                         <Modal
-                          open={openEdit}
-                          // onClose={handleCloseEdit}
+                          open={openReservationIdForEdit === reservationView.reservationID}
+                          onClose={handleCloseEdit}
                           aria-labelledby="modal-modal-title"
                         >
                           <Box sx={style}>
@@ -636,7 +636,7 @@ const handleYes = (reservationView: ReservationView) => {
                                   }}
                                 />{" "}
                                 <Typography variant="h6" component="div">
-                                  Reserve a desk
+                                  Reserve a desk {reservationView.deskName}
                                 </Typography>
                                 <IconButton
                                   sx={{ marginLeft: 97 }}
@@ -646,14 +646,14 @@ const handleYes = (reservationView: ReservationView) => {
                                 </IconButton>
                               </Toolbar>
                             </AppBar>
-
-                            <EditReservation />
+                            
+                            <EditReservation reservationID = {reservationView.reservationID}/>
                           </Box>
                         </Modal>
                       </Box>
 
                       <Stack direction="column" alignItems="center" gap={3}>
-                        <Button onClick={handleOpenEdit}>
+                        <Button onClick= {() => handleOpenEdit(reservationView.reservationID)}>
                           <CreateIcon
                             sx={{
                               marginTop: 2,
