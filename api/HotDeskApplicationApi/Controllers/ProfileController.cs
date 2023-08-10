@@ -83,7 +83,7 @@ namespace HotDeskApplicationApi.Controllers
 
         }
 
-        [HttpPost]
+            [HttpPost]
         public async Task<ActionResult<Profile>> PostProfile(Profile profile)
         {
             if (hotDeskDbContext.Profile == null)
