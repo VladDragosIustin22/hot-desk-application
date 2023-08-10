@@ -3,7 +3,7 @@
 namespace HotDeskApplicationApi.NewFolder2
 {
     [Keyless]
-    public class RegistrationView
+    public class ReservationView
     {
         public Guid ReservationID { get; set; }
 

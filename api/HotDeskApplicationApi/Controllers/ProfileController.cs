@@ -2,6 +2,7 @@
 using HotDeskApplicationApi.Framework.Identity;
 using HotDeskApplicationApi.Migrations;
 using HotDeskApplicationApi.Models;
+using HotDeskApplicationApi.ModelView;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,26 +30,48 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpGet]
-        public async Task<Profile> GetProfile()
+        public IActionResult GetProfile()
         {
             Identity identity = ControllerContext.GetIdentity();
-            var profile = await hotDeskDbContext.Profile.FindAsync(identity.ID);
 
-            return profile;
+            Profile userProfile = hotDeskDbContext.Profile.FirstOrDefault(p => p.ID == identity.ID);
+
+            var profile = new UserProfile
+            {
+                FirstName = userProfile.FirstName,
+                LastName = userProfile.LastName,
+                Avatar = userProfile.Avatar,
+                Role = userProfile.Role,
+                NickName = userProfile.NickName,
+                EmailAddress = userProfile.EmailAddress,
+
+            };
+            //var profile = await hotDeskDbContext.Profile.FindAsync(identity.ID);
+
+            return Ok(profile);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProfile(Guid id, Profile profile)
+        [HttpPut("EditProfile")]
+        public async Task<IActionResult> PutProfile(UserProfile userProfile)
         {
-            hotDeskDbContext.Entry(profile).State = EntityState.Modified;
+            Identity identity = ControllerContext.GetIdentity();
+
+            Guid profileID = identity.ID;
+
+            Profile user = hotDeskDbContext.Profile.FirstOrDefault(p => p.ID == profileID);
+
+            user.Avatar = userProfile.Avatar;
+            user.Role = userProfile.Role;
+            user.NickName = userProfile.NickName;
 
             try
             {
                 await hotDeskDbContext.SaveChangesAsync();
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProfileExists(id))
+                if (!ProfileExists(profileID))
                 {
                     return NotFound();
                 }
@@ -58,10 +81,9 @@ namespace HotDeskApplicationApi.Controllers
                 }
             }
 
-            return NoContent();
         }
 
-        [HttpPost]
+            [HttpPost]
         public async Task<ActionResult<Profile>> PostProfile(Profile profile)
         {
             if (hotDeskDbContext.Profile == null)
