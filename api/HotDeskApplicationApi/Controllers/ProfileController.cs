@@ -120,9 +120,12 @@ namespace HotDeskApplicationApi.Controllers
         {
             var AllUserProfiles = hotDeskDbContext.Profile.ToList();
 
+            Identity identity = ControllerContext.GetIdentity();
+
             var profiles = AllUserProfiles
                    .Where(profile =>
-                       profile.NickName.Contains(userName, StringComparison.OrdinalIgnoreCase)
+                       profile.NickName.Contains(userName, StringComparison.OrdinalIgnoreCase) &&
+                       profile.ID != identity.ID
                    )
                    .ToList();
 
