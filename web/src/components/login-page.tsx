@@ -17,9 +17,11 @@ import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "@fontsource/roboto/500.css";
 import { LogInModel } from "../models/login-model";
-
+import backgroundImage1 from "../assests/bg1.png"
+import backgroundImage2 from "../assests/bg2.png"
 const defaultTheme = createTheme();
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
+
 
 const schema = Yup.object().shape({
   email: Yup.string()
@@ -88,6 +90,8 @@ export default function LogIn() {
     }
   }, [redirect, navigate]);
   return (
+    <>
+      
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
@@ -98,7 +102,7 @@ export default function LogIn() {
           md={7}
           sx={{
             backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+              `url(${backgroundImage2})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -190,5 +194,6 @@ export default function LogIn() {
         </Grid>
       </Grid>
     </ThemeProvider>
+    </>
   );
 }
