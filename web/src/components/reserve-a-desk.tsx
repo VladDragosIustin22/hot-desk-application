@@ -41,11 +41,13 @@ const theme = createTheme({
 
 function DatePickerValue({
   allDay,
+  value,
+  setValue,
   handleAllDayToggle,
   setDateCompleted,
 }: any) {
   const [isDateSelected, setDateSelected] = useState(false); 
-  const [value, setValue] = useState<Dayjs | null>(null);
+  //const [value, setValue] = useState<Dayjs | null>(null);
   const [selectedOfficeID, setSelectedOfficeID] = useState('');
   const [selectedFloorID, setSelectedFloorID] = useState('');
   const [selectedDeskID, setSelectedDeskID] = useState('');

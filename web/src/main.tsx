@@ -7,7 +7,6 @@ import SignUp from "./components/sign-up-page";
 import LogIn from "./components/login-page";
 import ReserveDesk from "./components/reserve-a-desk";
 import ReservationOverview from "./components/reservation-overview";
-import MyProfile from "./components/my-profile";
 import Settings from "./components/settings";
 
 const router = createBrowserRouter([
@@ -30,10 +29,6 @@ const router = createBrowserRouter([
   {
     path: "/reservationoverview",
     element: <ReservationOverview />,
-  },
-  {
-    path: "/myProfile",
-    element: <MyProfile />,
   },
   {
     path: "/settings",

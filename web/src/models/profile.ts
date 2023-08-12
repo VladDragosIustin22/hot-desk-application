@@ -4,5 +4,5 @@ export interface Profile {
     role : string;
     avatar: Uint8Array;
     nickName : string;
-    email: string;
+    emailAddress: string;
 }
