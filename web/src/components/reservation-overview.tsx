@@ -9,7 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TodayIcon from "@mui/icons-material/Today";
-import { Button, Stack, Divider } from "@mui/material";
+import { Button, Stack, Divider, TextField } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,7 +17,6 @@ import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EditReservation from "./edit-reservation";
-import MyProfile from "./my-profile";
 import ReserveDesk from "./reserve-a-desk";
 import Settings from "./settings";
 import { grey, orange } from "@mui/material/colors";
@@ -180,7 +179,7 @@ const handleCloseDelete = () => {
     fetchData();
   }, []);
 
-  const [userProfile,setUserProfile] = useState<Profile | null>(null);
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -232,18 +231,39 @@ const handleCloseDelete = () => {
     } catch (error) {
       console.error("Unknown error occurred:", error);
     }
-  }; 
+  };
 
-const handleYes = (reservationView: ReservationView) => {
-  fetchDelete(reservationView);
+  const handleYes = (reservationView: ReservationView) => {
+    fetchDelete(reservationView);
+    
+    console.log(reservationView);
+    setConfirmation(true);
+    setOpenEdit(false);
+   };
   
-  console.log(reservationView);
-  setConfirmation(true);
-  setOpenEdit(false);
- };
+  const editProfile = async (profile: Profile) => {
+   try{
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Invalid token");
+      }
+      const response = await fetch(`https://localhost:7156/api/Profile/PutProfile/EditProfile`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(profile),
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+    }
+    catch (error) {
+      console.error("Unknown error occurred:", error);
+    }
+  }
 
-
-  const handleLogout = () => {
+   const handleLogout = () => {
     {
       localStorage.removeItem("authToken");
       localStorage.removeItem("authTokenExpiry");
@@ -264,6 +284,144 @@ const handleYes = (reservationView: ReservationView) => {
       fontSize: 15,
     },
   });
+
+
+ function MyProfile() {
+  return (
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+ 
+        <Stack direction="row" spacing={2}>
+          <Avatar
+            alt="V"
+            src="/static/images/avatar/1.jpg"
+            sx={{ width: 100, height: 100, ml: -28, mr: -25, mt: 15 }}
+          />
+        </Stack>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+            p: 2,
+            mb: -10,
+            mt: -28,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+              mt: 4,
+              p: 1,
+            }}
+          ></Box>
+          <Box
+            component="form"
+            sx={{
+              "& .MuiTextField-root": {
+                mb: -5,
+                width: "40ch",
+                mt: 10,
+                mr: -12,
+              },
+            }}
+            noValidate
+            autoComplete="off"
+          >
+            <TextField
+          label="Name"
+          id="outlined-size-normal"
+          value={userProfile?.firstName + " " + userProfile?.lastName}
+          // onChange={(event) =>
+          //   handleTextFieldChange("firstName", event.target.value)
+          // }
+        />
+
+            <TextField
+              label="Job title"
+              id="outlined-size-normal"
+              defaultValue={userProfile?.role}
+            />
+
+            <TextField
+              label="E-mail"
+              defaultValue={userProfile?.emailAddress}
+              variant="outlined"
+              disabled
+              InputProps={{
+                style: {
+                  width: "37ch",
+                  marginLeft: "-160px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  marginLeft: "-160px",
+                },
+                shrink: true,
+              }}
+            />
+            <TextField
+              label="Nickname"
+              defaultValue={userProfile?.nickName}
+              InputProps={{
+                style: {
+                  width: "37ch",
+                  marginLeft: "-160px",
+                },
+              }}
+              InputLabelProps={{
+                style: {
+                  marginLeft: "-160px",
+                },
+                shrink: true,
+              }}
+            />
+          </Box>
+
+          <div>
+            <Box
+              sx={{
+                justifyContent: "flex-start",
+                mt: 40,
+                marginBottom: -80,
+                ml: -7,
+              }}
+            >
+              <Button
+            variant="contained"
+            size="large"
+            color="secondary"
+            sx={{
+              height: "50px",
+              color: "white",
+              textTransform: "none",
+            }}
+          type="submit"
+          >
+                Save
+              </Button>
+            </Box>
+          </div>
+        </Box>
+      </Box>
+    </ThemeProvider>
+  );
+}
+
+
   return (
     <>
       <div style={backgroundImageStyle} />
@@ -707,6 +865,6 @@ const handleYes = (reservationView: ReservationView) => {
         </Box>
       </ThemeProvider>
     </>
-  );
-}
+  );}
+                          //}
 export default ReservationOverview;
