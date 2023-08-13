@@ -16,12 +16,13 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimeView } from "@mui/x-date-pickers";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { ReservationSetUp } from "../models/reservationSetup";
 import { EditUserReservation } from "../models/editReservation";
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 // import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
@@ -38,28 +39,48 @@ const theme = createTheme({
   },
 });
 
-function EditReservation({ reservationID }: { reservationID: string }){
+// const validationSchema = yup.object().shape({
+//   value: yup.date().required('Date is required'),
+//   startTime: yup.string().required("start time cannot be empty"),
+//   endTime: yup.string().required('End time is required'),
+//   // endTime: yup.string().when(['allDay', 'startTime'], {
+//   //   is: (allDay: any, startTime: undefined) => !allDay && startTime !== undefined,
+//   //   then: yup.string()
+//   //     .required('End time is required')
+//   //     .test('is-after-start', 'End time must be after start time', function (endTime) {
+//   //       if (startTime && endTime) {
+//   //         return dayjs(endTime).isAfter(dayjs(startTime));
+//   //       }
+//   //       return false;
+//   //     }),
+//   // }),
+//   officeID: yup.string().required('Office is required'),
+//   floorID: yup.string().required('Floor is required'),
+//   deskID: yup.string().required('Desk is required'),
+// });
+
+function EditReservation({ reservationID }: { reservationID: string }) {
 
   const token = localStorage.getItem("authToken");
-  const [reservationView,setReservationView] = useState<EditUserReservation | null>(null);
- 
+  const [reservationView, setReservationView] = useState<EditUserReservation | null>(null);
+
 
   const [isDateCompleted, setDateCompleted] = React.useState(false);
   const [isTimeCompleted, setTimeCompleted] = React.useState(false);
-  const [reservationSetUp,setReservationSetUp] = useState<ReservationSetUp[]>([]);
-  const [selectOffice,setSelectOffice] = useState(false);
-  const [selectFloor,setSelectFloor] = useState(false);
-  const [selectDesk,setSelectDesk] = useState(false);
+  const [reservationSetUp, setReservationSetUp] = useState<ReservationSetUp[]>([]);
+  const [selectOffice, setSelectOffice] = useState(false);
+  const [selectFloor, setSelectFloor] = useState(false);
+  const [selectDesk, setSelectDesk] = useState(false);
   const [selectedOfficeID, setSelectedOfficeID] = useState('');
   const [selectedFloorID, setSelectedFloorID] = useState('');
   const [selectedDeskID, setSelectedDeskID] = useState('');
 
-  const[arrivalTime,setArrivalTime] = React.useState<Dayjs | null>(dayjs()
+  const [arrivalTime, setArrivalTime] = React.useState<Dayjs | null>(dayjs()
   );
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
     dayjs()
   );
- 
+
   const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs()
   );
   const [endTime, setEndTime] = React.useState<Dayjs | null>(dayjs()
@@ -72,15 +93,21 @@ function EditReservation({ reservationID }: { reservationID: string }){
     setValue(newValue);
     if (newValue) {
       setDateCompleted(true);
+      setTimeCompleted(false);
       setStartTime(null);
       setEndTime(null);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
     } else {
       setDateCompleted(false);
     }
   };
 
+  // console.log(allDay);
   // All day button
   const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    
     setAllDay(event.target.checked);
     if (event.target.checked) {
       setStartTime(dayjs().set("hour", 7).set("minute", 0));
@@ -95,6 +122,9 @@ function EditReservation({ reservationID }: { reservationID: string }){
   const handleStartTimeChange = (newValue: Dayjs | null) => {
     if (newValue && !allDay) {
       setStartTime(newValue);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
       if (endTime) {
         setTimeCompleted(false);
       } else {
@@ -105,13 +135,16 @@ function EditReservation({ reservationID }: { reservationID: string }){
       setTimeCompleted(false);
     }
   };
-
+  
   //sets new value for endTime if it was changed and mark that time was completed
   const handleEndTimeChange = (newValue: Dayjs | null) => {
     if (newValue && !allDay) {
       setEndTime(newValue);
       if (startTime) {
         setTimeCompleted(false);
+        setSelectedOfficeID("");
+        setSelectedFloorID("");
+        setSelectedDeskID("");
       } else {
         setTimeCompleted(true);
       }
@@ -120,32 +153,24 @@ function EditReservation({ reservationID }: { reservationID: string }){
       setTimeCompleted(false);
     }
   };
+
   //takes the date from reservation and sets the value for date
-  useEffect(() =>{
+  useEffect(() => {
     if (reservationView) {
       const formattedArrivalTime = dayjs(reservationView.arrivalTime);
       setValue(formattedArrivalTime);
     }
   }, [reservationView]);
 
-  //Push the reservation that we want to edit into available desks
+  // Push the reservation that we want to edit into available desks
   // in order to be able to be displayed with them
   useEffect(() => {
     if (reservationView) {
       setSelectedOfficeID(reservationView.officeID);
       setSelectedFloorID(reservationView.floorID);
       setSelectedDeskID(reservationView.deskID);
-      const currentDesk : ReservationSetUp = {
-        officeID : reservationView.officeID,
-        officeName : reservationView.officeName,
-        floorID : reservationView.floorID,
-        floorName : reservationView.floorName,
-        deskID : reservationView.deskID,
-        deskName :reservationView.deskName,
-      }
-      setReservationSetUp([...reservationSetUp,currentDesk]);
     }
-  }, [reservationView]);
+  },[reservationView]);
 
   //After changing date set all fields except Arrival/Leaving Time disabled and value to null
   useEffect(() => {
@@ -162,17 +187,17 @@ function EditReservation({ reservationID }: { reservationID: string }){
       // setSelectDesk(false);
     }
   }, [isDateCompleted, isTimeCompleted]);
-  
+
   // Formating date according to database preferences
   useEffect(() => {
     if (value) {
       const datePart = value.format("YYYY-MM-DD");
-  
+
       if (startTime) {
         const adjustedStartTime = startTime.add(3, 'hour');
         setArrivalTime(dayjs(`${datePart}T${adjustedStartTime.format("HH:mm:ss")}`));
       }
-  
+
       if (endTime) {
         const adjustedEndTime = endTime.add(3, 'hour');
         setLeavingTime(dayjs(`${datePart}T${adjustedEndTime.format("HH:mm:ss")}`));
@@ -184,19 +209,30 @@ function EditReservation({ reservationID }: { reservationID: string }){
   useEffect(() => {
     const fetchData = async () => {
       try {
-        
+
         const response = await fetch(`https://localhost:7156/api/Desk/availableDesks?arrivalTime=${arrivalTime}&leavingTime=${leavingTime}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        
+
         const data = await response.json();
         setReservationSetUp(data)
 
       } catch (error) {
         console.error('Unknown error occurred:', error);
+      }
+      if (reservationView) {
+        const currentDesk: ReservationSetUp = {
+          officeID: reservationView.officeID,
+          officeName: reservationView.officeName,
+          floorID: reservationView.floorID,
+          floorName: reservationView.floorName,
+          deskID: reservationView.deskID,
+          deskName: reservationView.deskName,
+        }
+        setReservationSetUp([...reservationSetUp, currentDesk]);
       }
     };
     fetchData();
@@ -204,57 +240,54 @@ function EditReservation({ reservationID }: { reservationID: string }){
 
   //remove duplicated Officces by id
   const uniqueOffices: ReservationSetUp[] = reservationSetUp
-  ? reservationSetUp.reduce((acc: ReservationSetUp[], curr: ReservationSetUp) => {
+    ? reservationSetUp.reduce((acc: ReservationSetUp[], curr: ReservationSetUp) => {
       if (!acc.find((item: ReservationSetUp) => item.officeID === curr.officeID)) {
         acc.push(curr);
       }
       return acc;
     }, [])
-    .map((reservationSetUp: ReservationSetUp) => ({
-      officeID: reservationSetUp.officeID,
-      officeName: reservationSetUp.officeName,
-      floorID : reservationSetUp.floorID,
-      floorName : reservationSetUp.floorName,
-      deskID : reservationSetUp.deskID,
-      deskName : reservationSetUp.deskName
-    }))
-  : [];
+      .map((reservationSetUp: ReservationSetUp) => ({
+        officeID: reservationSetUp.officeID,
+        officeName: reservationSetUp.officeName,
+        floorID: reservationSetUp.floorID,
+        floorName: reservationSetUp.floorName,
+        deskID: reservationSetUp.deskID,
+        deskName: reservationSetUp.deskName
+      }))
+    : [];
 
   //remove duplicated Floors by id
   const uniqueFloors: ReservationSetUp[] = reservationSetUp
-  ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
+    ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
       const firstIndex = arr.findIndex((item) => item.floorID === curr.floorID);
       return index === firstIndex && curr.officeID === selectedOfficeID;
     })
-    .map((reservationSetUp: ReservationSetUp) => ({
-      officeID: reservationSetUp.officeID,
-      officeName: reservationSetUp.officeName,
-      floorID: reservationSetUp.floorID,
-      floorName: reservationSetUp.floorName,
-      deskID: reservationSetUp.deskID,
-      deskName: reservationSetUp.deskName,
-    }))
-  : [];
+      .map((reservationSetUp: ReservationSetUp) => ({
+        officeID: reservationSetUp.officeID,
+        officeName: reservationSetUp.officeName,
+        floorID: reservationSetUp.floorID,
+        floorName: reservationSetUp.floorName,
+        deskID: reservationSetUp.deskID,
+        deskName: reservationSetUp.deskName,
+      }))
+    : [];
 
   //remove duplicated Desks by id
   const uniqueDesks: ReservationSetUp[] = reservationSetUp
-  ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
-    const firstIndex = arr.findIndex((item) => item.deskID === curr.deskID);
-    
-    return index === firstIndex && curr.officeID === selectedOfficeID && curr.floorID === selectedFloorID;
-  })
-  .map((reservationSetUp: ReservationSetUp) => ({
-    officeID: reservationSetUp.officeID,
-    officeName: reservationSetUp.officeName,
-    floorID: reservationSetUp.floorID,
-    floorName: reservationSetUp.floorName,
-    deskID: reservationSetUp.deskID,
-    deskName: reservationSetUp.deskName,
-  }))
-: [];
- 
-  // console.log("Value:",value);
+    ? reservationSetUp.filter((curr: ReservationSetUp, index: number, arr: ReservationSetUp[]) => {
+      const firstIndex = arr.findIndex((item) => item.deskID === curr.deskID);
 
+      return index === firstIndex && curr.officeID === selectedOfficeID && curr.floorID === selectedFloorID;
+    })
+      .map((reservationSetUp: ReservationSetUp) => ({
+        officeID: reservationSetUp.officeID,
+        officeName: reservationSetUp.officeName,
+        floorID: reservationSetUp.floorID,
+        floorName: reservationSetUp.floorName,
+        deskID: reservationSetUp.deskID,
+        deskName: reservationSetUp.deskName,
+      }))
+    : [];
   //Get the reservation from backend that has following params:
   // reservationID : string;
   // arrivalTime :string ;
@@ -266,32 +299,32 @@ function EditReservation({ reservationID }: { reservationID: string }){
   // deskName : string;
   // deskID : string;
 
-  useEffect(() =>{
-    const fetchReservationView = async() =>{
+  useEffect(() => {
+    const fetchReservationView = async () => {
       try {
-       const response = await fetch(`https://localhost:7156/api/Reservation/${reservationID}`,
-       {
-         method : "GET",
-         headers: {
-           Authorization: `Bearer ${token}`,
-         },
-       });
-       
-       if (!response.ok) {
-         throw new Error('Network response was not ok');
-       }
-       const Data = await response.json();
-       setReservationView(Data);
-       
+        const response = await fetch(`https://localhost:7156/api/Reservation/${reservationID}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const Data = await response.json();
+        setReservationView(Data);
+
       } catch (error) {
-       console.error('Unknown error occurred:', error);
-     }
+        console.error('Unknown error occurred:', error);
+      }
     }
     fetchReservationView();
-  },[reservationID]);
+  }, [reservationID]);
 
   // set StartTime and EndTime according to reservation that user selected to edit
-  useEffect(() =>{
+  useEffect(() => {
     if (reservationView) {
       const formattedArrivalTime = dayjs(reservationView.arrivalTime);
       setStartTime(formattedArrivalTime);
@@ -332,178 +365,191 @@ function EditReservation({ reservationID }: { reservationID: string }){
             }}
           ></Box>
         </Box>
-        <FormControl sx={{ width: "64ch", mb: 5 }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <DatePicker
-              label="Date"
-              value={value}
-              onChange={handleDateChange}
-              sx={{ width: "64ch" }}
-            />
+          <FormControl sx={{ width: "64ch", mb: 5 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <DatePicker
+                  label="Date"
+                  value={value}
+                  onChange={handleDateChange}
+                  sx={{ width: "64ch" }}
+                />
 
-            <FormGroup sx={{ mr: -20, ml: "auto" }}>
-              <FormControlLabel
-                control={
-                  <Switch checked={allDay} onChange={handleAllDayToggle} />
-                }
-                label="All day"
-              />
-            </FormGroup>
+                <FormGroup sx={{ mr: -20, ml: "auto" }}>
+                  <FormControlLabel
+                    control={
+                      <Switch checked={allDay} onChange={handleAllDayToggle} />
+                    }
+                    label="All day"
+                  />
+                </FormGroup>
+              </Box>
+            </LocalizationProvider>
+          </FormControl>
+
+          {!allDay && (
+            <div>
+              <Box sx={{ display: "flex", mb: 3 }}>
+                <DemoItem component="TimePicker">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <>
+                        <TimePicker
+                          label="Start"
+                          value={startTime}
+                          onChange={handleStartTimeChange}
+                          shouldDisableTime={(time) => {
+                            const hour = dayjs(time).hour();
+                            const minutes = dayjs(time).minute();
+                            return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 17;
+                          }}
+                          sx={{
+                            "& .MuiOutlinedInput-root": {
+                              borderColor: grey[900],
+                              width: "18ch",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: grey[900],
+                            },
+                            "& .MuiOutlinedInput-input": {
+                              color: grey[900],
+                            },
+                          }}
+                        />
+                        <Typography
+                          variant="body1"
+                          component="span"
+                          style={{ margin: "0 10px" }}
+                        >
+                          to
+                        </Typography>
+                        <TimePicker
+                          label="End"
+                          onChange={handleEndTimeChange}
+                          shouldDisableTime={(time) => {
+                            const hour = dayjs(time).hour();
+                            const minutes = dayjs(time).minute();
+                            const startTimeHour = dayjs(startTime).hour();
+                            const startTimeMinutes = dayjs(startTime).minute();
+
+                            const timeDifference = (hour - startTimeHour) * 60 + (minutes - startTimeMinutes);
+
+                            return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference < 60;
+                          }}
+                          value={endTime}
+                          sx={{
+                            "& .MuiOutlinedInput-root": {
+                              borderColor: grey[900],
+                              width: "18ch",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: grey[900],
+                            },
+                            "& .MuiOutlinedInput-input": {
+                              color: grey[900],
+                            },
+                          }}
+                        />
+                      </>
+                    </div>
+                  </LocalizationProvider>
+                </DemoItem>
+              </Box>
+            </div>
+          )}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "left",
+              mt: 2,
+            }}
+          >
+            <FormControl sx={{ width: "64ch", mb: 5 }}>
+              <InputLabel id="select-office">Office</InputLabel>
+              <Select
+                labelId="select-office"
+                id="select-office"
+                value={selectedOfficeID || ""}
+                label="Office"
+                disabled={selectOffice}
+                onChange={(event) => {setSelectedOfficeID(event.target.value); setSelectFloor(false); setSelectDesk(true) }}
+              >
+                {uniqueOffices?.map((reservationSetUp: ReservationSetUp, index: number) => (
+                  <MenuItem key={index} value={reservationSetUp.officeID}>
+                    {reservationSetUp.officeName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
+              <InputLabel id="select-floor">Floor</InputLabel>
+              <Select
+                labelId="select-floor"
+                id="select-floor"
+                value={selectedFloorID || ""}
+                label="Floor"
+                disabled={selectFloor}
+                onChange={(event) => {setSelectedFloorID(event.target.value);setSelectDesk(false)}}
+              >
+
+                {uniqueFloors?.map((reservationSetUp: ReservationSetUp, index: number) => (
+                  <MenuItem key={index} value={reservationSetUp.floorID}>
+                    {reservationSetUp.floorName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
+              <InputLabel id="select-desk">Desk</InputLabel>
+              <Select
+                labelId="select-desk"
+                id="select-desk"
+                value={selectedDeskID || ""}
+                label="Desk"
+                onChange={(event) => setSelectedDeskID(event.target.value)}
+                disabled={selectDesk}
+              >
+
+                {uniqueDesks?.map((reservationSetUp: ReservationSetUp, index: number) => (
+                  <MenuItem key={index} value={reservationSetUp.deskID}>
+                    {reservationSetUp.deskName}
+                  </MenuItem>
+                ))}
+
+              </Select>
+            </FormControl>
+            {/* <Button
+            variant="contained"
+            size="large"
+            color="secondary"
+            sx={{
+              height: "50px",
+              color: "white",
+              textTransform: "none",
+            }}
+          >
+            Save
+          </Button> */}
+            <Button type="submit" variant="contained" size="large"
+              color="secondary" sx={{
+                height: "50px",
+                color: "white",
+                textTransform: "none",
+              }}>
+              Submit
+            </Button>
           </Box>
-        </LocalizationProvider>
-      </FormControl>
-
-        {!allDay && (
-          <div>
-            <Box sx={{ display: "flex", mb: 3 }}>
-              <DemoItem component="TimePicker">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <>
-                      <TimePicker
-                        label="Start"
-                        value={startTime}
-                        onChange={handleStartTimeChange}
-                        shouldDisableTime={(time) => {
-                          const hour = dayjs(time).hour();
-                          const minutes = dayjs(time).minute();
-                          return hour < 7 ||   (minutes !== 0 && minutes !== 30) || hour > 17;
-                        }}
-                        sx={{
-                          "& .MuiOutlinedInput-root": {
-                            borderColor: grey[900],
-                            width: "18ch",
-                          },
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: grey[900],
-                          },
-                          "& .MuiOutlinedInput-input": {
-                            color: grey[900],
-                          },
-                        }}
-                      />
-                      <Typography
-                        variant="body1"
-                        component="span"
-                        style={{ margin: "0 10px" }}
-                      >
-                        to
-                      </Typography>
-                      <TimePicker
-                        label="End"
-                        onChange={handleEndTimeChange}
-                        shouldDisableTime={(time) => {
-                          const hour = dayjs(time).hour();
-                          const minutes = dayjs(time).minute();
-                          const startTimeHour = dayjs(startTime).hour();
-                          const startTimeMinutes = dayjs(startTime).minute();
-                        
-                          const timeDifference = (hour - startTimeHour) * 60 + (minutes - startTimeMinutes);
-                        
-                          return hour < 7 ||   (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference < 60;
-                        }}
-                        value={endTime}
-                        sx={{
-                          "& .MuiOutlinedInput-root": {
-                            borderColor: grey[900],
-                            width: "18ch",
-                          },
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: grey[900],
-                          },
-                          "& .MuiOutlinedInput-input": {
-                            color: grey[900],
-                          },
-                        }}
-                      />
-                    </>
-                  </div>
-                </LocalizationProvider>
-              </DemoItem>
-            </Box>
-          </div>
-        )}
-       <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "left",
-        mt: 2,
-      }}
-    >
-      <FormControl sx={{ width: "64ch", mb: 5 }}>
-        <InputLabel id="select-office">Office</InputLabel>
-        <Select
-          labelId="select-office"
-          id="select-office"
-          value={selectedOfficeID || ""}
-          label="Office"
-          disabled={selectOffice}
-          onChange={(event) => setSelectedOfficeID(event.target.value)}
-        >
-          {uniqueOffices?.map((reservationSetUp : ReservationSetUp, index: number) => (
-            <MenuItem key={index} value={reservationSetUp.officeID}>
-              {reservationSetUp.officeName}
-            </MenuItem>
-          ))} 
-        </Select>
-      </FormControl>
-
-      <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
-        <InputLabel id="select-floor">Floor</InputLabel>
-        <Select
-          labelId="select-floor"
-          id="select-floor"
-          value={selectedFloorID}
-          label="Floor"
-          disabled={selectFloor}
-          onChange={(event) => setSelectedFloorID(event.target.value)}
-        >
-          
-          {uniqueFloors?.map((reservationSetUp : ReservationSetUp, index: number) => (
-            <MenuItem key={index} value={reservationSetUp.floorID}>
-              {reservationSetUp.floorName}
-            </MenuItem>
-          ))} 
-        </Select>
-      </FormControl>
-
-      <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
-        <InputLabel id="select-desk">Desk</InputLabel>
-        <Select
-          labelId="select-desk"
-          id="select-desk"
-          value={selectedDeskID || ""}
-          label="Desk"
-          onChange={(event) => setSelectedDeskID(event.target.value)}
-          disabled={selectDesk}
-        >
-          
-           {uniqueDesks?.map((reservationSetUp : ReservationSetUp, index: number) => (
-            <MenuItem key={index} value={reservationSetUp.deskID}>
-              {reservationSetUp.deskName}
-            </MenuItem>
-          ))} 
-          
-        </Select>
-      </FormControl>
-      <Button
-      variant="contained"
-      size="large"
-      color="secondary"
-      sx={{
-        height: "50px",
-        color: "white",
-        textTransform: "none",
-      }}
-      >
-        Save
-      </Button>
-    </Box>
       </Box>
+
     </ThemeProvider>
   );
 }
 
 export default EditReservation;
+function moment(value: string, arg1: string) {
+  throw new Error("Function not implemented.");
+}
+

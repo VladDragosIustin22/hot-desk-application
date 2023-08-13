@@ -17,7 +17,7 @@
     "@mui/material": "^5.13.7",
     "@mui/x-date-pickers": "^6.9.2",
     "dayjs": "^1.11.9",
-    "formik": "^2.4.2",
+    "formik": "^2.4.3",
     "guid-typescript": "^1.0.9",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
