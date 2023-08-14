@@ -40,23 +40,7 @@ const theme = createTheme({
 });
 
 // const validationSchema = yup.object().shape({
-//   value: yup.date().required('Date is required'),
-//   startTime: yup.string().required("start time cannot be empty"),
-//   endTime: yup.string().required('End time is required'),
-//   // endTime: yup.string().when(['allDay', 'startTime'], {
-//   //   is: (allDay: any, startTime: undefined) => !allDay && startTime !== undefined,
-//   //   then: yup.string()
-//   //     .required('End time is required')
-//   //     .test('is-after-start', 'End time must be after start time', function (endTime) {
-//   //       if (startTime && endTime) {
-//   //         return dayjs(endTime).isAfter(dayjs(startTime));
-//   //       }
-//   //       return false;
-//   //     }),
-//   // }),
-//   officeID: yup.string().required('Office is required'),
-//   floorID: yup.string().required('Floor is required'),
-//   deskID: yup.string().required('Desk is required'),
+//   
 // });
 
 function EditReservation({ reservationID }: { reservationID: string }) {
@@ -103,8 +87,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
       setDateCompleted(false);
     }
   };
-
-  // console.log(allDay);
+console.log(reservationView);
   // All day button
   const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     
@@ -521,18 +504,6 @@ function EditReservation({ reservationID }: { reservationID: string }) {
 
               </Select>
             </FormControl>
-            {/* <Button
-            variant="contained"
-            size="large"
-            color="secondary"
-            sx={{
-              height: "50px",
-              color: "white",
-              textTransform: "none",
-            }}
-          >
-            Save
-          </Button> */}
             <Button type="submit" variant="contained" size="large"
               color="secondary" sx={{
                 height: "50px",
@@ -549,7 +520,5 @@ function EditReservation({ reservationID }: { reservationID: string }) {
 }
 
 export default EditReservation;
-function moment(value: string, arg1: string) {
-  throw new Error("Function not implemented.");
-}
+
 

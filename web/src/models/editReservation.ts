@@ -1,4 +1,4 @@
-export interface EditReservation{
+export interface EditUserReservation{
     reservationID : string;
     arrivalTime :string ;
     leavingTime :string;
