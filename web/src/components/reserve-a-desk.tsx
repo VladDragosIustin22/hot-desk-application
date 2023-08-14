@@ -119,6 +119,8 @@ function BasicSelect({
   setSelectedFloorID,
   selectedDeskID,
   setSelectedDeskID,
+  isDateSelected,
+  isTimeSelected,
 }: {
   startTime : any
   endTime : any,
@@ -131,6 +133,8 @@ function BasicSelect({
   setSelectedFloorID:any,
   selectedDeskID:any,
   setSelectedDeskID:any;
+  isDateSelected: boolean;
+  isTimeSelected: boolean;
 }) {
 
   const [reservationSetUp,setReservationSetUp] = useState<ReservationSetUp[] | null>(null);
@@ -285,7 +289,7 @@ function BasicSelect({
           id="select-office"
           value={selectedOfficeID}
           label="Office"
-          disabled={!isDateCompleted || !isTimeCompleted }
+          disabled={!isTimeCompleted}
           onChange={(event) => setSelectedOfficeID(event.target.value)}
         >
           
@@ -345,6 +349,7 @@ function BasicSelect({
         textTransform: "none",
       }}
       onClick={createReservation}
+      disabled={!isDateCompleted || !isTimeCompleted || isDateSelected}
       >
         Save
       </Button>
@@ -364,6 +369,7 @@ function ReserveDesk() {
   const [isTimeCompleted, setTimeCompleted] = React.useState(false);
 
   const [isDateSelected, setDateSelected] = useState(false); 
+  const [isTimeSelected, setTimeSelected] = useState(false);
   const [selectedOfficeID, setSelectedOfficeID] = useState('');
   const [selectedFloorID, setSelectedFloorID] = useState('');
   const [selectedDeskID, setSelectedDeskID] = useState('');
@@ -371,14 +377,21 @@ function ReserveDesk() {
   const handleDateChange = (newValue: Dayjs | null) => {
     setValue(newValue);
     if (newValue) {
-      setDateSelected(true); 
+      setDateSelected(true);
       setDateCompleted(true);
-      setSelectedOfficeID(''); 
-      setSelectedFloorID(''); 
-      setSelectedDeskID('');   
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
+      setTimeCompleted(false); 
+      setTimeSelected(false);
     } else {
-      setDateSelected(false); 
+      setDateSelected(false);
       setDateCompleted(false);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
+      setTimeCompleted(false);
+      setTimeSelected(false);
     }
   };
 
@@ -390,19 +403,6 @@ function ReserveDesk() {
       setTimeCompleted(true);
     } else {
       setTimeCompleted(!!startTime && !!endTime);
-    }
-  };
-
-  const handleStartTimeChange = (newValue: Dayjs | null) => {
-    setStartTime(allDay ? null : newValue);
-  };
-
-  const handleEndTimeChange = (newValue: Dayjs | null) => {
-    setEndTime(allDay ? null : newValue);
-    if (newValue) {
-      setTimeCompleted(true);
-    } else {
-      setTimeCompleted(false);
     }
   };
 
@@ -448,6 +448,25 @@ function ReserveDesk() {
       return minute !== 0 && minute !== 30;
     }
     return false;
+  };
+
+  const handleStartTimeChange = (newValue: Dayjs | null) => {
+    setStartTime(allDay ? null : newValue);
+    setSelectedOfficeID("");
+    setSelectedFloorID("");
+    setSelectedDeskID("");
+  };
+
+  const handleEndTimeChange = (newValue: Dayjs | null) => {
+    setEndTime(allDay ? null : newValue);
+    if (newValue) {
+      setTimeCompleted(true);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
+    } else {
+      setTimeCompleted(false);
+    }
   };
 
   return (
@@ -564,6 +583,8 @@ function ReserveDesk() {
           setSelectedFloorID={setSelectedFloorID}
           selectedDeskID={selectedDeskID}
           setSelectedDeskID={setSelectedDeskID}
+          isDateSelected={isDateSelected}
+          isTimeSelected={isTimeSelected}
         />
       </Box>
     </ThemeProvider>
