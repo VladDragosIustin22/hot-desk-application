@@ -374,24 +374,18 @@ function ReserveDesk() {
   const [selectedFloorID, setSelectedFloorID] = useState('');
   const [selectedDeskID, setSelectedDeskID] = useState('');
 
-  const handleDateChange = (newValue: Dayjs | null) => {
+  const handleDateChangee = (newValue: Dayjs | null) => {
     setValue(newValue);
     if (newValue) {
-      setDateSelected(true);
       setDateCompleted(true);
-      setSelectedOfficeID("");
-      setSelectedFloorID("");
-      setSelectedDeskID("");
-      setTimeCompleted(false); 
-      setTimeSelected(false);
-    } else {
-      setDateSelected(false);
-      setDateCompleted(false);
-      setSelectedOfficeID("");
-      setSelectedFloorID("");
-      setSelectedDeskID("");
       setTimeCompleted(false);
-      setTimeSelected(false);
+      setStartTime(null);
+      setEndTime(null);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
+    } else {
+      setDateCompleted(false);
     }
   };
 
@@ -401,8 +395,14 @@ function ReserveDesk() {
       setStartTime(dayjs().set("hour", 7).set("minute", 0));
       setEndTime(dayjs().set("hour", 18).set("minute", 0));
       setTimeCompleted(true);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
     } else {
       setTimeCompleted(!!startTime && !!endTime);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
     }
   };
 
@@ -510,7 +510,7 @@ function ReserveDesk() {
           handleStartTimeChange={handleStartTimeChange}
           handleEndTimeChange={handleEndTimeChange}
           setDateCompleted={setDateCompleted}
-          handleDateChange={handleDateChange}
+          handleDateChange={handleDateChangee}
           isTimeCompleted={isTimeCompleted}
         />
 

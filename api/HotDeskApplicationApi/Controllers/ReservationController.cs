@@ -68,7 +68,7 @@ namespace HotDeskApplicationApi.Controllers
             List<Guid> offices = _dbContext.Offices.Select(o => o.ID).ToList();
 
             var reservations = _dbContext.Reservations
-                .Where(r => r.ProfileID == identity.ID)
+                .Where(r => r.ProfileID == identity.ID && r.LeavingTime >= DateTime.Now.Date)
                 .Select(r => new ReservationView
                 {
                     ReservationID = r.ID,
