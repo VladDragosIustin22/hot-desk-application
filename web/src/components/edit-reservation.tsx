@@ -96,8 +96,14 @@ console.log(reservationView);
       setStartTime(dayjs().set("hour", 7).set("minute", 0));
       setEndTime(dayjs().set("hour", 18).set("minute", 0));
       setTimeCompleted(true);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
     } else {
       setTimeCompleted(!!startTime && !!endTime);
+      setSelectedOfficeID("");
+      setSelectedFloorID("");
+      setSelectedDeskID("");
     }
   };
 
