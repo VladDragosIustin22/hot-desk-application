@@ -240,8 +240,15 @@ const handleCloseDelete = () => {
     setConfirmation(true);
     setOpenEdit(false);
    };
-  
-  const editProfile = async (profile: Profile) => {
+  const editProfile = async () => {
+    const editedProfile ={
+    firstName: userProfile?.firstName,
+    lastName: userProfile?.lastName,
+    role: userProfile?.role,
+    nickName: userProfile?.nickName,
+    avatar: userProfile?.avatar,
+    emailAddress: userProfile?.emailAddress
+    }
    try{
       const token = localStorage.getItem("authToken");
       if (!token) {
@@ -250,11 +257,15 @@ const handleCloseDelete = () => {
       const response = await fetch(`https://localhost:7156/api/Profile/PutProfile/EditProfile`, {
         method: "PUT",
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(profile),
+        body: JSON.stringify(editedProfile),
       });
-      if (!response.ok) {
+      if(response.ok){
+        window.location.reload();
+      }
+      else {
         throw new Error("Network response was not ok");
       }
     }
@@ -296,8 +307,7 @@ const handleCloseDelete = () => {
           alignItems: "center",
           justifyContent: "center",
         }}
-      >
- 
+      > 
         <Stack direction="row" spacing={2}>
           <Avatar
             alt="V"
@@ -306,6 +316,9 @@ const handleCloseDelete = () => {
           />
         </Stack>
         <Box
+         component="form"
+         noValidate
+         autoComplete="off"
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -328,7 +341,6 @@ const handleCloseDelete = () => {
             }}
           ></Box>
           <Box
-            component="form"
             sx={{
               "& .MuiTextField-root": {
                 mb: -5,
@@ -337,16 +349,11 @@ const handleCloseDelete = () => {
                 mr: -12,
               },
             }}
-            noValidate
-            autoComplete="off"
           >
             <TextField
           label="Name"
           id="outlined-size-normal"
-          value={userProfile?.firstName + " " + userProfile?.lastName}
-          // onChange={(event) =>
-          //   handleTextFieldChange("firstName", event.target.value)
-          // }
+          defaultValue={userProfile?.firstName + " " + userProfile?.lastName}
         />
 
             <TextField
@@ -410,6 +417,7 @@ const handleCloseDelete = () => {
               textTransform: "none",
             }}
           type="submit"
+          onClick={editProfile}
           >
                 Save
               </Button>
