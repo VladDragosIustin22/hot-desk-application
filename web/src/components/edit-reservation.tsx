@@ -47,7 +47,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
 
   const token = localStorage.getItem("authToken");
   const [reservationView, setReservationView] = useState<EditUserReservation | null>(null);
-
+  const [editedReservation,setEditedReservation]  = useState<EditUserReservation | null>(null);
 
   const [isDateCompleted, setDateCompleted] = React.useState(false);
   const [isTimeCompleted, setTimeCompleted] = React.useState(false);
@@ -277,6 +277,36 @@ console.log(reservationView);
         deskName: reservationSetUp.deskName,
       }))
     : [];
+    
+    const handleEditClick = async () => {
+
+      const editedReservation = {
+        reservationID : reservationView?.reservationID,
+        arrivalTime : arrivalTime?.toDate() || new Date(),
+        leavingTime : leavingTime?.toDate() || new Date(),
+        officeID : selectedOfficeID,
+        floorID : selectedFloorID,
+        deskID :selectedDeskID,
+      }
+      try {
+        
+    const response = await fetch(`https://localhost:7156/api/Reservation/EditReservation`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
+      body: JSON.stringify(editedReservation)
+    });
+    if (response.ok) {
+    window.location.reload();
+    } else {
+      console.error('Error editing reservation');
+    }
+      } catch (error) {
+        console.error('Error editing reservation:', error);
+      }
+    };
   //Get the reservation from backend that has following params:
   // reservationID : string;
   // arrivalTime :string ;
@@ -288,6 +318,7 @@ console.log(reservationView);
   // deskName : string;
   // deskID : string;
 
+  
   useEffect(() => {
     const fetchReservationView = async () => {
       try {
@@ -515,7 +546,8 @@ console.log(reservationView);
                 height: "50px",
                 color: "white",
                 textTransform: "none",
-              }}>
+              }}
+              onClick = {handleEditClick }>
               Submit
             </Button>
           </Box>
