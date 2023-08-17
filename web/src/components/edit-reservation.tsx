@@ -47,7 +47,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
 
   const token = localStorage.getItem("authToken");
   const [reservationView, setReservationView] = useState<EditUserReservation | null>(null);
-  const [editedReservation,setEditedReservation]  = useState<EditUserReservation | null>(null);
+  const [editedReservation, setEditedReservation] = useState<EditUserReservation | null>(null);
 
   const [isDateCompleted, setDateCompleted] = React.useState(false);
   const [isTimeCompleted, setTimeCompleted] = React.useState(false);
@@ -64,6 +64,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
     dayjs()
   );
+  const [timeDiff,setTimeDiff] = useState(true);
 
   const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs()
   );
@@ -71,31 +72,35 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   );
   const [allDay, setAllDay] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<Dayjs | null>(dayjs());
-
+  const [isDateSelected, setDateSelected] = useState(false);
   //if Date changes empty start/end Time and mark that date has changed
   const handleDateChange = (newValue: Dayjs | null) => {
+    setAllDay(false);
     setValue(newValue);
     if (newValue) {
+      setDateSelected(true);
       setDateCompleted(true);
-      setTimeCompleted(false);
-      setStartTime(null);
-      setEndTime(null);
+      setDisabledButton(false)
       setSelectedOfficeID("");
       setSelectedFloorID("");
       setSelectedDeskID("");
+      setEndTime(null);
+      setStartTime(null);
     } else {
       setDateCompleted(false);
+      setDateSelected(false);
     }
   };
-console.log(reservationView);
+  // console.log(reservationView);
   // All day button
   const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    
+
     setAllDay(event.target.checked);
     if (event.target.checked) {
       setStartTime(dayjs().set("hour", 7).set("minute", 0));
       setEndTime(dayjs().set("hour", 18).set("minute", 0));
       setTimeCompleted(true);
+      setDisabledButton(false)
       setSelectedOfficeID("");
       setSelectedFloorID("");
       setSelectedDeskID("");
@@ -111,6 +116,7 @@ console.log(reservationView);
   const handleStartTimeChange = (newValue: Dayjs | null) => {
     if (newValue && !allDay) {
       setStartTime(newValue);
+      setDisabledButton(false)
       setSelectedOfficeID("");
       setSelectedFloorID("");
       setSelectedDeskID("");
@@ -124,11 +130,12 @@ console.log(reservationView);
       setTimeCompleted(false);
     }
   };
-  
+
   //sets new value for endTime if it was changed and mark that time was completed
   const handleEndTimeChange = (newValue: Dayjs | null) => {
     if (newValue && !allDay) {
       setEndTime(newValue);
+      setDisabledButton(false)
       if (startTime) {
         setTimeCompleted(false);
         setSelectedOfficeID("");
@@ -159,7 +166,7 @@ console.log(reservationView);
       setSelectedFloorID(reservationView.floorID);
       setSelectedDeskID(reservationView.deskID);
     }
-  },[reservationView]);
+  }, [reservationView]);
 
   //After changing date set all fields except Arrival/Leaving Time disabled and value to null
   useEffect(() => {
@@ -198,8 +205,14 @@ console.log(reservationView);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let url = `https://localhost:7156/api/Desk/availableDesks?arrivalTime=${arrivalTime}&leavingTime=${leavingTime}`;
 
-        const response = await fetch(`https://localhost:7156/api/Desk/availableDesks?arrivalTime=${arrivalTime}&leavingTime=${leavingTime}`, {
+        const id = reservationView?.reservationID;
+        if (id) {
+          url += `&id=${id}`;
+        }
+
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -207,25 +220,16 @@ console.log(reservationView);
         });
 
         const data = await response.json();
-        setReservationSetUp(data)
+        setReservationSetUp(data);
 
       } catch (error) {
         console.error('Unknown error occurred:', error);
       }
-      if (reservationView) {
-        const currentDesk: ReservationSetUp = {
-          officeID: reservationView.officeID,
-          officeName: reservationView.officeName,
-          floorID: reservationView.floorID,
-          floorName: reservationView.floorName,
-          deskID: reservationView.deskID,
-          deskName: reservationView.deskName,
-        }
-        setReservationSetUp([...reservationSetUp, currentDesk]);
-      }
+
+      console.log(reservationSetUp.length)
     };
     fetchData();
-  }, [arrivalTime, leavingTime]);
+  }, [arrivalTime, leavingTime, reservationView]);
 
   //remove duplicated Officces by id
   const uniqueOffices: ReservationSetUp[] = reservationSetUp
@@ -277,36 +281,36 @@ console.log(reservationView);
         deskName: reservationSetUp.deskName,
       }))
     : [];
-    
-    const handleEditClick = async () => {
+  const [disabledButton, setDisabledButton] = useState(false);
+  const handleEditClick = async () => {
 
-      const editedReservation = {
-        reservationID : reservationView?.reservationID,
-        arrivalTime : arrivalTime?.toDate() || new Date(),
-        leavingTime : leavingTime?.toDate() || new Date(),
-        officeID : selectedOfficeID,
-        floorID : selectedFloorID,
-        deskID :selectedDeskID,
-      }
-      try {
-        
-    const response = await fetch(`https://localhost:7156/api/Reservation/EditReservation`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` 
-      },
-      body: JSON.stringify(editedReservation)
-    });
-    if (response.ok) {
-    window.location.reload();
-    } else {
-      console.error('Error editing reservation');
+    const editedReservation = {
+      reservationID: reservationView?.reservationID,
+      arrivalTime: arrivalTime?.toDate() || new Date(),
+      leavingTime: leavingTime?.toDate() || new Date(),
+      officeID: selectedOfficeID,
+      floorID: selectedFloorID,
+      deskID: selectedDeskID,
     }
-      } catch (error) {
-        console.error('Error editing reservation:', error);
+    try {
+
+      const response = await fetch(`https://localhost:7156/api/Reservation/EditReservation`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(editedReservation)
+      });
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.error('Error editing reservation');
       }
-    };
+    } catch (error) {
+      console.error('Error editing reservation:', error);
+    }
+  };
   //Get the reservation from backend that has following params:
   // reservationID : string;
   // arrivalTime :string ;
@@ -318,7 +322,7 @@ console.log(reservationView);
   // deskName : string;
   // deskID : string;
 
-  
+
   useEffect(() => {
     const fetchReservationView = async () => {
       try {
@@ -352,7 +356,11 @@ console.log(reservationView);
       setEndTime(formattedLeavingTime);
     }
   }, [reservationView]);
+  const shouldDisableDate = (date: Dayjs) => {
+    return date.day() === 0 || date.day() === 6;
+  };
 
+  
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -385,172 +393,185 @@ console.log(reservationView);
             }}
           ></Box>
         </Box>
-          <FormControl sx={{ width: "64ch", mb: 5 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <DatePicker
-                  label="Date"
-                  value={value}
-                  onChange={handleDateChange}
-                  sx={{ width: "64ch" }}
-                />
+        <FormControl sx={{ width: "64ch", mb: 5 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <DatePicker
+                label="Date"
+                value={value}
+                onChange={handleDateChange}
+                minDate={dayjs()}
+                shouldDisableDate={shouldDisableDate}
+                sx={{ width: "64ch" }}
+              />
 
-                <FormGroup sx={{ mr: -20, ml: "auto" }}>
-                  <FormControlLabel
-                    control={
-                      <Switch checked={allDay} onChange={handleAllDayToggle} />
-                    }
-                    label="All day"
-                  />
-                </FormGroup>
-              </Box>
-            </LocalizationProvider>
+              <FormGroup sx={{ mr: -20, ml: "auto" }}>
+                <FormControlLabel
+                  control={
+                    <Switch checked={allDay} disabled={value === null} onChange={handleAllDayToggle} />
+                  }
+                  label="All day"
+                />
+              </FormGroup>
+            </Box>
+          </LocalizationProvider>
+        </FormControl>
+
+        {!allDay && (
+          <div>
+            <Box sx={{ display: "flex", mb: 3 }}>
+              <DemoItem component="TimePicker">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <>
+                      <TimePicker
+                        label="Start"
+                        value={startTime}
+                        onChange={handleStartTimeChange}
+                        shouldDisableTime={(time) => {
+                          const hour = dayjs(time).hour();
+                          const minutes = dayjs(time).minute();
+                          if (endTime !== null) {
+                            const endTimeHour = dayjs(endTime).hour();
+                            const endTimeMinutes = dayjs(endTime).minute();
+                            const timeDifference = (hour - endTimeHour) * 60 + (minutes - endTimeMinutes);
+
+                            return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference > 30 ;
+                          }
+                          return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 ;
+                        }}
+                        disabled={value === null}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderColor: grey[900],
+                            width: "18ch",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: grey[900],
+                          },
+                          "& .MuiOutlinedInput-input": {
+                            color: grey[900],
+                          },
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        component="span"
+                        style={{ margin: "0 10px" }}
+                      >
+                        to
+                      </Typography>
+                      <TimePicker
+                        label="End"
+                        onChange={handleEndTimeChange}
+                        shouldDisableTime={(time) => {
+                          const hour = dayjs(time).hour();
+                          const minutes = dayjs(time).minute();
+                          const startTimeHour = dayjs(startTime).hour();
+                          const startTimeMinutes = dayjs(startTime).minute();
+
+                          const timeDifference = (hour - startTimeHour) * 60 + (minutes - startTimeMinutes);
+
+                          return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference < 30;
+                        }}
+                        disabled={value === null}
+                        value={endTime}
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderColor: grey[900],
+                            width: "18ch",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: grey[900],
+                          },
+                          "& .MuiOutlinedInput-input": {
+                            color: grey[900],
+                          },
+                        }}
+                      />
+                    </>
+                  </div>
+                </LocalizationProvider>
+              </DemoItem>
+            </Box>
+          </div>
+        )}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "left",
+            mt: 2,
+          }}
+        >
+          <FormControl sx={{ width: "64ch", mb: 5 }}>
+            <InputLabel id="select-office">Office</InputLabel>
+            <Select
+              labelId="select-office"
+              id="select-office"
+              value={selectedOfficeID || ""}
+              label="Office"
+              disabled={endTime === null || startTime === null}
+              onChange={(event) => { setSelectedOfficeID(event.target.value); setSelectFloor(false); setSelectDesk(true); setSelectedDeskID(""); setSelectedFloorID(""); setDisabledButton(false) }}
+            >
+              {uniqueOffices?.map((reservationSetUp: ReservationSetUp, index: number) => (
+                <MenuItem key={index} value={reservationSetUp.officeID}>
+                  {reservationSetUp.officeName}
+                </MenuItem>
+              ))}
+            </Select>
           </FormControl>
 
-          {!allDay && (
-            <div>
-              <Box sx={{ display: "flex", mb: 3 }}>
-                <DemoItem component="TimePicker">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <>
-                        <TimePicker
-                          label="Start"
-                          value={startTime}
-                          onChange={handleStartTimeChange}
-                          shouldDisableTime={(time) => {
-                            const hour = dayjs(time).hour();
-                            const minutes = dayjs(time).minute();
-                            return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 17;
-                          }}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderColor: grey[900],
-                              width: "18ch",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: grey[900],
-                            },
-                            "& .MuiOutlinedInput-input": {
-                              color: grey[900],
-                            },
-                          }}
-                        />
-                        <Typography
-                          variant="body1"
-                          component="span"
-                          style={{ margin: "0 10px" }}
-                        >
-                          to
-                        </Typography>
-                        <TimePicker
-                          label="End"
-                          onChange={handleEndTimeChange}
-                          shouldDisableTime={(time) => {
-                            const hour = dayjs(time).hour();
-                            const minutes = dayjs(time).minute();
-                            const startTimeHour = dayjs(startTime).hour();
-                            const startTimeMinutes = dayjs(startTime).minute();
+          <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
+            <InputLabel id="select-floor">Floor</InputLabel>
+            <Select
+              labelId="select-floor"
+              id="select-floor"
+              value={selectedFloorID || ""}
+              label="Floor"
+              disabled={selectedOfficeID === ""}
+              onChange={(event) => { setSelectedFloorID(event.target.value); setSelectDesk(false); setDisabledButton(false) }}
+            >
 
-                            const timeDifference = (hour - startTimeHour) * 60 + (minutes - startTimeMinutes);
+              {uniqueFloors?.map((reservationSetUp: ReservationSetUp, index: number) => (
+                <MenuItem key={index} value={reservationSetUp.floorID}>
+                  {reservationSetUp.floorName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-                            return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference < 60;
-                          }}
-                          value={endTime}
-                          sx={{
-                            "& .MuiOutlinedInput-root": {
-                              borderColor: grey[900],
-                              width: "18ch",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: grey[900],
-                            },
-                            "& .MuiOutlinedInput-input": {
-                              color: grey[900],
-                            },
-                          }}
-                        />
-                      </>
-                    </div>
-                  </LocalizationProvider>
-                </DemoItem>
-              </Box>
-            </div>
-          )}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "left",
-              mt: 2,
+          <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
+            <InputLabel id="select-desk">Desk</InputLabel>
+            <Select
+              labelId="select-desk"
+              id="select-desk"
+              value={selectedDeskID || ""}
+              label="Desk"
+              onChange={(event) => { setSelectedDeskID(event.target.value); setDisabledButton(true) }}
+              disabled={selectedFloorID === ""}
+            >
+
+              {uniqueDesks?.map((reservationSetUp: ReservationSetUp, index: number) => (
+                <MenuItem key={index} value={reservationSetUp.deskID}>
+                  {reservationSetUp.deskName}
+                </MenuItem>
+              ))}
+
+            </Select>
+          </FormControl>
+          <Button type="submit" variant="contained" size="large"
+            color="secondary" sx={{
+              height: "50px",
+              color: "white",
+              textTransform: "none",
             }}
-          >
-            <FormControl sx={{ width: "64ch", mb: 5 }}>
-              <InputLabel id="select-office">Office</InputLabel>
-              <Select
-                labelId="select-office"
-                id="select-office"
-                value={selectedOfficeID || ""}
-                label="Office"
-                disabled={selectOffice}
-                onChange={(event) => {setSelectedOfficeID(event.target.value); setSelectFloor(false); setSelectDesk(true) }}
-              >
-                {uniqueOffices?.map((reservationSetUp: ReservationSetUp, index: number) => (
-                  <MenuItem key={index} value={reservationSetUp.officeID}>
-                    {reservationSetUp.officeName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
-              <InputLabel id="select-floor">Floor</InputLabel>
-              <Select
-                labelId="select-floor"
-                id="select-floor"
-                value={selectedFloorID || ""}
-                label="Floor"
-                disabled={selectFloor}
-                onChange={(event) => {setSelectedFloorID(event.target.value);setSelectDesk(false)}}
-              >
-
-                {uniqueFloors?.map((reservationSetUp: ReservationSetUp, index: number) => (
-                  <MenuItem key={index} value={reservationSetUp.floorID}>
-                    {reservationSetUp.floorName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl sx={{ width: "25ch", mb: 5, alignItems: "left" }}>
-              <InputLabel id="select-desk">Desk</InputLabel>
-              <Select
-                labelId="select-desk"
-                id="select-desk"
-                value={selectedDeskID || ""}
-                label="Desk"
-                onChange={(event) => setSelectedDeskID(event.target.value)}
-                disabled={selectDesk}
-              >
-
-                {uniqueDesks?.map((reservationSetUp: ReservationSetUp, index: number) => (
-                  <MenuItem key={index} value={reservationSetUp.deskID}>
-                    {reservationSetUp.deskName}
-                  </MenuItem>
-                ))}
-
-              </Select>
-            </FormControl>
-            <Button type="submit" variant="contained" size="large"
-              color="secondary" sx={{
-                height: "50px",
-                color: "white",
-                textTransform: "none",
-              }}
-              onClick = {handleEditClick }>
-              Submit
-            </Button>
-          </Box>
+            disabled={!disabledButton}
+            // disabled={!isDateCompleted || !isTimeCompleted}
+            onClick={handleEditClick}>
+            Submit
+          </Button>
+        </Box>
       </Box>
 
     </ThemeProvider>

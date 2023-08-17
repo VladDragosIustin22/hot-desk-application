@@ -94,20 +94,14 @@ namespace HotDeskApplicationApi.Controllers
         }
 
         [HttpGet("availableDesks")]
-        public IActionResult GetAvailableDesks(DateTime arrivalTime,DateTime leavingTime)
+        public IActionResult GetAvailableDesks(DateTime arrivalTime,DateTime leavingTime,Guid? id = null)
         {
            
             List<Guid> busyDeskIds = hotDeskDbContext.Reservations
-                    .Where(r => (r.ArrivalTime < leavingTime && r.LeavingTime > arrivalTime)
-                        || (r.ArrivalTime >= arrivalTime && r.ArrivalTime < leavingTime))
+                    .Where(r => ((r.ArrivalTime < leavingTime && r.LeavingTime > arrivalTime)
+                        || (r.ArrivalTime >= arrivalTime && r.ArrivalTime < leavingTime)) && r.ID != id)
                     .Select(r => r.DeskID)
                     .ToList();
-
-            var offices = hotDeskDbContext.Offices.ToList();
-
-            var floors = hotDeskDbContext.Floors.ToList();
-
-            var desks = hotDeskDbContext.Desks.ToList();
 
             List<ReservationSetUp> availableDesks = hotDeskDbContext.Desks
                     .Where(d => !busyDeskIds.Contains(d.ID))
