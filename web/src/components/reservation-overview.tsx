@@ -240,14 +240,48 @@ const handleCloseDelete = () => {
     setConfirmation(true);
     setOpenEdit(false);
    };
+  
+
+   const handleLogout = () => {
+    {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authTokenExpiry");
+      localStorage.clear();
+    }
+    navigate("/login");
+  };
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: grey[700],
+      },
+      secondary: {
+        main: orange[900],
+      },
+    },
+    typography: {
+      fontSize: 15,
+    },
+  });
+
+
+ function MyProfile() {
+
+  const [firstName, setFirstName] = useState(userProfile?.firstName || '');
+  const [lastName, setLastName] = useState(userProfile?.lastName || '');
+  const [role, setRole] = useState(userProfile?.role || '');
+  const [nickName, setNickName] = useState(userProfile?.nickName || '');
+  const [emailAddress, setEmailAddress] = useState(userProfile?.emailAddress || '');
+
+
   const editProfile = async () => {
     const editedProfile ={
-    firstName: userProfile?.firstName,
-    lastName: userProfile?.lastName,
-    role: userProfile?.role,
-    nickName: userProfile?.nickName,
-    avatar: userProfile?.avatar,
-    emailAddress: userProfile?.emailAddress
+      firstName,
+      lastName,
+      role,
+      nickName,
+      avatar: userProfile?.avatar,
+      emailAddress,
     }
    try{
       const token = localStorage.getItem("authToken");
@@ -274,30 +308,6 @@ const handleCloseDelete = () => {
     }
   }
 
-   const handleLogout = () => {
-    {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("authTokenExpiry");
-      localStorage.clear();
-    }
-    navigate("/login");
-  };
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: grey[700],
-      },
-      secondary: {
-        main: orange[900],
-      },
-    },
-    typography: {
-      fontSize: 15,
-    },
-  });
-
-
- function MyProfile() {
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -308,7 +318,7 @@ const handleCloseDelete = () => {
           justifyContent: "center",
         }}
       > 
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1.5}>
           <Avatar
             alt="V"
             src="/static/images/avatar/1.jpg"
@@ -350,16 +360,25 @@ const handleCloseDelete = () => {
               },
             }}
           >
-            <TextField
-          label="Name"
-          id="outlined-size-normal"
-          defaultValue={userProfile?.firstName + " " + userProfile?.lastName}
-        />
+             <TextField
+              label="First Name"
+              id="outlined-size-normal"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+
+             <TextField
+              label="Last Name"
+              id="outlined-size-normal"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
 
             <TextField
               label="Job title"
               id="outlined-size-normal"
-              defaultValue={userProfile?.role}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
             />
 
             <TextField
@@ -382,7 +401,8 @@ const handleCloseDelete = () => {
             />
             <TextField
               label="Nickname"
-              defaultValue={userProfile?.nickName}
+              value={nickName}
+              onChange={(e) => setNickName(e.target.value)}
               InputProps={{
                 style: {
                   width: "37ch",
@@ -403,7 +423,7 @@ const handleCloseDelete = () => {
               sx={{
                 justifyContent: "flex-start",
                 mt: 40,
-                marginBottom: -80,
+                marginBottom: -40,
                 ml: -7,
               }}
             >

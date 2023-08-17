@@ -63,6 +63,8 @@ namespace HotDeskApplicationApi.Controllers
             user.Avatar = userProfile.Avatar;
             user.Role = userProfile.Role;
             user.NickName = userProfile.NickName;
+            user.FirstName = userProfile.FirstName;
+            user.LastName = userProfile.LastName;
 
             try
             {
