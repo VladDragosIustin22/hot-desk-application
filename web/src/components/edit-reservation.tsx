@@ -64,6 +64,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
     dayjs()
   );
+  const [timeDiff,setTimeDiff] = useState(true);
 
   const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs()
   );
@@ -71,20 +72,23 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   );
   const [allDay, setAllDay] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<Dayjs | null>(dayjs());
-
+  const [isDateSelected, setDateSelected] = useState(false);
   //if Date changes empty start/end Time and mark that date has changed
   const handleDateChange = (newValue: Dayjs | null) => {
+    setAllDay(false);
     setValue(newValue);
     if (newValue) {
+      setDateSelected(true);
       setDateCompleted(true);
-      setTimeCompleted(false);
-      setStartTime(null);
-      setEndTime(null);
+      setDisabledButton(false)
       setSelectedOfficeID("");
       setSelectedFloorID("");
       setSelectedDeskID("");
+      setEndTime(null);
+      setStartTime(null);
     } else {
       setDateCompleted(false);
+      setDateSelected(false);
     }
   };
   // console.log(reservationView);
@@ -96,6 +100,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
       setStartTime(dayjs().set("hour", 7).set("minute", 0));
       setEndTime(dayjs().set("hour", 18).set("minute", 0));
       setTimeCompleted(true);
+      setDisabledButton(false)
       setSelectedOfficeID("");
       setSelectedFloorID("");
       setSelectedDeskID("");
@@ -111,6 +116,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   const handleStartTimeChange = (newValue: Dayjs | null) => {
     if (newValue && !allDay) {
       setStartTime(newValue);
+      setDisabledButton(false)
       setSelectedOfficeID("");
       setSelectedFloorID("");
       setSelectedDeskID("");
@@ -129,6 +135,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   const handleEndTimeChange = (newValue: Dayjs | null) => {
     if (newValue && !allDay) {
       setEndTime(newValue);
+      setDisabledButton(false)
       if (startTime) {
         setTimeCompleted(false);
         setSelectedOfficeID("");
@@ -274,7 +281,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
         deskName: reservationSetUp.deskName,
       }))
     : [];
-
+  const [disabledButton, setDisabledButton] = useState(false);
   const handleEditClick = async () => {
 
     const editedReservation = {
@@ -349,7 +356,11 @@ function EditReservation({ reservationID }: { reservationID: string }) {
       setEndTime(formattedLeavingTime);
     }
   }, [reservationView]);
+  const shouldDisableDate = (date: Dayjs) => {
+    return date.day() === 0 || date.day() === 6;
+  };
 
+  
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -389,13 +400,15 @@ function EditReservation({ reservationID }: { reservationID: string }) {
                 label="Date"
                 value={value}
                 onChange={handleDateChange}
+                minDate={dayjs()}
+                shouldDisableDate={shouldDisableDate}
                 sx={{ width: "64ch" }}
               />
 
               <FormGroup sx={{ mr: -20, ml: "auto" }}>
                 <FormControlLabel
                   control={
-                    <Switch checked={allDay} onChange={handleAllDayToggle} />
+                    <Switch checked={allDay} disabled={value === null} onChange={handleAllDayToggle} />
                   }
                   label="All day"
                 />
@@ -418,8 +431,16 @@ function EditReservation({ reservationID }: { reservationID: string }) {
                         shouldDisableTime={(time) => {
                           const hour = dayjs(time).hour();
                           const minutes = dayjs(time).minute();
-                          return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 17;
+                          if (endTime !== null) {
+                            const endTimeHour = dayjs(endTime).hour();
+                            const endTimeMinutes = dayjs(endTime).minute();
+                            const timeDifference = (hour - endTimeHour) * 60 + (minutes - endTimeMinutes);
+
+                            return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference > 30 ;
+                          }
+                          return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 ;
                         }}
+                        disabled={value === null}
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             borderColor: grey[900],
@@ -451,8 +472,9 @@ function EditReservation({ reservationID }: { reservationID: string }) {
 
                           const timeDifference = (hour - startTimeHour) * 60 + (minutes - startTimeMinutes);
 
-                          return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference < 60;
+                          return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18 || timeDifference < 30;
                         }}
+                        disabled={value === null}
                         value={endTime}
                         sx={{
                           "& .MuiOutlinedInput-root": {
@@ -489,8 +511,8 @@ function EditReservation({ reservationID }: { reservationID: string }) {
               id="select-office"
               value={selectedOfficeID || ""}
               label="Office"
-              disabled={selectOffice}
-              onChange={(event) => { setSelectedOfficeID(event.target.value); setSelectFloor(false); setSelectDesk(true);setSelectedDeskID("");setSelectedFloorID(""); }}
+              disabled={endTime === null || startTime === null}
+              onChange={(event) => { setSelectedOfficeID(event.target.value); setSelectFloor(false); setSelectDesk(true); setSelectedDeskID(""); setSelectedFloorID(""); setDisabledButton(false) }}
             >
               {uniqueOffices?.map((reservationSetUp: ReservationSetUp, index: number) => (
                 <MenuItem key={index} value={reservationSetUp.officeID}>
@@ -507,8 +529,8 @@ function EditReservation({ reservationID }: { reservationID: string }) {
               id="select-floor"
               value={selectedFloorID || ""}
               label="Floor"
-              disabled={selectFloor}
-              onChange={(event) => { setSelectedFloorID(event.target.value); setSelectDesk(false) }}
+              disabled={selectedOfficeID === ""}
+              onChange={(event) => { setSelectedFloorID(event.target.value); setSelectDesk(false); setDisabledButton(false) }}
             >
 
               {uniqueFloors?.map((reservationSetUp: ReservationSetUp, index: number) => (
@@ -526,8 +548,8 @@ function EditReservation({ reservationID }: { reservationID: string }) {
               id="select-desk"
               value={selectedDeskID || ""}
               label="Desk"
-              onChange={(event) => setSelectedDeskID(event.target.value)}
-              disabled={selectDesk}
+              onChange={(event) => { setSelectedDeskID(event.target.value); setDisabledButton(true) }}
+              disabled={selectedFloorID === ""}
             >
 
               {uniqueDesks?.map((reservationSetUp: ReservationSetUp, index: number) => (
@@ -544,6 +566,8 @@ function EditReservation({ reservationID }: { reservationID: string }) {
               color: "white",
               textTransform: "none",
             }}
+            disabled={!disabledButton}
+            // disabled={!isDateCompleted || !isTimeCompleted}
             onClick={handleEditClick}>
             Submit
           </Button>

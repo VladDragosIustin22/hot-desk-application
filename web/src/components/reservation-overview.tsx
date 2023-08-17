@@ -794,7 +794,7 @@ const handleCloseDelete = () => {
                                   }}
                                 />{" "}
                                 <Typography variant="h6" component="div">
-                                  Reserve a desk {reservationView.deskName}
+                                  Reserve a desk
                                 </Typography>
                                 <IconButton
                                   sx={{ marginLeft: 97 }}
