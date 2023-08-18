@@ -363,9 +363,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   };
 
 
-  const shouldDisableDate = (date: Dayjs) => {
-    return date.day() === 0 || date.day() === 6;
-  };
+  
 
   const handleOfficeChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setSelectedOfficeID(event.target.value);
