@@ -60,7 +60,9 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   const [leavingTime, setLeavingTime] = React.useState<Dayjs | null>(
     dayjs()
   );
+
   const [timeDiff, setTimeDiff] = useState(true);
+
 
   const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs()
   );
@@ -69,6 +71,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
   const [allDay, setAllDay] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<Dayjs | null>(dayjs());
   const [isDateSelected, setDateSelected] = useState(false);
+
 
   //if Date changes empty start/end Time and mark that date has changed
   const handleDateChange = (newValue: Dayjs | null) => {
@@ -88,7 +91,6 @@ function EditReservation({ reservationID }: { reservationID: string }) {
       setDateSelected(false);
     }
   };
-
 
   // All day button
   const handleAllDayToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -282,6 +284,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
 
   const [disabledButton, setDisabledButton] = useState(false);
 
+
   const handleEditClick = async () => {
 
     const editedReservation = {
@@ -355,6 +358,10 @@ function EditReservation({ reservationID }: { reservationID: string }) {
       setEndTime(formattedLeavingTime);
     }
   }, [reservationView]);
+  const shouldDisableDate = (date: Dayjs) => {
+    return date.day() === 0 || date.day() === 6;
+  };
+
 
   const shouldDisableDate = (date: Dayjs) => {
     return date.day() === 0 || date.day() === 6;
@@ -380,6 +387,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
     }
     
   }
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -450,6 +458,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
                         shouldDisableTime={(time) => {
                           const hour = dayjs(time).hour();
                           const minutes = dayjs(time).minute();
+
                           return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18;
                         }}
                         maxTime={
@@ -457,6 +466,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
                             ? dayjs(endTime).subtract(30, 'minutes')
                             : undefined
                         }
+
                         disabled={value === null}
                         sx={{
                           "& .MuiOutlinedInput-root": {
@@ -484,6 +494,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
                         shouldDisableTime={(time) => {
                           const hour = dayjs(time).hour();
                           const minutes = dayjs(time).minute();
+
                           return hour < 7 || (minutes !== 0 && minutes !== 30) || hour > 18;
                         }}
                         disabled={value === null}
@@ -531,6 +542,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
               label="Office"
               disabled={endTime === null || startTime === null || endTime <= startTime}
               onChange={handleOfficeChange}
+
             >
               {uniqueOffices?.map((reservationSetUp: ReservationSetUp, index: number) => (
                 <MenuItem key={index} value={reservationSetUp.officeID}>
@@ -549,6 +561,7 @@ function EditReservation({ reservationID }: { reservationID: string }) {
               label="Floor"
               disabled={selectedOfficeID === ""}
               onChange={handleFloorChange}
+
             >
 
               {uniqueFloors?.map((reservationSetUp: ReservationSetUp, index: number) => (
@@ -566,7 +579,9 @@ function EditReservation({ reservationID }: { reservationID: string }) {
               id="select-desk"
               value={selectedDeskID || ""}
               label="Desk"
+
               onChange={handleDeskChange}
+
               disabled={selectedFloorID === ""}
             >
 
