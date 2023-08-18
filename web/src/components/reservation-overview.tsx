@@ -241,27 +241,6 @@ const handleCloseDelete = () => {
     setOpenEdit(false);
    };
   
-  const editProfile = async (profile: Profile) => {
-   try{
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("Invalid token");
-      }
-      const response = await fetch(`https://localhost:7156/api/Profile/PutProfile/EditProfile`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(profile),
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-    }
-    catch (error) {
-      console.error("Unknown error occurred:", error);
-    }
-  }
 
    const handleLogout = () => {
     {
@@ -287,6 +266,48 @@ const handleCloseDelete = () => {
 
 
  function MyProfile() {
+
+  const [firstName, setFirstName] = useState(userProfile?.firstName || '');
+  const [lastName, setLastName] = useState(userProfile?.lastName || '');
+  const [role, setRole] = useState(userProfile?.role || '');
+  const [nickName, setNickName] = useState(userProfile?.nickName || '');
+  const [emailAddress, setEmailAddress] = useState(userProfile?.emailAddress || '');
+
+
+  const editProfile = async () => {
+    const editedProfile ={
+      firstName,
+      lastName,
+      role,
+      nickName,
+      avatar: userProfile?.avatar,
+      emailAddress,
+    }
+   try{
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Invalid token");
+      }
+      const response = await fetch(`https://localhost:7156/api/Profile/PutProfile/EditProfile`, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editedProfile),
+      });
+      if(response.ok){
+        window.location.reload();
+      }
+      else {
+        throw new Error("Network response was not ok");
+      }
+    }
+    catch (error) {
+      console.error("Unknown error occurred:", error);
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -296,9 +317,8 @@ const handleCloseDelete = () => {
           alignItems: "center",
           justifyContent: "center",
         }}
-      >
- 
-        <Stack direction="row" spacing={2}>
+      > 
+        <Stack direction="row" spacing={1.5}>
           <Avatar
             alt="V"
             src="/static/images/avatar/1.jpg"
@@ -306,6 +326,9 @@ const handleCloseDelete = () => {
           />
         </Stack>
         <Box
+         component="form"
+         noValidate
+         autoComplete="off"
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -328,7 +351,6 @@ const handleCloseDelete = () => {
             }}
           ></Box>
           <Box
-            component="form"
             sx={{
               "& .MuiTextField-root": {
                 mb: -5,
@@ -337,22 +359,26 @@ const handleCloseDelete = () => {
                 mr: -12,
               },
             }}
-            noValidate
-            autoComplete="off"
           >
-            <TextField
-          label="Name"
-          id="outlined-size-normal"
-          value={userProfile?.firstName + " " + userProfile?.lastName}
-          // onChange={(event) =>
-          //   handleTextFieldChange("firstName", event.target.value)
-          // }
-        />
+             <TextField
+              label="First Name"
+              id="outlined-size-normal"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+
+             <TextField
+              label="Last Name"
+              id="outlined-size-normal"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
 
             <TextField
               label="Job title"
               id="outlined-size-normal"
-              defaultValue={userProfile?.role}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
             />
 
             <TextField
@@ -375,7 +401,8 @@ const handleCloseDelete = () => {
             />
             <TextField
               label="Nickname"
-              defaultValue={userProfile?.nickName}
+              value={nickName}
+              onChange={(e) => setNickName(e.target.value)}
               InputProps={{
                 style: {
                   width: "37ch",
@@ -396,7 +423,7 @@ const handleCloseDelete = () => {
               sx={{
                 justifyContent: "flex-start",
                 mt: 40,
-                marginBottom: -80,
+                marginBottom: -40,
                 ml: -7,
               }}
             >
@@ -410,6 +437,7 @@ const handleCloseDelete = () => {
               textTransform: "none",
             }}
           type="submit"
+          onClick={editProfile}
           >
                 Save
               </Button>
@@ -792,7 +820,7 @@ const handleCloseDelete = () => {
                                   }}
                                 />{" "}
                                 <Typography variant="h6" component="div">
-                                  Reserve a desk {reservationView.deskName}
+                                  Edit reservation
                                 </Typography>
                                 <IconButton
                                   sx={{ marginLeft: 97 }}
