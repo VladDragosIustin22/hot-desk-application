@@ -580,19 +580,17 @@ const handleCloseDelete = () => {
                 position: "absolute",
               }}
             >
-              <Box
-                sx={{position:"sticky",
-                 justifyContent: "flex-start",
-                  mt: 10, 
-                  marginBottom: 200,
-                  zIndex: 1000}}
-              >
+              
+              
                 <Button
                   variant="contained" 
                   size="large"
                   color="secondary"
                   sx={{
-                    
+                    position: "sticky",
+                    top: "20px",  
+                    right: "100px", 
+                    zIndex: 1000,
                     height: "50px",
                     color: "white",
                     textTransform: "none",
@@ -601,7 +599,7 @@ const handleCloseDelete = () => {
                 >
                   Make a reservation
                 </Button>
-              </Box>
+              
 
               <Modal
                 open={openReservation}
