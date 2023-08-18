@@ -25,7 +25,7 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
 
 const schema = Yup.object().shape({
   email: Yup.string()
-    .email("Email shuld be valid! Example: bob.golden@gmail.com")
+    .email("Email should be valid! Example: bob.golden@gmail.com")
     .required("Required"),
   password: Yup.string()
     .min(8)
