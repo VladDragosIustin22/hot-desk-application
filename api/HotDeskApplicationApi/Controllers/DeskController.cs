@@ -1,7 +1,9 @@
 ﻿using HotDeskApplicationApi.Data;
+using HotDeskApplicationApi.Framework.Identity;
 using HotDeskApplicationApi.Models;
 using HotDeskApplicationApi.ModelView;
 using HotDeskApplicationApi.NewFolder2;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,7 @@ namespace HotDeskApplicationApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DeskController : ControllerBase
     {
         private HotDeskDbContext hotDeskDbContext;
@@ -96,7 +98,7 @@ namespace HotDeskApplicationApi.Controllers
         [HttpGet("availableDesks")]
         public IActionResult GetAvailableDesks(DateTime arrivalTime,DateTime leavingTime,Guid? id = null)
         {
-           
+
             List<Guid> busyDeskIds = hotDeskDbContext.Reservations
                     .Where(r => ((r.ArrivalTime < leavingTime && r.LeavingTime > arrivalTime)
                         || (r.ArrivalTime >= arrivalTime && r.ArrivalTime < leavingTime)) && r.ID != id)
