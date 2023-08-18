@@ -81,6 +81,7 @@ namespace HotDeskApplicationApi.Controllers
                     ProfileRole = userProfile.Role,
                     ProfileName = userProfile.NickName
                 })
+                .OrderBy(r => r.ArrivalTime)
                 .ToList();
 
             return Ok(reservations);
