@@ -349,7 +349,7 @@ function BasicSelect({
         textTransform: "none",
       }}
       onClick={createReservation}
-      disabled={!isDateCompleted || !isTimeCompleted || isDateSelected}
+    
       >
         Save
       </Button>
@@ -411,10 +411,7 @@ function ReserveDesk() {
       const startHour = startTime?.hour();
       const startMinute = startTime?.minute();
       if (startHour !== undefined && startMinute !== undefined) {
-        const startTime = dayjs()
-          .set("hour", startHour)
-          .set("minute", startMinute)
-          .startOf("minute");
+        const startTime = dayjs().set("hour", 7).startOf("hour");
         const endTime = dayjs().set("hour", 16).startOf("hour");
         return (
           value.isBefore(startTime, "hour") || value.isAfter(endTime, "hour")
@@ -432,11 +429,7 @@ function ReserveDesk() {
       const startHour = startTime?.add(1, "hour").hour();
       const startMinute = startTime?.minute();
       if (startHour !== undefined && startMinute !== undefined) {
-        const startTime = dayjs()
-          .set("hour", startHour)
-          .set("minute", startMinute)
-          .startOf("minute");
-
+        const startTime = dayjs().set("hour", 7).startOf("hour");
         const endTime = dayjs().set("hour", 16).startOf("hour");
         return (
           value.isBefore(startTime, "hour") || value.isAfter(endTime, "hour")
